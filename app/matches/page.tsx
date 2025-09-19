@@ -1,7 +1,8 @@
 'use client'
 
-import { useQuery } from '@convex/react'
+import { useQuery } from 'convex/react'
 import { api } from '../../convex/_generated/api'
+import type { Id } from '../../convex/_generated/dataModel'
 
 interface Team {
   _id: string;
@@ -57,7 +58,7 @@ export default function MatchesPage() {
       <h1 className="text-3xl font-bold mb-6 text-center">Interclass Matches</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {matches.map((match: Match) => {
-          const events = useQuery(api.matches.getMatchEvents, { matchId: match._id }) as Event[] | undefined
+          const events = useQuery(api.matches.getMatchEvents, { matchId: match._id as Id<"matches"> }) as Event[] | undefined
 
           let team1Points = 0
           let team2Points = 0
