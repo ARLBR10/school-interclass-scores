@@ -1,36 +1,14 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# School Interclass Score system
 
-## Getting Started
+This is an system that will be used for 3 days (yeah...) for routing teams and the registry of points, penalties and others. This project will use NextJS, Convex, and Tailwind CSS.
 
-First, run the development server:
+## FAQ
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+> Why not vibecoded it?
+> Well... I tried doing this but, i didn't have a good model available and [Sonoma Sky Alpha](https://openrouter.ai/openrouter/sonoma-sky-alpha) (Anonymous model that is probably an Grok 5 or 4.20) is free but sucked. See branch [`third_try`](https://github.com/ARLBR10/school-interclass-scores/tree/third_try) to see what this FUCKING SHITTY model gave me.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> There is AI at least?
+> I am writing this before i even started to code but i probably use [Github Copilot](https://github.com/features/copilot) with GPT 5 Mini to create the UI/UX and learn about convex.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> Languages and Products in use?
+> [NextJS](https://nextjs.org/), [Convex (for backend)](https://www.convex.dev/), package management with [PNPM](https://pnpm.io/), and runner will be [BunJS](https://bun.com/)
