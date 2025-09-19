@@ -14,3 +14,7 @@ New packages or running services you request to me, dont run it.
 It did its job faster than Kilo ever could with even less requests, i didn't get rate limited so upside! But the interface was the most basic it could ever be and Convex registry didn't work at all. I never messed with convex and just a little with NextJS but for this shitty work, my thoughts are that or this model SUCK a lot or AI Vibecoded shit isn't really a 10x dev is just an 0.1x instead.
 
 I will save this but maybe i will need to make this myself and some help of GPT 5 Mini along the way to create an good UI and a working project.
+
+Images: 
+![Reference 1](image.png)
+![Reference 2](image-1.png)
