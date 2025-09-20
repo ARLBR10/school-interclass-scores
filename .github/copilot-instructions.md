@@ -69,3 +69,8 @@ Verification checklist (maintainer)
 
 - Suggest to the maintainer to install dependencies (do not run commands): `pnpm install`.
 - Suggest to the maintainer to start the dev server and spot-check the app (do not run commands): `pnpm run dev` (or `npm run dev`).
+
+Repository-specific notes
+
+- **Language:** All visible UI text should be Portuguese (pt-BR). When creating UX, labels, messages, or short documentation, use Portuguese.
+- **Context:** This site is for an inter-school competition (interclasse). Prefer sports/competition terminology such as "Partidas", "Equipes", "Classificação", "Regras" when creating UI components or examples.
