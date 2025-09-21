@@ -34,6 +34,7 @@ export default defineSchema({
   }),
   players: defineTable({
     name: v.string(),
+    class: v.string(),
     alias: v.array(v.string()),
     height: v.optional(v.string()),
     weight: v.optional(v.string()),
