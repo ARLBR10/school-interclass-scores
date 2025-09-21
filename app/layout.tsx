@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -35,7 +36,7 @@ export default function RootLayout({
             {/* Left brand */}
             <div className="flex items-center flex-shrink-0">
               <span className="text-sm sm:text-base font-semibold truncate">
-                Anglo Interclasse
+                <Link href="/">Anglo Interclasse</Link>
               </span>
             </div>
 
@@ -90,10 +91,14 @@ export default function RootLayout({
                   </summary>
                   <div className="fixed inset-x-0 top-16 bg-[#0b0b0c] border-t border-white/6 shadow-sm z-50">
                     <ul className="flex flex-col text-lg text-gray-200">
-                      <li className="py-4 px-5 hover:bg-white/2">Partidas</li>
-                      <li className="py-4 px-5 hover:bg-white/2">Equipes</li>
                       <li className="py-4 px-5 hover:bg-white/2">
-                        Classificação
+                        <Link href="/matches">Partidas</Link>
+                      </li>
+                      <li className="py-4 px-5 hover:bg-white/2">
+                        <Link href="/teams">Equipes</Link>
+                      </li>
+                      <li className="py-4 px-5 hover:bg-white/2">
+                        <Link href="/standings">Classificação</Link>
                       </li>
                     </ul>
                   </div>
@@ -130,9 +135,15 @@ export default function RootLayout({
                 </details>
               </div>
               <ul className="hidden sm:flex items-center gap-4 text-sm text-gray-200">
-                <li>Partidas</li>
-                <li>Equipes</li>
-                <li>Classificação</li>
+                <li>
+                  <Link href="/matches">Partidas</Link>
+                </li>
+                <li>
+                  <Link href="/teams">Equipes</Link>
+                </li>
+                <li>
+                  <Link href="/standings">Classificação</Link>
+                </li>
               </ul>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-xs font-medium">
