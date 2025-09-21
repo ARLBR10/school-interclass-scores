@@ -43,7 +43,10 @@ export default function MatchesList() {
           <div className="text-right">
             {/* status badge colors */}
             {(() => {
-              const map: Record<string, any> = {
+              const map: Record<string, {
+                classes: string,
+                text: string,
+              }> = {
                 Scheduled: {
                   classes: "bg-blue-600 text-white",
                   text: "Agendado",
