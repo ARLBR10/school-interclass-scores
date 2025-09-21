@@ -40,11 +40,44 @@ export default function MatchesList() {
               })}
             </p>
           </div>
-
           <div className="text-right">
-            <span className="inline-block text-xs px-2 py-1 rounded-md bg-white/6 text-white">
-              {m.status}
-            </span>
+            {/* status badge colors */}
+            {(() => {
+              const map: Record<string, any> = {
+                Scheduled: {
+                  classes: "bg-blue-600 text-white",
+                  text: "Agendado",
+                },
+                Delayed: {
+                  classes: "bg-yellow-600 text-white",
+                  text: "Atrasado",
+                },
+                Canceled: {
+                  classes: "bg-red-600 text-white",
+                  text: "Cancelado",
+                },
+                Started: {
+                  classes: "bg-green-600 text-white",
+                  text: "Em progresso",
+                },
+                Finished: {
+                  classes: "bg-gray-600 text-white",
+                  text: "Finalizado",
+                },
+              };
+              const Status = map[m.status] ?? {
+                classes: "bg-white/6 text-white",
+                text: m.status,
+              };
+              return (
+                <span
+                  className={`inline-block text-xs px-2 py-1 rounded-md ${Status.classes}`}
+                >
+                  {Status.text}
+                </span>
+              );
+            })()}
+
             <div className="mt-2">
               <Link
                 href={`/matches/${m.id}`}
