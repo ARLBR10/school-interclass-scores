@@ -1,31 +1,44 @@
+"use client";
+
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
 import Link from "next/link";
+import { use } from "react";
 
-// Dynamic team page.
-// TODO: Fetch real team data with Convex API, for example:
-// `import { api } from '../../../convex/_generated/api'` and
-// `const team = await api.teams.get.fetch(id)` when ready.
-
+// GPT 5 Mini made this?
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export default function TeamPage({ params }: Props) {
-  const { id } = params;
+  const id = use(params).id;
 
-  // Placeholder data
-  const team = {
-    id,
-    name: `Equipe ${id}`,
-    points: 10,
-    members: ["Aluno 1", "Aluno 2", "Aluno 3"],
-  };
+  const TeamInfo = useQuery(
+    api.teams.get,
+    id ? { ID: id } : (undefined as any)
+  );
+  const isLoading = !TeamInfo;
+
+  //if (!TeamInfo) return redirect('/teams')
+
+  // Derived data (use placeholders when loading)
+  const teamName = TeamInfo ? `Time ${TeamInfo.name}` : "Time";
+  const teamPoints =
+    TeamInfo && (TeamInfo as any).points !== undefined
+      ? (TeamInfo as any).points
+      : null;
+  const teamMembers = TeamInfo ? TeamInfo.players : [];
 
   return (
     <div className="min-h-screen flex items-start justify-center py-12 px-4 sm:py-16">
       <div className="max-w-3xl w-full">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl sm:text-4xl font-semibold text-white">
-            {team.name}
+            {isLoading ? (
+              <div className="h-10 w-48 bg-white/10 rounded animate-pulse" />
+            ) : (
+              teamName
+            )}
           </h1>
           <Link
             href="/teams"
@@ -35,14 +48,24 @@ export default function TeamPage({ params }: Props) {
           </Link>
         </div>
 
-        <p className="mt-3 text-gray-300">{team.points} pontos</p>
+        <p className="mt-3 text-gray-300">
+          {isLoading ? (
+            <span className="inline-block h-4 w-20 bg-white/10 rounded animate-pulse" />
+          ) : (
+            `${teamPoints ?? 0} pontos`
+          )}
+        </p>
 
         <section className="mt-6 bg-white/3 rounded-lg p-4">
           <h2 className="text-lg font-medium text-white">Membros</h2>
           <ul className="mt-2 list-disc list-inside text-gray-300">
-            {team.members.map((m) => (
-              <li key={m}>{m}</li>
-            ))}
+            {isLoading
+              ? [1, 2, 3].map((i) => (
+                  <li key={i} className="mb-2">
+                    <div className="h-4 w-48 bg-white/10 rounded animate-pulse" />
+                  </li>
+                ))
+              : teamMembers.map((m: string) => <li key={m}>{m}</li>)}
           </ul>
         </section>
       </div>
