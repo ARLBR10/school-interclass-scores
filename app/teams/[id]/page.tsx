@@ -3,6 +3,7 @@
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { use } from "react";
 
 // GPT 5 Mini made this?
@@ -13,13 +14,17 @@ type Props = {
 export default function TeamPage({ params }: Props) {
   const id = use(params).id;
 
-  const TeamInfo = useQuery(
-    api.teams.get,
-    id ? { ID: id } : (undefined as any)
-  );
-  const isLoading = !TeamInfo;
+  let TeamInfo
+  try {
+    TeamInfo = useQuery(
+      api.teams.get,
+      id ? { ID: id } : (undefined as any)
+    );
+  } catch (e) {
+    return redirect('/teams')
+  }
 
-  //if (!TeamInfo) return redirect('/teams')
+  const isLoading = !TeamInfo;
 
   // Derived data (use placeholders when loading)
   const teamName = TeamInfo ? `Time ${TeamInfo.name}` : "Time";
