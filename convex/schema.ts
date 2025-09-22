@@ -10,22 +10,44 @@ export default defineSchema({
       v.literal("Scheduled"),
       //v.literal("Delayed"), // Have to do through scheduleData
       v.literal("Canceled"),
-      v.literal("Started"),
       v.literal("Finished")
     ),
     events: v.array(
-      v.object({
-        type: v.union(
-          v.literal('AddScore'),
-          v.literal('RemScore'),
-          v.literal('KickedPlayer'),
-          v.literal('SwitchPlayers'),
-          v.literal('StartedMatch'),
-          v.literal('FinishedMatch'),
-        ),
-        team: v.id('teams'),
-        player: v.optional(v.union(v.id("players"), v.literal("Unknown"), v.array(v.id("players")))),
-      })
+      v.union(
+        v.object({
+          type: v.union(v.literal("AddScore"), v.literal("RemScore")),
+          time: v.number(), // UNIX Timestamp
+          team: v.id("teams"),
+          score: v.number(),
+          player: v.optional(
+            v.union(
+              v.id("players"),
+              v.array(v.id("players"))
+            )
+          ),
+        }),
+        v.object({
+          type: v.literal("KickedPlayer"),
+          time: v.number(), // UNIX Timestamp
+          team: v.id("teams"),
+          player: v.optional(
+            v.union(
+              v.id("players"),
+              v.array(v.id("players"))
+            )
+          ),
+        }),
+        v.object({
+          type: v.union(v.literal("StartedMatch"), v.literal("FinishedMatch")),
+          time: v.number(), // UNIX Timestamp
+        }),
+        v.object({
+          type: v.literal("SwitchPlayers"),
+          time: v.number(), // UNIX Timestamp
+          team: v.id("teams"),
+          players: v.array(v.id("players")),
+        })
+      )
     ),
   }),
   teams: defineTable({
