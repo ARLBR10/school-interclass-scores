@@ -5,24 +5,26 @@ export default defineSchema({
   // First time doing this so we need to check it.
   matches: defineTable({
     teams: v.array(v.id("teams")),
-    scheduledData: v.optional(v.string()), // JS Date (Format: YYYY-MM-DDTHH:mm:ss.sssZ)
+    scheduledData: v.optional(v.number()), // UNIX Timestamp
     status: v.union(
       v.literal("Scheduled"),
-      v.literal("Delayed"),
+      //v.literal("Delayed"), // Have to do through scheduleData
       v.literal("Canceled"),
       v.literal("Started"),
       v.literal("Finished")
     ),
-    scores: v.array(
+    events: v.array(
       v.object({
-        reversed: v.boolean(), // If it was canceled
-        player: v.union(v.id("players"), v.literal("N/A")),
-      })
-    ),
-    penalties: v.array(
-      v.object({
-        player: v.union(v.id("players")),
-        type: v.string() // Add some literals on the future
+        type: v.union(
+          v.literal('AddScore'),
+          v.literal('RemScore'),
+          v.literal('KickedPlayer'),
+          v.literal('SwitchPlayers'),
+          v.literal('StartedMatch'),
+          v.literal('FinishedMatch'),
+        ),
+        team: v.id('teams'),
+        player: v.optional(v.union(v.id("players"), v.literal("Unknown"), v.array(v.id("players")))),
       })
     ),
   }),
