@@ -1,3 +1,4 @@
+// TODO: Add point or goal system
 export const Sports = {
   Soccer: "Futebol",
   Volleyball: "Volleyball",
