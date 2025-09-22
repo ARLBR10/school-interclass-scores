@@ -19,23 +19,13 @@ export default defineSchema({
           time: v.number(), // UNIX Timestamp
           team: v.id("teams"),
           score: v.number(),
-          player: v.optional(
-            v.union(
-              v.id("players"),
-              v.array(v.id("players"))
-            )
-          ),
+          player: v.optional(v.id("players")),
         }),
         v.object({
           type: v.literal("KickedPlayer"),
           time: v.number(), // UNIX Timestamp
           team: v.id("teams"),
-          player: v.optional(
-            v.union(
-              v.id("players"),
-              v.array(v.id("players"))
-            )
-          ),
+          player: v.id("players"),
         }),
         v.object({
           type: v.union(v.literal("StartedMatch"), v.literal("FinishedMatch")),

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { use } from "react";
 import TeamMatches from "./TeamMatches";
+import { PlayerItem } from "@/app/utils/PlayerItem";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -81,22 +82,5 @@ export default function TeamPage({ params }: Props) {
         <TeamMatches team={id} />
       </div>
     </div>
-  );
-}
-
-function PlayerItem({ id }: { id: string }) {
-  const player = useQuery(api.player.get, { ID: id as any });
-
-  if (!player) {
-    return <div className="h-4 w-48 bg-white/10 rounded animate-pulse" />;
-  }
-
-  return (
-    <Link
-      href={`/players/${player._id}`}
-      className="text-gray-300 hover:underline"
-    >
-      {player.name} - {player.class}
-    </Link>
   );
 }

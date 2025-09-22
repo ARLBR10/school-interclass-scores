@@ -80,9 +80,12 @@ export default function TeamMatches({ team }: { team: string }) {
               const MatchDate =
                 m.date === false
                   ? "Não agendado"
-                  : (m.date as Date).toLocaleDateString("pt-br", {
-                      hour: "numeric",
-                      minute: "numeric",
+                  : (m.date as Date).toLocaleString("pt-BR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
                     });
 
               // Opponent name (lookup from fetched teams)
@@ -96,10 +99,12 @@ export default function TeamMatches({ team }: { team: string }) {
                     className="flex items-center justify-between hover:underline"
                   >
                     <div>
-                      <div className="text-sm text-gray-200">
-                        {MatchDate}
-                      </div>
-                      {<div className="text-xs text-gray-400">Time {opponent_name}</div>}
+                      <div className="text-sm text-gray-200">{MatchDate}</div>
+                      {
+                        <div className="text-xs text-gray-400">
+                          Oponente: Time {opponent_name}
+                        </div>
+                      }
                     </div>
 
                     <div className="flex items-center gap-3">

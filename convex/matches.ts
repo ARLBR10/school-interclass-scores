@@ -26,6 +26,15 @@ function makeBetterMatch(Match: any): BetterMatch {
 }
 
 export const get = query({
+  args: {
+    ID: v.id("matches")
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.ID);
+  },
+});
+
+export const getAll = query({
   args: {},
   handler: async (ctx) => {
     return await ctx.db.query("matches").collect();
