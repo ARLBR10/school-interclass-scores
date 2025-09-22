@@ -5,6 +5,7 @@ import { useQuery } from "convex/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { use } from "react";
+import { Sports, TeamType } from "@/app/utils/Translations";
 
 // GPT 5 Mini made this?
 type Props = {
@@ -14,24 +15,23 @@ type Props = {
 export default function TeamPage({ params }: Props) {
   const id = use(params).id;
 
-  let TeamInfo
+  let TeamInfo;
   try {
-    TeamInfo = useQuery(
-      api.teams.get,
-      id ? { ID: id } : (undefined as any)
-    );
+    TeamInfo = useQuery(api.teams.get, id ? { ID: id } : (undefined as any));
   } catch (e) {
-    return redirect('/teams')
+    // Unknown ID
+    return redirect("/teams");
   }
 
   const isLoading = !TeamInfo;
 
   // Derived data (use placeholders when loading)
-  const teamName = TeamInfo ? `Time ${TeamInfo.name}` : "Time";
-  const teamPoints =
-    TeamInfo && (TeamInfo as any).points !== undefined
-      ? (TeamInfo as any).points
-      : null;
+  const teamName = TeamInfo ? `Time ${TeamInfo.name}` : "Time Desconhecido";
+  const teamModality = TeamInfo
+    ? `${Sports[TeamInfo.sport] || TeamInfo.sport}, ${
+        TeamType[TeamInfo.type] || TeamInfo.type
+      }`
+    : "Desconhecida, Assexuada";
   const teamMembers = TeamInfo ? TeamInfo.players : [];
 
   return (
@@ -57,7 +57,7 @@ export default function TeamPage({ params }: Props) {
           {isLoading ? (
             <span className="inline-block h-4 w-20 bg-white/10 rounded animate-pulse" />
           ) : (
-            `${teamPoints ?? 0} pontos`
+            `${teamModality ?? "Desconhecida, Assexuada"}`
           )}
         </p>
 

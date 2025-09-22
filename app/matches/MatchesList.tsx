@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MatchStatus } from "../utils/Translations";
 
 // Placeholder component for listing matches.
 // TODO: Replace placeholder data with Convex API calls using
@@ -43,31 +44,7 @@ export default function MatchesList() {
           <div className="text-right">
             {/* status badge colors */}
             {(() => {
-              const map: Record<string, {
-                classes: string,
-                text: string,
-              }> = {
-                Scheduled: {
-                  classes: "bg-blue-600 text-white",
-                  text: "Agendado",
-                },
-                Delayed: {
-                  classes: "bg-yellow-600 text-white",
-                  text: "Atrasado",
-                },
-                Canceled: {
-                  classes: "bg-red-600 text-white",
-                  text: "Cancelado",
-                },
-                Started: {
-                  classes: "bg-green-600 text-white",
-                  text: "Em progresso",
-                },
-                Finished: {
-                  classes: "bg-gray-600 text-white",
-                  text: "Finalizado",
-                },
-              };
+              const map = MatchStatus;
               const Status = map[m.status] ?? {
                 classes: "bg-white/6 text-white",
                 text: m.status,
