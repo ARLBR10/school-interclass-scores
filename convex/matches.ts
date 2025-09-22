@@ -1,3 +1,4 @@
+import { v } from "convex/values";
 import { query } from "./_generated/server";
 
 export type BetterMatch = {
@@ -59,5 +60,20 @@ export const nextMatch = query({
       null;
 
     return Next;
+  },
+});
+
+export const teamMatches = query({
+  args: {
+    Team: v.id("teams"),
+  },
+  async handler(ctx, args) {
+    const Matches = await ctx.db.query("matches").collect();
+
+    const Filtered = Matches.filter((m) => {
+      return m.teams.includes(args.Team);
+    });
+
+    return Filtered;
   },
 });

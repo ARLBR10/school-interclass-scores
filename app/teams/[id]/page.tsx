@@ -6,6 +6,7 @@ import { useQuery } from "convex/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { use } from "react";
+import TeamMatches from "./TeamMatches";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -76,6 +77,8 @@ export default function TeamPage({ params }: Props) {
                 ))}
           </ul>
         </section>
+
+        <TeamMatches isLoading={isLoading} />
       </div>
     </div>
   );
