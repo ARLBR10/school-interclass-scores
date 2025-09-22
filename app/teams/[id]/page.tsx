@@ -7,7 +7,6 @@ import { redirect } from "next/navigation";
 import { use } from "react";
 import { Sports, TeamType } from "@/app/utils/Translations";
 
-// GPT 5 Mini made this?
 type Props = {
   params: Promise<{ id: string }>;
 };
