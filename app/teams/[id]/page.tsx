@@ -78,7 +78,7 @@ export default function TeamPage({ params }: Props) {
           </ul>
         </section>
 
-        <TeamMatches isLoading={isLoading} />
+        <TeamMatches team={id} />
       </div>
     </div>
   );
