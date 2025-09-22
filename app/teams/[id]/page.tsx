@@ -1,11 +1,11 @@
 "use client";
 
+import { Sports, TeamType } from "@/app/utils/Translations";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { use } from "react";
-import { Sports, TeamType } from "@/app/utils/Translations";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -69,10 +69,31 @@ export default function TeamPage({ params }: Props) {
                     <div className="h-4 w-48 bg-white/10 rounded animate-pulse" />
                   </li>
                 ))
-              : teamMembers.map((m: string) => <li key={m}>{m}</li>)}
+              : teamMembers.map((playerId) => (
+                  <li key={playerId.toString()} className="mb-2">
+                    <PlayerItem id={playerId} />
+                  </li>
+                ))}
           </ul>
         </section>
       </div>
     </div>
+  );
+}
+
+function PlayerItem({ id }: { id: string }) {
+  const player = useQuery(api.player.get, { ID: id as any });
+
+  if (!player) {
+    return <div className="h-4 w-48 bg-white/10 rounded animate-pulse" />;
+  }
+
+  return (
+    <Link
+      href={`/players/${player._id}`}
+      className="text-gray-300 hover:underline"
+    >
+      {player.name} - {player.class}
+    </Link>
   );
 }
