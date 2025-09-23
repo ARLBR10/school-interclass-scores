@@ -1,3 +1,5 @@
+"use client";
+
 import { PlayerItem } from "@/app/utils/PlayerItem";
 
 type PlayerInfo = {
@@ -17,11 +19,7 @@ function eventLabel(e: MatchEvents, teamInfo: teamInfoType[]) {
       if (e.player) {
         PlayerLink = (
           <span>
-            —{" "}
-            {PlayerItem({
-              id: e.player,
-              notIncludeClass: true,
-            })}
+            — <PlayerItem id={e.player} notIncludeClass={true} />
           </span>
         );
       }
@@ -37,11 +35,7 @@ function eventLabel(e: MatchEvents, teamInfo: teamInfoType[]) {
       if (e.player) {
         RemPlayerLink = (
           <span>
-            —{" "}
-            {PlayerItem({
-              id: e.player,
-              notIncludeClass: true,
-            })}
+            — <PlayerItem id={e.player} notIncludeClass={true} />
           </span>
         );
       }
@@ -53,14 +47,12 @@ function eventLabel(e: MatchEvents, teamInfo: teamInfoType[]) {
         </span>
       );
     case "SwitchPlayers":
-      const Player0Link = PlayerItem({
-        id: e.players[0],
-        notIncludeClass: true,
-      });
-      const Player1Link = PlayerItem({
-        id: e.players[1],
-        notIncludeClass: true,
-      });
+      const Player0Link = (
+        <PlayerItem id={e.players[0]} notIncludeClass={true} />
+      );
+      const Player1Link = (
+        <PlayerItem id={e.players[1]} notIncludeClass={true} />
+      );
 
       return (
         <span>
@@ -72,10 +64,7 @@ function eventLabel(e: MatchEvents, teamInfo: teamInfoType[]) {
       if (e.player) {
         KickPlayerLink = (
           <span>
-            {PlayerItem({
-              id: e.player,
-              notIncludeClass: true,
-            })}
+            <PlayerItem id={e.player} notIncludeClass={true} />
           </span>
         );
       }

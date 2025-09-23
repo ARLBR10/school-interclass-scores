@@ -1,8 +1,16 @@
-import Link from "next/link";
+"use client";
+
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
+import Link from "next/link";
 
-export function PlayerItem({ id, notIncludeClass }: { id: string; notIncludeClass?: boolean }) {
+export function PlayerItem({
+  id,
+  notIncludeClass,
+}: {
+  id: string;
+  notIncludeClass?: boolean;
+}) {
   const player = useQuery(api.player.get, { ID: id as any });
 
   if (!player) {
