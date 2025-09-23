@@ -83,7 +83,7 @@ export default function MatchPage({ params }: Props) {
                 {isLoading ? (
                   <div className="h-10 w-20 bg-white/10 rounded animate-pulse inline-block" />
                 ) : (
-                  Teams?.[0]?.score ?? "0"
+                  MatchInfo?.status !== "Scheduled" ? Teams?.[0]?.score : ""
                 )}
               </div>
             </div>
@@ -115,7 +115,7 @@ export default function MatchPage({ params }: Props) {
                 {isLoading ? (
                   <div className="h-10 w-20 bg-white/10 rounded animate-pulse inline-block" />
                 ) : (
-                  Teams?.[1]?.score ?? "0"
+                  MatchInfo?.status !== "Scheduled" ? Teams?.[1]?.score : ""
                 )}
               </div>
               <div className="text-center">
