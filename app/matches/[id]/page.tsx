@@ -14,6 +14,7 @@ type Props = {
 export default function MatchPage({ params }: Props) {
   const { id } = use(params);
   // Get Match Info from ID
+  // TODO: Creating a function of this to catch it error
   const MatchInfo = useQuery(api.matches.get, { ID: id as any });
 
   // Scores
