@@ -1,33 +1,9 @@
 import { v } from "convex/values";
 import { query } from "./_generated/server";
 
-export type BetterMatch = {
-  _id: string;
-  _creationTime: number;
-  scheduledData?: Date | undefined;
-  finishedData?: Date | undefined;
-  teams: string[];
-  status: "Scheduled" | "Delayed" | "Canceled" | "Started" | "Finished";
-  scores: {
-    reversed: boolean;
-    player: string | "N/A";
-  }[];
-  penalties: {
-    type: string;
-    player: string;
-  }[];
-};
-
-function makeBetterMatch(Match: any): BetterMatch {
-  const NewMatch = Match as any;
-  if (Match.scheduledData)
-    NewMatch.scheduledData = new Date(Match.scheduledData);
-  return NewMatch;
-}
-
 export const get = query({
   args: {
-    ID: v.id("matches")
+    ID: v.id("matches"),
   },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.ID);
@@ -44,31 +20,29 @@ export const getAll = query({
 export const nextMatch = query({
   args: {},
   async handler(ctx) {
-    const Matches = await ctx.db.query("matches").collect();
+    const Matches = await ctx.db
+      .query("matches")
+      .filter((q) => q.eq(q.field("status"), "Scheduled"))
+      .collect();
 
-    // Transform to BetterMatch
-    const BetterMatches = Matches.map((Match) => makeBetterMatch(Match));
-
-    // Sort to nearest date
-    const CurrentDate = Date.now();
-    // Filter out entries without a scheduled date, then sort ascending
-    const WithDates = BetterMatches.filter((m) => m.scheduledData).sort(
-      (a, b) => {
-        const ta = new Date(a.scheduledData as any).getTime();
-        const tb = new Date(b.scheduledData as any).getTime();
-        return ta - tb;
-      }
+    // Filter out matches without a scheduled timestamp on the server side.
+    const MatchesWithSchedule = Matches.filter(
+      (m) => m.scheduledData !== null && m.scheduledData !== undefined
     );
 
-    // Find the first upcoming match (scheduled after now), fallback to the earliest one
-    const Next =
-      WithDates.find(
-        (m) => (m.scheduledData as Date).getTime() >= CurrentDate
-      ) ||
-      WithDates[0] ||
-      null;
+    const sorted = MatchesWithSchedule.sort((a, b) => {
+      const ta =
+        typeof a.scheduledData === "number"
+          ? a.scheduledData
+          : Number(a.scheduledData);
+      const tb =
+        typeof b.scheduledData === "number"
+          ? b.scheduledData
+          : Number(b.scheduledData);
+      return ta - tb;
+    });
 
-    return Next;
+    return sorted;
   },
 });
 
