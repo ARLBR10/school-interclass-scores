@@ -108,9 +108,9 @@ export default function RootLayout({
                           <li className="py-4 px-5 hover:bg-white/2">
                             <Link href="/teams">Equipes</Link>
                           </li>
-                          <li className="py-4 px-5 hover:bg-white/2">
+                          {/* <li className="py-4 px-5 hover:bg-white/2">
                             <Link href="/standings">Classificação</Link>
-                          </li>
+                          </li> */}
                           <li className="py-4 px-5 hover:bg-white/2">
                             <Link href="/players">Jogadores</Link>
                           </li>
@@ -155,9 +155,9 @@ export default function RootLayout({
                     <li>
                       <Link href="/teams">Equipes</Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link href="/standings">Classificação</Link>
-                    </li>
+                    </li> */}
                     <li>
                       <Link href="/players">Jogadores</Link>
                     </li>
