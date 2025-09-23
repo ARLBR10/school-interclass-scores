@@ -16,9 +16,8 @@ export default function PlayersList() {
               className="bg-white/3 rounded-lg p-4 flex items-center justify-between"
             >
               <div>
-                <h3 className="text-lg font-medium text-white">
-                  {t.name}
-                </h3>
+                <h3 className="text-lg font-medium text-white">{t.name}</h3>
+                <p className="mt-1 text-sm text-gray-300">Classe: {t.class}</p>
               </div>
               <div className="text-right">
                 <Link
@@ -38,6 +37,7 @@ export default function PlayersList() {
             >
               <div className="space-y-2">
                 <div className="h-5 w-48 bg-white/10 rounded"></div>
+                <div className="h-4 w-36 bg-white/6 rounded"></div>
               </div>
               <div className="text-right">
                 <div className="h-8 w-24 bg-white/6 rounded inline-block" />
