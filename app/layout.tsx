@@ -5,7 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import ClerkIcon from "./ClerkIcon";
+import { ClerkIcon, AdminPageLayout } from "./Authentication";
 import { dark } from "@clerk/themes";
 
 const geistSans = Geist({
@@ -114,6 +114,7 @@ export default function RootLayout({
                           <li className="py-4 px-5 hover:bg-white/2">
                             <Link href="/players">Jogadores</Link>
                           </li>
+                          <AdminPageLayout isMobile={true}></AdminPageLayout>
                         </ul>
                       </div>
                     </details>
@@ -161,6 +162,7 @@ export default function RootLayout({
                     <li>
                       <Link href="/players">Jogadores</Link>
                     </li>
+                    <AdminPageLayout isMobile={false}></AdminPageLayout>
                   </ul>
                   <div className="flex items-center gap-3">
                     <ClerkIcon></ClerkIcon>

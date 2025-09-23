@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Authenticated, Unauthenticated } from "convex/react";
 import { SignInButton, UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 
 /**
  * ClerkIcon
@@ -15,7 +16,7 @@ import { SignInButton, UserButton } from "@clerk/nextjs";
  *
  * Todo o texto visível está em pt-BR conforme convenção do repositório.
  */
-export default function ClerkIcon() {
+export function ClerkIcon() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -63,4 +64,25 @@ export default function ClerkIcon() {
       )}
     </div>
   );
+}
+
+export function AdminPageLayout({ isMobile }: { isMobile: boolean }) {
+  if (isMobile) {
+    return (
+      <Authenticated>
+        <li className="py-4 px-5 hover:bg-white/2">
+          <Link href="/admin">Admin</Link>
+        </li>
+      </Authenticated>
+    );
+  } else {
+    return (
+      // Only admins will have login so i don't give a fuck
+      <Authenticated>
+        <li>
+          <Link href="/admin">Admin</Link>
+        </li>
+      </Authenticated>
+    );
+  }
 }
