@@ -2,21 +2,11 @@
 
 import Link from "next/link";
 import { use } from "react";
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
 
 type Props = {
   params: Promise<{ id: string }>;
-};
-
-type Player = {
-  id: string;
-  name: string;
-  class: string;
-  alias: string[]; // required but can be empty
-  height?: string | null;
-  weight?: string | null;
-  age?: number | null;
-  photo?: string | null;
-  socialMedias?: Record<string, string | null> | null;
 };
 
 function formatOptional(value: any) {
@@ -27,25 +17,12 @@ function formatOptional(value: any) {
 
 export default function PlayerPage({ params }: Props) {
   const id = use(params).id;
-
-  const player = {
-    id: "1",
-    name: "João Silva",
-    class: "3A",
-    alias: ["J-Silva", "Capitão"],
-    height: "1.78m",
-    weight: "72kg",
-    age: 17,
-    photo:
-      "https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=800&q=80&auto=format&fit=crop",
-    socialMedias: {
-      instagram: "https://instagram.com/joaosilva",
-      tiktok: null,
-    },
-  }
+  const player = useQuery(api.players.get, {
+    ID: id as any
+  })
 
   // If you want a loading state when params are not yet available
-  const isLoading = !id;
+  const isLoading = !player;
 
   const playerName = player ? player.name : "Não definido";
   const playerClass = player ? player.class : "Não definido";
@@ -154,7 +131,7 @@ export default function PlayerPage({ params }: Props) {
                   <dt className="text-sm text-white">Idade</dt>
                   <dd className="text-sm">
                     {player && player.age !== undefined && player.age !== null
-                      ? player.age
+                      ? `${player.age} anos`
                       : "Não definido"}
                   </dd>
                 </div>
@@ -184,7 +161,7 @@ export default function PlayerPage({ params }: Props) {
                                   "Não definido"
                                 )}
                               </li>
-                            ),
+                            )
                           )}
                         </ul>
                       )

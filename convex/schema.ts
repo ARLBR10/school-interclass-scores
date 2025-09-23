@@ -56,7 +56,7 @@ export default defineSchema({
     photo: v.optional(v.string()), // URL *maybe?
     socialMedias: v.optional(
       v.object({
-        instagram: v.optional(v.string()), // Maybe some other?
+        Instagram: v.optional(v.string()), // Maybe some other?
       })
     ),
   }),

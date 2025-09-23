@@ -103,6 +103,9 @@ export default function RootLayout({
                         <li className="py-4 px-5 hover:bg-white/2">
                           <Link href="/standings">Classificação</Link>
                         </li>
+                        <li className="py-4 px-5 hover:bg-white/2">
+                          <Link href="/players">Jogadores</Link>
+                        </li>
                       </ul>
                     </div>
                   </details>
@@ -146,6 +149,9 @@ export default function RootLayout({
                   </li>
                   <li>
                     <Link href="/standings">Classificação</Link>
+                  </li>
+                  <li>
+                    <Link href="/players">Jogadores</Link>
                   </li>
                 </ul>
                 <div className="flex items-center gap-3">
