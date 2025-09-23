@@ -1,13 +1,12 @@
 "use client";
 
+import { PlayerItem } from "@/app/utils/PlayerItem";
 import { Sports, TeamType } from "@/app/utils/Translations";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { use } from "react";
 import TeamMatches from "./TeamMatches";
-import { PlayerItem } from "@/app/utils/PlayerItem";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -16,13 +15,10 @@ type Props = {
 export default function TeamPage({ params }: Props) {
   const id = use(params).id;
 
-  let TeamInfo;
-  try {
-    TeamInfo = useQuery(api.teams.get, id ? { ID: id } : (undefined as any));
-  } catch (e) {
-    // Unknown ID
-    return redirect("/teams");
-  }
+  const TeamInfo = useQuery(
+    api.teams.get,
+    id ? { ID: id } : (undefined as any)
+  );
 
   const isLoading = !TeamInfo;
 

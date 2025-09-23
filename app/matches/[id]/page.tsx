@@ -3,8 +3,8 @@
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { use } from "react";
+import { useRouter } from "next/navigation";
+import { use, useEffect } from "react";
 import { MatchTimeline } from "./MatchTimeline";
 
 type Props = {
@@ -14,14 +14,7 @@ type Props = {
 export default function MatchPage({ params }: Props) {
   const { id } = use(params);
   // Get Match Info from ID
-  let MatchInfo;
-  try {
-    MatchInfo = useQuery(api.matches.get, {
-      ID: id as any,
-    });
-  } catch (e) {
-    return redirect("/matches");
-  }
+  const MatchInfo = useQuery(api.matches.get, { ID: id as any });
 
   // Scores
   let scores = {} as {
@@ -40,19 +33,19 @@ export default function MatchPage({ params }: Props) {
 
   // Teams with Name and ID
   const AllTeamsInfo = useQuery(api.teams.getAll);
-  let Teams;
-  if (AllTeamsInfo && MatchInfo) {
-    Teams = MatchInfo?.teams.map((t) => {
-      let TeamInfo = AllTeamsInfo.find((t2) => t2._id === t);
-      return {
-        name: TeamInfo?.name,
-        score: scores[t],
-        id: t,
-        sport: TeamInfo?.sport,
-        link: <Link href={`/teams/${id}`}>{TeamInfo?.name}</Link>,
-      };
-    });
-  }
+  const Teams =
+    MatchInfo && AllTeamsInfo
+      ? MatchInfo.teams.map((t) => {
+          const TeamInfo = AllTeamsInfo.find((t2) => t2._id === t);
+          return {
+            name: TeamInfo?.name,
+            score: scores[t],
+            id: t,
+            sport: TeamInfo?.sport,
+            link: <Link href={`/teams/${t}`}>{TeamInfo?.name}</Link>,
+          };
+        })
+      : undefined;
 
   return (
     <div className="min-h-screen flex items-start justify-center py-12 px-4 sm:py-16">
@@ -82,8 +75,10 @@ export default function MatchPage({ params }: Props) {
               <div className="text-4xl font-bold text-white">
                 {isLoading ? (
                   <div className="h-10 w-20 bg-white/10 rounded animate-pulse inline-block" />
+                ) : MatchInfo?.status !== "Scheduled" ? (
+                  Teams?.[0]?.score
                 ) : (
-                  MatchInfo?.status !== "Scheduled" ? Teams?.[0]?.score : ""
+                  ""
                 )}
               </div>
             </div>
@@ -114,8 +109,10 @@ export default function MatchPage({ params }: Props) {
               <div className="text-4xl font-bold text-white">
                 {isLoading ? (
                   <div className="h-10 w-20 bg-white/10 rounded animate-pulse inline-block" />
+                ) : MatchInfo?.status !== "Scheduled" ? (
+                  Teams?.[1]?.score
                 ) : (
-                  MatchInfo?.status !== "Scheduled" ? Teams?.[1]?.score : ""
+                  ""
                 )}
               </div>
               <div className="text-center">

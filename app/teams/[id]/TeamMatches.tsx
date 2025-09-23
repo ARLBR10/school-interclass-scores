@@ -6,38 +6,27 @@ import { useQuery } from "convex/react";
 import Link from "next/link";
 
 export default function TeamMatches({ team }: { team: string }) {
-  let MatchesConvex;
-  try {
-    MatchesConvex = useQuery(api.matches.teamMatches, {
-      Team: team as any,
-    });
-  } catch (E) {}
+  const MatchesConvex = useQuery(api.matches.teamMatches, {
+    Team: team as any,
+  });
+  const AllTeams = useQuery(api.teams.getAll);
 
   const isLoading = !MatchesConvex;
 
-  // Fetch all teams once to avoid calling hooks inside loops
-  const AllTeams = useQuery(api.teams.getAll);
-
-  let Matches;
-  if (!isLoading) {
-    Matches = MatchesConvex?.map((Match) => {
-      return {
-        id: Match._id,
-        date:
-          Match.status === "Finished"
-            ? new Date(
-                Match.events.find((m) => m.type === "FinishedMatch")!.time *
-                  1000
-              )
-            : Match.scheduledData !== undefined
-            ? new Date(Match.scheduledData * 1000)
-            : false,
-        status: Match.status,
-        opponent: Match.teams.find((m) => m !== team)!,
-        events: Match.events,
-      };
-    });
-  }
+  const Matches = MatchesConvex?.map((Match) => ({
+    id: Match._id,
+    date:
+      Match.status === "Finished"
+        ? new Date(
+            Match.events.find((m) => m.type === "FinishedMatch")!.time * 1000
+          )
+        : Match.scheduledData !== undefined
+        ? new Date(Match.scheduledData * 1000)
+        : false,
+    status: Match.status,
+    opponent: Match.teams.find((m) => m !== team)!,
+    events: Match.events,
+  }));
 
   return (
     <section className="mt-6 bg-white/3 rounded-lg p-4">

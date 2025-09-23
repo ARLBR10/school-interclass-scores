@@ -2,12 +2,6 @@
 
 import { PlayerItem } from "@/app/utils/PlayerItem";
 
-type PlayerInfo = {
-  [key: string]: any; // I am lazy
-  name: string;
-  _id: string;
-};
-
 function eventLabel(e: MatchEvents, teamInfo: teamInfoType[]) {
   switch (e.type) {
     case "StartedMatch":

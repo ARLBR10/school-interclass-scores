@@ -14,7 +14,8 @@
 }
 
 /* Tell browsers to render form controls and built-in UI in dark mode */
-html, body {
+html,
+body {
   color-scheme: dark;
 }
 

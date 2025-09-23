@@ -33,16 +33,18 @@ export default function Home() {
                   <TeamLink TeamID={nextMatch?.teams[0] as string} /> vs{" "}
                   <TeamLink TeamID={nextMatch?.teams[1] as string} />
                   {" — "}
-                  {new Date(nextMatch?.scheduledData! * 1000).toLocaleString(
-                    "pt-BR",
-                    {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    }
-                  )}
+                  {nextMatch && nextMatch.scheduledData
+                    ? new Date(nextMatch.scheduledData * 1000).toLocaleString(
+                        "pt-BR",
+                        {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }
+                      )
+                    : "Invalid date"}
                 </>
               ) : (
                 <span>Não existe uma partida agendada neste momento</span>

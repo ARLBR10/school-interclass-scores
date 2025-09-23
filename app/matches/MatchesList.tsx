@@ -5,7 +5,7 @@ import { useQuery } from "convex/react";
 import Link from "next/link";
 import { MatchStatus } from "../utils/Translations";
 
-export default function matchesList() {
+export default function MatchesList() {
   const matches = useQuery(api.matches.getAll);
   const teams = useQuery(api.teams.getAll);
   let teamsLinks = {} as any;
