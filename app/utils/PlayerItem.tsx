@@ -11,7 +11,7 @@ export function PlayerItem({
   id: string;
   notIncludeClass?: boolean;
 }) {
-  const player = useQuery(api.player.get, { ID: id as any });
+  const player = useQuery(api.players.get, { ID: id as any });
 
   if (!player) {
     return <div className="h-4 w-48 bg-white/10 rounded animate-pulse" />;
