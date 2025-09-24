@@ -77,7 +77,7 @@ export default function MatchPage({ params }: Props) {
                 {isLoading ? (
                   <div className="h-10 w-20 bg-white/10 rounded animate-pulse inline-block" />
                 ) : MatchInfo?.status !== "Scheduled" ? (
-                  Teams?.[0]?.score
+                  Teams?.[0]?.score || "0"
                 ) : (
                   ""
                 )}
@@ -111,7 +111,7 @@ export default function MatchPage({ params }: Props) {
                 {isLoading ? (
                   <div className="h-10 w-20 bg-white/10 rounded animate-pulse inline-block" />
                 ) : MatchInfo?.status !== "Scheduled" ? (
-                  Teams?.[1]?.score
+                  Teams?.[1]?.score || "0"
                 ) : (
                   ""
                 )}
