@@ -64,7 +64,7 @@ export default function TeamMatches({ team }: { team: string }) {
                   scores[e.team as string] += e.score * multiplier;
                 }
               });
-              const score = `${scores[team]} - ${scores[m.opponent]}`;
+              const score = `${scores[team] || 0} - ${scores[m.opponent] || 0}`;
               // Date
               const MatchDate =
                 m.date === false
