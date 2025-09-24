@@ -22,7 +22,7 @@ export const nextMatch = query({
   async handler(ctx) {
     const Matches = await ctx.db
       .query("matches")
-      .filter((q) => q.eq(q.field("status"), "Scheduled"))
+      .filter((q) => q.or(q.eq(q.field("status"), "Scheduled"),q.eq(q.field("status"), "Started")))
       .collect();
 
     // Filter out matches without a scheduled timestamp on the server side.
