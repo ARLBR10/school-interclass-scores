@@ -8,7 +8,7 @@ export default defineSchema({
     scheduledData: v.optional(v.number()), // UNIX Timestamp
     status: v.union(
       v.literal("Scheduled"),
-      v.literal("Started")
+      v.literal("Started"),
       //v.literal("Delayed"), // Have to do through scheduleData
       v.literal("Canceled"),
       v.literal("Finished")
