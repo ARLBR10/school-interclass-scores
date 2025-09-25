@@ -2,6 +2,10 @@
 
 This is an system that will be used for 3 days (yeah...) for routing teams and the registry of points, penalties and others. This project will use NextJS, Convex, and Tailwind CSS.
 
+> This project is incomplete and needs working at the Admin page and some UI bugs. 
+
+Check Final (Thoughts file)[./docs/ProjectMaking.md] and (Project Making file)[docs/ProjectMaking.md] to know more.
+
 ## FAQ
 
 Q: **Why not vibecoded it?**

@@ -1,0 +1,7 @@
+# Final thoughts  
+
+This project was really great to me because i learn a lot of things along the way. This isn't quite [my first touch with NextJS](https://github.com/ARLBR10/learning-curses/tree/nextjs-course/app-router), but it is the first with convex, and i have to admit this shit is freaking cool! I just change some data at the DB and it somehow updates everything on my code, but its a little tricky at the page because from the normal HTML roots this updating behavior is difficult to do and they make it so easy!
+
+NextJS had some things that I didn't experience like the need to make use of the `use()` function from react to get a parameter, i never had to do such thing at a Express Server but may make sense of the fast loading between pages. The `console.log` is a little tricky and debug isn't a great thing specialty at a Firefox based browser such as [Zen](https://zen-browser.app/), but [helium](https://helium.computer/) is great to it!
+
+I used a couple of models with this codebase, such as GPT 5 Mini and Sonoma Sky Alpha (Grok 4 Fast) but GPT 5 Mini was the only one at this branch and it had some aggressive use of React/NextJS router to redirect to pages and just forget about the NextJS Link component. My knowledge about Vibecoded software has changed but i can't just don't bother if the code otherwise it wouldn't work at ALL.
