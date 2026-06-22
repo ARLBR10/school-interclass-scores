@@ -1,17 +1,21 @@
-import { ConvexProvider } from 'convex/react'
-import { TooltipProvider } from '@/components/ui/tooltip'
-import type { ConvexReactClient } from 'convex/react'
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
+import { authClient } from "@/lib/auth-client";
 
 export default function Providers({
-  client,
+  context,
   children,
 }: {
-  client: ConvexReactClient
-  children: React.ReactNode
+  context: any, // @todo
+  children: React.ReactNode;
 }) {
   return (
-    <ConvexProvider client={client}>
+    <ConvexBetterAuthProvider
+      client={context.convexQueryClient.convexClient}
+      authClient={authClient}
+      initialToken={context.token}
+    >
       <TooltipProvider>{children}</TooltipProvider>
-    </ConvexProvider>
-  )
+    </ConvexBetterAuthProvider>
+  );
 }
