@@ -1,0 +1,25 @@
+import { query } from "./_generated/server";
+import { v } from "convex/values";
+
+export const getAll = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("teams").collect();
+  },
+});
+
+export const get = query({
+  args: { ID: v.id("teams") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.ID)
+  }
+})
+
+export const playerTeams = query({
+  args: { ID: v.id("players") },
+  handler: async (ctx, args) => {
+    const teams = await ctx.db.query("teams").collect()
+
+    return teams.filter((t) => t.players.includes(args.ID))
+  }
+})
