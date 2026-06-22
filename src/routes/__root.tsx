@@ -1,5 +1,6 @@
 import {
   HeadContent,
+  Link,
   Outlet,
   Scripts,
   createRootRouteWithContext,
@@ -20,6 +21,7 @@ import appCss from "../styles.css?url";
 import { cn } from "@/lib/utils";
 import { getToken } from "@/lib/auth-server";
 import Providers from "@/components/Providers";
+import { Button } from "@/components/ui/button";
 
 const isDev = import.meta.env.DEV;
 
@@ -67,7 +69,31 @@ export const Route = createRootRouteWithContext<{
     };
   },
   component: RootComponent,
+  notFoundComponent: NotFoundComponent,
 });
+
+function NotFoundComponent() {
+  return (
+    <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-border/70 bg-card/60 p-8 text-center">
+      <div className="max-w-md space-y-4">
+        <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
+          404
+        </p>
+        <div className="space-y-2">
+          <h1 className="font-serif text-3xl font-semibold text-foreground">
+            Página não encontrada
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            O endereço acessado não corresponde a nenhuma página disponível.
+          </p>
+        </div>
+        <Button asChild>
+          <Link to="/">Voltar ao início</Link>
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 function RootComponent() {
   const context = useRouteContext({ from: Route.id }) 
