@@ -1,9 +1,11 @@
 <!-- BEGIN:tanstack-start-agent-rules -->
+
 # This Is TanStack Start
 
 This repo uses TanStack Start with React 19, TanStack Router file routes, Vite, Nitro, and Tailwind CSS 4.
 Route files live in `src/routes/` and must export `Route` from `createFileRoute` or `createRootRoute`/`createRootRouteWithContext`.
 Do not add Next.js APIs, `next/link`, `next/navigation`, `next/font`, App Router metadata exports, or `page.tsx`/`layout.tsx` route files.
+
 <!-- END:tanstack-start-agent-rules -->
 
 <!-- convex-ai-start -->
@@ -28,7 +30,7 @@ Convex agent skills for common tasks can be installed by running
 - Frontend: TanStack Start routes in `src/routes/`; router setup is `src/router.tsx` and generated route tree is `src/routeTree.gen.ts`.
 - Backend: Convex code in `convex/`; current schema tables are `matches`, `teams`, and `players`.
 - Styling: Tailwind CSS 4 plus shadcn `radix-rhea`, with tokens and app CSS in `src/styles.css`.
-- App shell: `src/routes/__root.tsx` wraps pages with `ConvexProvider`, `Header`, `Footer`, and TanStack devtools.
+- App shell: the router `Wrap` (`src/router.tsx`) applies `Providers` (`src/components/Providers.tsx`: `ConvexProvider` + shadcn `TooltipProvider`); `src/routes/__root.tsx` renders `AppShell` (`src/components/AppShell.tsx`: shadcn `sidebar-07` layout) plus TanStack devtools.
 - Product goal: public viewer for interclass scores, matches, teams, players, and related school data.
 
 ## Commands
@@ -56,8 +58,10 @@ Convex agent skills for common tasks can be installed by running
 
 - `src/routes/`: TanStack Router file routes, including `__root.tsx`.
 - `src/components/`: shared React components; `src/components/ui/` holds shadcn-style primitives.
-- `src/integrations/convex/provider.tsx`: reads `VITE_CONVEX_URL` and creates the Convex React client.
-- `src/integrations/tanstack-query/`: QueryClient setup and devtools wiring used by the router.
+- `src/integrations/convex/provider.tsx`: reads `VITE_CONVEX_URL` and exports `createConvexQueryClient()` (a fresh `ConvexQueryClient` per request — never a module singleton, or SSR re-`connect` throws "already subscribed").
+- `src/integrations/tanstack-query/root-provider.tsx`: `getContext()` creates the per-request `convexQueryClient` + `QueryClient` wired to Convex (`queryKeyHashFn`/`queryFn`), calls `convexQueryClient.connect(queryClient)`, and returns both as router context.
+- `src/components/Providers.tsx`: cross-app providers (`ConvexProvider` with the passed `client`, then `TooltipProvider`); applied via the router `Wrap` option in `src/router.tsx`.
+- `src/components/AppShell.tsx` / `src/components/app-sidebar.tsx`: shadcn `sidebar-07` chrome rendered around every route.
 - `src/styles.css`: Tailwind imports, shadcn CSS import, theme tokens, and app-level utility classes.
 - `convex/`: Convex schema and functions; do not edit `convex/_generated/*`.
 - `public/`: static assets and web manifest.
@@ -94,6 +98,26 @@ Convex agent skills for common tasks can be installed by running
 - Derive identity with `ctx.auth.getUserIdentity()`; do not accept user IDs for authorization decisions.
 - Prefer indexed queries and bounded reads over unbounded `filter(...).collect()` for new production paths.
 - This project has a previous Convex version; schema changes may require a migration/backfill instead of direct narrowing.
+
+### Reading Convex Data From React (TanStack Query)
+
+- Convex is consumed through TanStack Query, not the bare `useQuery` from `convex/react`. The `QueryClient` is pre-wired with `convexQueryClient.queryFn()`/`hashFn()` in `src/integrations/tanstack-query/root-provider.tsx`, so reactive Convex queries flow through React Query.
+- Build query options with `convexQuery(api.<module>.<fn>, args)` from `@convex-dev/react-query`, then read them with TanStack hooks:
+
+  ```tsx
+  import { convexQuery } from '@convex-dev/react-query'
+  import { useSuspenseQuery } from '@tanstack/react-query'
+  import { api } from '../../convex/_generated/api'
+
+  function Teams() {
+    const { data } = useSuspenseQuery(convexQuery(api.teams.list, {}))
+    return data.map((team) => <div key={team._id}>{team.name}</div>)
+  }
+  ```
+
+- Prefer `useSuspenseQuery` for SSR-friendly loading; prefetch in a route `loader` with `context.queryClient.ensureQueryData(convexQuery(...))` when you want data ready before render.
+- Mutations use `useMutation({ mutationFn: useConvexMutation(api.<module>.<fn>) })` from `@convex-dev/react-query`.
+- Do not add a second `ConvexProvider` or a separate `QueryClient`; reuse the per-request ones created in `getContext()` (provided via the router `Wrap`) and the router context.
 
 ## Practical Agent Workflow
 

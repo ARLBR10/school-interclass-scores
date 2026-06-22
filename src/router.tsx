@@ -1,5 +1,6 @@
 import { createRouter as createTanStackRouter } from '@tanstack/react-router'
 import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query'
+import Providers from './components/Providers'
 import { getContext } from './integrations/tanstack-query/root-provider'
 import { routeTree } from './routeTree.gen'
 
@@ -12,6 +13,11 @@ export function getRouter() {
     scrollRestoration: true,
     defaultPreload: 'intent',
     defaultPreloadStaleTime: 0,
+    Wrap: ({ children }) => (
+      <Providers client={context.convexQueryClient.convexClient}>
+        {children}
+      </Providers>
+    ),
   })
 
   setupRouterSsrQueryIntegration({ router, queryClient: context.queryClient })
