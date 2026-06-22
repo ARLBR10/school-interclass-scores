@@ -67,7 +67,7 @@ Convex agent skills for common tasks can be installed by running
 - `tsconfig.json` uses `strict: true`, `moduleResolution: "bundler"`, and aliases `@/*` and `#/*` to `src/*`.
 - `.oxfmtrc.json` enforces no semicolons, single quotes, trailing commas, and 80-column print width.
 - `.oxlintrc.json` enables TypeScript, React, import, unicorn, and oxc plugins; there is no ESLint config.
-- `components.json` uses shadcn aliases, `radix-rhea`, Lucide icons, and `src/styles.css`; it references `tailwind.config.js`, but Tailwind v4 config is effectively CSS/plugin driven here.
+- `components.json` uses shadcn aliases, Lucide icons, and `src/styles.css`; it references `tailwind.config.js`, but Tailwind v4 config is effectively CSS/plugin driven here.
 - Required local env vars are documented in `.env.example`: `CONVEX_DEPLOYMENT` and `VITE_CONVEX_URL`.
 
 ## React And TanStack Start
