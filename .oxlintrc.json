@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "import", "unicorn", "oxc"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "rules": {
+    "no-underscore-dangle": "off",
+    "react/react-in-jsx-scope": "off",
+    "sort-imports": "off",
+    "typescript/array-type": "off",
+    "typescript/require-await": "off"
+  }
+}
