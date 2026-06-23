@@ -1,14 +1,14 @@
-"use client"
+'use client'
 
 import {
   type OrganizationAuthClient,
   useAuth,
   useAuthPlugin,
-  useInviteMember
-} from "@better-auth-ui/react"
-import { UserPlus } from "lucide-react"
-import { type SyntheticEvent, useEffect, useState } from "react"
-import { toast } from "sonner"
+  useInviteMember,
+} from '@better-auth-ui/react'
+import { UserPlus } from 'lucide-react'
+import { type SyntheticEvent, useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 import {
   AlertDialog,
@@ -18,21 +18,21 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogMedia,
-  AlertDialogTitle
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
-import { Field, FieldError } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { Field, FieldError } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from "@/components/ui/select"
-import { Spinner } from "@/components/ui/spinner"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
+  SelectValue,
+} from '@/components/ui/select'
+import { Spinner } from '@/components/ui/spinner'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
 
 /** Props for the `InviteMemberDialog` component. */
 export type InviteMemberDialogProps = {
@@ -41,14 +41,14 @@ export type InviteMemberDialogProps = {
 }
 
 const pickDefaultRole = (keys: string[]) =>
-  keys.includes("member") ? "member" : (keys.at(-1) ?? "")
+  keys.includes('member') ? 'member' : (keys.at(-1) ?? '')
 
 /**
  * Render a dialog for inviting a member to the organization.
  */
 export function InviteMemberDialog({
   open,
-  onOpenChange
+  onOpenChange,
 }: InviteMemberDialogProps) {
   const { authClient, localization } = useAuth()
   const { localization: organizationLocalization, roles } =
@@ -74,8 +74,8 @@ export function InviteMemberDialog({
       onSuccess: () => {
         onOpenChange(false)
         toast.success(organizationLocalization.inviteMemberSuccess)
-      }
-    }
+      },
+    },
   )
 
   const isRoleValid = Object.keys(roles).includes(role)
@@ -86,11 +86,11 @@ export function InviteMemberDialog({
     if (!isRoleValid) return
 
     const formData = new FormData(e.target as HTMLFormElement)
-    const email = formData.get("email") as string
+    const email = formData.get('email') as string
 
     inviteMember({
       email: email.trim(),
-      role: role as Parameters<typeof inviteMember>[0]["role"]
+      role: role as Parameters<typeof inviteMember>[0]['role'],
     })
   }
 
@@ -148,7 +148,7 @@ export function InviteMemberDialog({
 
               <Select
                 value={role}
-                onValueChange={(value) => setRole(value ?? "")}
+                onValueChange={(value) => setRole(value ?? '')}
                 disabled={isInviting}
               >
                 <SelectTrigger id="invite-member-role" className="w-full">

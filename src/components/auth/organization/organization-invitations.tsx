@@ -1,45 +1,45 @@
-import type { OrganizationLocalization } from "@better-auth-ui/core/plugins"
+import type { OrganizationLocalization } from '@better-auth-ui/core/plugins'
 import {
   type OrganizationAuthClient,
   useAuth,
   useAuthPlugin,
   useHasPermission,
-  useListOrganizationInvitations
-} from "@better-auth-ui/react"
-import { ChevronUp, Filter, Search, X } from "lucide-react"
-import { type ComponentProps, type ReactNode, useMemo, useState } from "react"
+  useListOrganizationInvitations,
+} from '@better-auth-ui/react'
+import { ChevronUp, Filter, Search, X } from 'lucide-react'
+import { type ComponentProps, type ReactNode, useMemo, useState } from 'react'
 
-import { Badge } from "@/components/ui/badge"
-import { buttonVariants } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { Badge } from '@/components/ui/badge'
+import { buttonVariants } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu"
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
   InputGroup,
   InputGroupAddon,
-  InputGroupInput
-} from "@/components/ui/input-group"
+  InputGroupInput,
+} from '@/components/ui/input-group'
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
-} from "@/components/ui/table"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
-import { cn } from "@/lib/utils"
-import { InviteMemberDialog } from "./invite-member-dialog"
-import { OrganizationInvitationRow } from "./organization-invitation-row"
-import { OrganizationInvitationRowSkeleton } from "./organization-invitation-row-skeleton"
-import { OrganizationInvitationsEmpty } from "./organization-invitations-empty"
+  TableRow,
+} from '@/components/ui/table'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
+import { cn } from '@/lib/utils'
+import { InviteMemberDialog } from './invite-member-dialog'
+import { OrganizationInvitationRow } from './organization-invitation-row'
+import { OrganizationInvitationRowSkeleton } from './organization-invitation-row-skeleton'
+import { OrganizationInvitationsEmpty } from './organization-invitations-empty'
 
-type SortDirection = "ascending" | "descending"
+type SortDirection = 'ascending' | 'descending'
 
 type SortDescriptor = {
   column: string
@@ -57,7 +57,7 @@ export type OrganizationInvitationsProps = {
 export function OrganizationInvitations({
   className,
   ...props
-}: OrganizationInvitationsProps & ComponentProps<"div">) {
+}: OrganizationInvitationsProps & ComponentProps<'div'>) {
   const { authClient, localization } = useAuth()
   const { localization: organizationLocalization, roles } =
     useAuthPlugin(organizationPlugin)
@@ -68,23 +68,23 @@ export function OrganizationInvitations({
   const { isPending: invitationPermissionPending } = useHasPermission(
     authClient as OrganizationAuthClient,
     {
-      permissions: { invitation: ["cancel"] }
-    }
+      permissions: { invitation: ['cancel'] },
+    },
   )
 
   const isPending = invitationsPending || invitationPermissionPending
 
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>()
-  const [roleFilter, setRoleFilter] = useState("all")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [search, setSearch] = useState("")
+  const [roleFilter, setRoleFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [search, setSearch] = useState('')
 
   const filteredInvitations = useMemo(() => {
     return invitations?.filter(
       (invitation) =>
-        (roleFilter === "all" || invitation.role === roleFilter) &&
-        (statusFilter === "all" || invitation.status === statusFilter) &&
-        invitation.email.toLowerCase().includes(search.toLowerCase())
+        (roleFilter === 'all' || invitation.role === roleFilter) &&
+        (statusFilter === 'all' || invitation.status === statusFilter) &&
+        invitation.email.toLowerCase().includes(search.toLowerCase()),
     )
   }, [search, invitations, roleFilter, statusFilter])
 
@@ -92,17 +92,17 @@ export function OrganizationInvitations({
     if (!sortDescriptor) return filteredInvitations
     if (!filteredInvitations) return filteredInvitations
 
-    return [...filteredInvitations].sort((a, b) => {
+    return filteredInvitations.toSorted((a, b) => {
       const col = sortDescriptor.column as keyof typeof a
       let cmp = 0
 
-      if (col === "createdAt") {
+      if (col === 'createdAt') {
         cmp = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       } else {
         cmp = String(a[col]).localeCompare(String(b[col]))
       }
 
-      if (sortDescriptor.direction === "descending") {
+      if (sortDescriptor.direction === 'descending') {
         cmp *= -1
       }
 
@@ -115,17 +115,17 @@ export function OrganizationInvitations({
   function toggleSort(column: string) {
     setSortDescriptor((current) => {
       if (current?.column !== column) {
-        return { column, direction: "ascending" }
+        return { column, direction: 'ascending' }
       }
-      if (current.direction === "ascending") {
-        return { column, direction: "descending" }
+      if (current.direction === 'ascending') {
+        return { column, direction: 'descending' }
       }
       return undefined
     })
   }
 
   return (
-    <div className={cn("flex flex-col gap-3", className)} {...props}>
+    <div className={cn('flex flex-col gap-3', className)} {...props}>
       <h3 className="truncate text-sm font-semibold">
         {organizationLocalization.invitations}
       </h3>
@@ -149,7 +149,7 @@ export function OrganizationInvitations({
 
           <DropdownMenu>
             <DropdownMenuTrigger
-              className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
+              className={cn(buttonVariants({ size: 'sm', variant: 'outline' }))}
               disabled={isPending}
             >
               <Filter />
@@ -177,7 +177,7 @@ export function OrganizationInvitations({
 
           <DropdownMenu>
             <DropdownMenuTrigger
-              className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
+              className={cn(buttonVariants({ size: 'sm', variant: 'outline' }))}
               disabled={isPending}
             >
               <Filter />
@@ -194,25 +194,25 @@ export function OrganizationInvitations({
                   {organizationLocalization.all}
                 </DropdownMenuRadioItem>
 
-                {(["pending", "accepted", "rejected", "canceled"] as const).map(
+                {(['pending', 'accepted', 'rejected', 'canceled'] as const).map(
                   (status) => (
                     <DropdownMenuRadioItem key={status} value={status}>
                       {organizationLocalization[
                         status as keyof OrganizationLocalization
                       ] ?? status}
                     </DropdownMenuRadioItem>
-                  )
+                  ),
                 )}
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
 
-        {(roleFilter !== "all" || statusFilter !== "all") && (
+        {(roleFilter !== 'all' || statusFilter !== 'all') && (
           <div className="flex flex-wrap gap-2">
-            {roleFilter !== "all" && (
+            {roleFilter !== 'all' && (
               <Badge variant="secondary" className="gap-1">
-                {organizationLocalization.role}:{" "}
+                {organizationLocalization.role}:{' '}
                 <span className="capitalize">
                   {roles?.[roleFilter] ?? roleFilter}
                 </span>
@@ -220,16 +220,16 @@ export function OrganizationInvitations({
                   type="button"
                   aria-label={organizationLocalization.clear}
                   className="inline-flex cursor-pointer items-center text-muted-foreground hover:text-foreground"
-                  onClick={() => setRoleFilter("all")}
+                  onClick={() => setRoleFilter('all')}
                 >
                   <X className="size-3" />
                 </button>
               </Badge>
             )}
 
-            {statusFilter !== "all" && (
+            {statusFilter !== 'all' && (
               <Badge variant="secondary" className="gap-1">
-                {organizationLocalization.status}:{" "}
+                {organizationLocalization.status}:{' '}
                 {organizationLocalization[
                   statusFilter as keyof OrganizationLocalization
                 ] ?? statusFilter}
@@ -237,7 +237,7 @@ export function OrganizationInvitations({
                   type="button"
                   aria-label={organizationLocalization.clear}
                   className="inline-flex cursor-pointer items-center text-muted-foreground hover:text-foreground"
-                  onClick={() => setStatusFilter("all")}
+                  onClick={() => setStatusFilter('all')}
                 >
                   <X className="size-3" />
                 </button>
@@ -252,44 +252,44 @@ export function OrganizationInvitations({
               <TableRow>
                 <SortableTableHead
                   sortDirection={
-                    sortDescriptor?.column === "email"
+                    sortDescriptor?.column === 'email'
                       ? sortDescriptor.direction
                       : undefined
                   }
-                  onClick={() => toggleSort("email")}
+                  onClick={() => toggleSort('email')}
                 >
                   {localization.auth.email}
                 </SortableTableHead>
 
                 <SortableTableHead
                   sortDirection={
-                    sortDescriptor?.column === "createdAt"
+                    sortDescriptor?.column === 'createdAt'
                       ? sortDescriptor.direction
                       : undefined
                   }
-                  onClick={() => toggleSort("createdAt")}
+                  onClick={() => toggleSort('createdAt')}
                 >
                   {organizationLocalization.invitedAt}
                 </SortableTableHead>
 
                 <SortableTableHead
                   sortDirection={
-                    sortDescriptor?.column === "role"
+                    sortDescriptor?.column === 'role'
                       ? sortDescriptor.direction
                       : undefined
                   }
-                  onClick={() => toggleSort("role")}
+                  onClick={() => toggleSort('role')}
                 >
                   {organizationLocalization.role}
                 </SortableTableHead>
 
                 <SortableTableHead
                   sortDirection={
-                    sortDescriptor?.column === "status"
+                    sortDescriptor?.column === 'status'
                       ? sortDescriptor.direction
                       : undefined
                   }
-                  onClick={() => toggleSort("status")}
+                  onClick={() => toggleSort('status')}
                 >
                   {organizationLocalization.status}
                 </SortableTableHead>
@@ -332,14 +332,14 @@ export function OrganizationInvitations({
 function SortableTableHead({
   children,
   sortDirection,
-  onClick
+  onClick,
 }: {
   children: ReactNode
   sortDirection?: SortDirection
   onClick: () => void
 }) {
   return (
-    <TableHead aria-sort={sortDirection ?? "none"}>
+    <TableHead aria-sort={sortDirection ?? 'none'}>
       <button
         type="button"
         onClick={onClick}
@@ -350,8 +350,8 @@ function SortableTableHead({
         {!!sortDirection && (
           <ChevronUp
             className={cn(
-              "size-3 transition-transform duration-100 ease-out",
-              sortDirection === "descending" ? "rotate-180" : ""
+              'size-3 transition-transform duration-100 ease-out',
+              sortDirection === 'descending' ? 'rotate-180' : '',
             )}
           />
         )}

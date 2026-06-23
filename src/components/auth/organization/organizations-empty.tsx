@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import { useAuthPlugin } from "@better-auth-ui/react"
-import { Briefcase } from "lucide-react"
+import { useAuthPlugin } from '@better-auth-ui/react'
+import { Briefcase } from 'lucide-react'
 
-import { Button } from "@/components/ui/button"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
+import { Button } from '@/components/ui/button'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
 
 export type OrganizationsEmptyProps = {
   onCreatePress: () => void

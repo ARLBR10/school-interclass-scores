@@ -2,21 +2,21 @@ import {
   type OrganizationAuthClient,
   useAuth,
   useAuthPlugin,
-  useCheckSlug
-} from "@better-auth-ui/react"
-import { useDebouncer } from "@tanstack/react-pacer"
-import { Check, X } from "lucide-react"
-import { useEffect, useState } from "react"
+  useCheckSlug,
+} from '@better-auth-ui/react'
+import { useDebouncer } from '@tanstack/react-pacer'
+import { Check, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-import { Field, FieldError } from "@/components/ui/field"
+import { Field, FieldError } from '@/components/ui/field'
 import {
   InputGroup,
   InputGroupAddon,
-  InputGroupInput
-} from "@/components/ui/input-group"
-import { Label } from "@/components/ui/label"
-import { Spinner } from "@/components/ui/spinner"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
+  InputGroupInput,
+} from '@/components/ui/input-group'
+import { Label } from '@/components/ui/label'
+import { Spinner } from '@/components/ui/spinner'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
 
 /** Props for the `SlugField` component. */
 export type SlugFieldProps = {
@@ -33,7 +33,7 @@ export type SlugFieldProps = {
  * leading/trailing dashes are preserved while the user is still typing.
  */
 export function sanitizeSlug(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-")
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 }
 
 /**
@@ -44,13 +44,13 @@ export function SlugField({
   onChange,
   currentSlug,
   disabled,
-  id = "slug"
+  id = 'slug',
 }: SlugFieldProps) {
   const { authClient, localization: authLocalization } = useAuth()
   const {
     localization,
     checkSlug: checkSlugEnabled,
-    slugPrefix
+    slugPrefix,
   } = useAuthPlugin(organizationPlugin)
 
   const [slugError, setSlugError] = useState<string>()
@@ -59,7 +59,7 @@ export function SlugField({
     mutate: checkSlug,
     data: checkSlugData,
     error: checkSlugError,
-    reset: resetCheckSlug
+    reset: resetCheckSlug,
   } = useCheckSlug(authClient as OrganizationAuthClient)
 
   const debouncer = useDebouncer(
@@ -69,7 +69,7 @@ export function SlugField({
 
       checkSlug({ slug: next.trim() })
     },
-    { wait: 500 }
+    { wait: 500 },
   )
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export function SlugField({
 
     resetCheckSlug()
     debouncer.maybeExecute(value)
-  }, [checkSlugEnabled, value, debouncer.maybeExecute, resetCheckSlug])
+  }, [checkSlugEnabled, value, debouncer, resetCheckSlug])
 
   return (
     <Field data-invalid={!!slugError}>

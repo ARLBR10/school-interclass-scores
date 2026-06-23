@@ -1,40 +1,40 @@
-"use client"
+'use client'
 
 import {
   authMutationKeys,
-  parseAdditionalFieldValue
-} from "@better-auth-ui/core"
-import { useAuth, useFetchOptions, useSignUpEmail } from "@better-auth-ui/react"
-import { useIsMutating } from "@tanstack/react-query"
-import { Eye, EyeOff } from "lucide-react"
-import { type SyntheticEvent, useState } from "react"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+  parseAdditionalFieldValue,
+} from '@better-auth-ui/core'
+import { useAuth, useFetchOptions, useSignUpEmail } from '@better-auth-ui/react'
+import { useIsMutating } from '@tanstack/react-query'
+import { Eye, EyeOff } from 'lucide-react'
+import { type SyntheticEvent, useState } from 'react'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Field,
   FieldDescription,
   FieldError,
   FieldGroup,
-  FieldSeparator
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+  FieldSeparator,
+} from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
-  InputGroupInput
-} from "@/components/ui/input-group"
-import { Label } from "@/components/ui/label"
-import { Spinner } from "@/components/ui/spinner"
-import { cn } from "@/lib/utils"
-import { AdditionalField } from "./additional-field"
-import { ProviderButtons, type SocialLayout } from "./provider-buttons"
+  InputGroupInput,
+} from '@/components/ui/input-group'
+import { Label } from '@/components/ui/label'
+import { Spinner } from '@/components/ui/spinner'
+import { cn } from '@/lib/utils'
+import { AdditionalField } from './additional-field'
+import { ProviderButtons, type SocialLayout } from './provider-buttons'
 
 export type SignUpProps = {
   className?: string
   socialLayout?: SocialLayout
-  socialPosition?: "top" | "bottom"
+  socialPosition?: 'top' | 'bottom'
 }
 
 /**
@@ -54,7 +54,7 @@ export type SignUpProps = {
 export function SignUp({
   className,
   socialLayout,
-  socialPosition = "bottom"
+  socialPosition = 'bottom',
 }: SignUpProps) {
   const {
     additionalFields,
@@ -67,45 +67,45 @@ export function SignUp({
     socialProviders,
     viewPaths,
     navigate,
-    Link
+    Link,
   } = useAuth()
 
   const { fetchOptions, resetFetchOptions } = useFetchOptions()
 
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
 
   const { mutate: signUpEmail, isPending: signUpEmailPending } = useSignUpEmail(
     authClient,
     {
       onError: () => {
-        setPassword("")
-        setConfirmPassword("")
+        setPassword('')
+        setConfirmPassword('')
         resetFetchOptions()
       },
       onSuccess: (_data, { email }) => {
         if (emailAndPassword?.requireEmailVerification) {
-          sessionStorage.setItem("better-auth-ui.verify-email", email)
+          sessionStorage.setItem('better-auth-ui.verify-email', email)
           navigate({
-            to: `${basePaths.auth}/${viewPaths.auth.verifyEmail}`
+            to: `${basePaths.auth}/${viewPaths.auth.verifyEmail}`,
           })
         } else {
           navigate({ to: redirectTo })
         }
-      }
-    }
+      },
+    },
   )
 
   const signInMutating = useIsMutating({
-    mutationKey: authMutationKeys.signIn.all
+    mutationKey: authMutationKeys.signIn.all,
   })
   const signUpMutating = useIsMutating({
-    mutationKey: authMutationKeys.signUp.all
+    mutationKey: authMutationKeys.signUp.all,
   })
   const isPending = signInMutating + signUpMutating > 0
 
   const Captcha = plugins.find(
-    (plugin) => plugin.captchaComponent
+    (plugin) => plugin.captchaComponent,
   )?.captchaComponent
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
@@ -124,13 +124,13 @@ export function SignUp({
 
     const formData = new FormData(e.currentTarget)
     // `emailAndPassword.name === false` hides the name field and submits "".
-    const name = (formData.get("name") as string | null) ?? ""
-    const email = formData.get("email") as string
+    const name = (formData.get('name') as string | null) ?? ''
+    const email = formData.get('email') as string
 
     if (emailAndPassword?.confirmPassword && password !== confirmPassword) {
       toast.error(localization.auth.passwordsDoNotMatch)
-      setPassword("")
-      setConfirmPassword("")
+      setPassword('')
+      setConfirmPassword('')
       return
     }
 
@@ -140,7 +140,7 @@ export function SignUp({
       if (!field.signUp || field.readOnly) continue
       const value = parseAdditionalFieldValue(
         field,
-        formData.get(field.name) as string | null
+        formData.get(field.name) as string | null,
       )
 
       if (field.validate) {
@@ -162,7 +162,7 @@ export function SignUp({
       email,
       password,
       ...additionalFieldValues,
-      fetchOptions
+      fetchOptions,
     })
   }
 
@@ -170,7 +170,7 @@ export function SignUp({
     emailAndPassword?.enabled && socialProviders && socialProviders.length > 0
 
   return (
-    <Card className={cn("w-full max-w-sm", className)}>
+    <Card className={cn('w-full max-w-sm', className)}>
       <CardHeader>
         <CardTitle className="text-xl font-semibold">
           {localization.auth.signUp}
@@ -179,7 +179,7 @@ export function SignUp({
 
       <CardContent>
         <div className="flex flex-col gap-6">
-          {socialPosition === "top" && (
+          {socialPosition === 'top' && (
             <>
               {socialProviders && socialProviders.length > 0 && (
                 <ProviderButtons socialLayout={socialLayout} />
@@ -211,7 +211,7 @@ export function SignUp({
                       onChange={() => {
                         setFieldErrors((prev) => ({
                           ...prev,
-                          name: undefined
+                          name: undefined,
                         }))
                       }}
                       onInvalid={(e) => {
@@ -219,7 +219,7 @@ export function SignUp({
 
                         setFieldErrors((prev) => ({
                           ...prev,
-                          name: localization.auth.fieldRequired
+                          name: localization.auth.fieldRequired,
                         }))
                       }}
                       aria-invalid={!!fieldErrors.name}
@@ -243,7 +243,7 @@ export function SignUp({
                     onChange={() => {
                       setFieldErrors((prev) => ({
                         ...prev,
-                        email: undefined
+                        email: undefined,
                       }))
                     }}
                     onInvalid={(e) => {
@@ -255,7 +255,7 @@ export function SignUp({
 
                       setFieldErrors((prev) => ({
                         ...prev,
-                        email: msg
+                        email: msg,
                       }))
                     }}
                     aria-invalid={!!fieldErrors.email}
@@ -266,14 +266,14 @@ export function SignUp({
 
                 {additionalFields?.map(
                   (field) =>
-                    field.signUp === "above" && (
+                    field.signUp === 'above' && (
                       <AdditionalField
                         key={field.name}
                         name={field.name}
                         field={field}
                         isPending={isPending}
                       />
-                    )
+                    ),
                 )}
 
                 <Field data-invalid={!!fieldErrors.password}>
@@ -283,14 +283,14 @@ export function SignUp({
                     <InputGroupInput
                       id="password"
                       name="password"
-                      type={isPasswordVisible ? "text" : "password"}
+                      type={isPasswordVisible ? 'text' : 'password'}
                       autoComplete="new-password"
                       value={password}
                       onChange={(e) => {
                         setPassword(e.target.value)
                         setFieldErrors((prev) => ({
                           ...prev,
-                          password: undefined
+                          password: undefined,
                         }))
                       }}
                       placeholder={localization.auth.passwordPlaceholder}
@@ -307,17 +307,17 @@ export function SignUp({
                           ? localization.auth.fieldRequired
                           : el.validity.tooShort
                             ? localization.auth.tooShort.replace(
-                                "{{min}}",
-                                String(min)
+                                '{{min}}',
+                                String(min),
                               )
                             : localization.auth.tooLong.replace(
-                                "{{max}}",
-                                String(max)
+                                '{{max}}',
+                                String(max),
                               )
 
                         setFieldErrors((prev) => ({
                           ...prev,
-                          password: msg
+                          password: msg,
                         }))
                       }}
                       aria-invalid={!!fieldErrors.password}
@@ -357,7 +357,7 @@ export function SignUp({
                       <InputGroupInput
                         id="confirmPassword"
                         name="confirmPassword"
-                        type={isConfirmPasswordVisible ? "text" : "password"}
+                        type={isConfirmPasswordVisible ? 'text' : 'password'}
                         autoComplete="new-password"
                         value={confirmPassword}
                         onChange={(e) => {
@@ -365,7 +365,7 @@ export function SignUp({
 
                           setFieldErrors((prev) => ({
                             ...prev,
-                            confirmPassword: undefined
+                            confirmPassword: undefined,
                           }))
                         }}
                         placeholder={
@@ -384,17 +384,17 @@ export function SignUp({
                             ? localization.auth.fieldRequired
                             : el.validity.tooShort
                               ? localization.auth.tooShort.replace(
-                                  "{{min}}",
-                                  String(min)
+                                  '{{min}}',
+                                  String(min),
                                 )
                               : localization.auth.tooLong.replace(
-                                  "{{max}}",
-                                  String(max)
+                                  '{{max}}',
+                                  String(max),
                                 )
 
                           setFieldErrors((prev) => ({
                             ...prev,
-                            confirmPassword: msg
+                            confirmPassword: msg,
                           }))
                         }}
                         aria-invalid={!!fieldErrors.confirmPassword}
@@ -414,7 +414,7 @@ export function SignUp({
                           }
                           onClick={() =>
                             setIsConfirmPasswordVisible(
-                              !isConfirmPasswordVisible
+                              !isConfirmPasswordVisible,
                             )
                           }
                         >
@@ -430,14 +430,14 @@ export function SignUp({
                 {additionalFields?.map(
                   (field) =>
                     field.signUp &&
-                    field.signUp !== "above" && (
+                    field.signUp !== 'above' && (
                       <AdditionalField
                         key={field.name}
                         name={field.name}
                         field={field}
                         isPending={isPending}
                       />
-                    )
+                    ),
                 )}
 
                 {Captcha && (
@@ -457,14 +457,14 @@ export function SignUp({
                         key={`${plugin.id}-${index.toString()}`}
                         view="signUp"
                       />
-                    ))
+                    )),
                   )}
                 </div>
               </FieldGroup>
             </form>
           )}
 
-          {socialPosition === "bottom" && (
+          {socialPosition === 'bottom' && (
             <>
               {showSeparator && (
                 <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card text-xs flex items-center">
@@ -482,7 +482,7 @@ export function SignUp({
         {emailAndPassword?.enabled && (
           <div className="flex flex-col gap-3 items-center w-full mt-4">
             <FieldDescription className="text-center">
-              {localization.auth.alreadyHaveAnAccount}{" "}
+              {localization.auth.alreadyHaveAnAccount}{' '}
               <Link
                 href={`${basePaths.auth}/${viewPaths.auth.signIn}`}
                 className="underline underline-offset-4"

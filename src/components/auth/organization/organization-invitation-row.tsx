@@ -1,36 +1,36 @@
-"use client"
+'use client'
 
 import {
   type OrganizationAuthClient,
   useAuth,
   useAuthPlugin,
   useCancelInvitation,
-  useHasPermission
-} from "@better-auth-ui/react"
-import type { Invitation } from "better-auth/client"
-import { X } from "lucide-react"
+  useHasPermission,
+} from '@better-auth-ui/react'
+import type { Invitation } from 'better-auth/client'
+import { X } from 'lucide-react'
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Spinner } from "@/components/ui/spinner"
-import { TableCell, TableRow } from "@/components/ui/table"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
-import { cn } from "@/lib/utils"
-import { OrganizationInvitationRowSkeleton } from "./organization-invitation-row-skeleton"
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Spinner } from '@/components/ui/spinner'
+import { TableCell, TableRow } from '@/components/ui/table'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
+import { cn } from '@/lib/utils'
+import { OrganizationInvitationRowSkeleton } from './organization-invitation-row-skeleton'
 
 export type OrganizationInvitationRowProps = {
   invitation: Invitation
 }
 
 const statusBadgeClasses: Record<string, string> = {
-  pending: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-  accepted: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  rejected: "bg-destructive/10 text-destructive",
-  canceled: "bg-muted text-muted-foreground"
+  pending: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+  accepted: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+  rejected: 'bg-destructive/10 text-destructive',
+  canceled: 'bg-muted text-muted-foreground',
 }
 
 export function OrganizationInvitationRow({
-  invitation
+  invitation,
 }: OrganizationInvitationRowProps) {
   const { authClient } = useAuth()
   const { localization: organizationLocalization, roles } =
@@ -38,9 +38,9 @@ export function OrganizationInvitationRow({
 
   const {
     data: cancelInvitationPermission,
-    isPending: cancelPermissionPending
+    isPending: cancelPermissionPending,
   } = useHasPermission(authClient as OrganizationAuthClient, {
-    permissions: { invitation: ["cancel"] }
+    permissions: { invitation: ['cancel'] },
   })
 
   const { mutate: cancelInvitation, isPending: cancelPending } =
@@ -63,8 +63,8 @@ export function OrganizationInvitationRow({
 
       <TableCell className="text-muted-foreground text-xs tabular-nums whitespace-nowrap">
         {new Date(invitation.createdAt).toLocaleString(undefined, {
-          dateStyle: "short",
-          timeStyle: "short"
+          dateStyle: 'short',
+          timeStyle: 'short',
         })}
       </TableCell>
 
@@ -81,7 +81,7 @@ export function OrganizationInvitationRow({
 
       <TableCell className="text-end">
         {cancelInvitationPermission?.success &&
-          invitation.status === "pending" && (
+          invitation.status === 'pending' && (
             <Button
               size="icon"
               variant="outline"

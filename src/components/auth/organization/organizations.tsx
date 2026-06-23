@@ -2,18 +2,18 @@ import {
   type OrganizationAuthClient,
   useAuth,
   useAuthPlugin,
-  useListOrganizations
-} from "@better-auth-ui/react"
-import { useState } from "react"
+  useListOrganizations,
+} from '@better-auth-ui/react'
+import { useState } from 'react'
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
-import { CreateOrganizationDialog } from "./create-organization-dialog"
-import { OrganizationRow } from "./organization-row"
-import { OrganizationViewSkeleton } from "./organization-view-skeleton"
-import { OrganizationsEmpty } from "./organizations-empty"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
+import { CreateOrganizationDialog } from './create-organization-dialog'
+import { OrganizationRow } from './organization-row'
+import { OrganizationViewSkeleton } from './organization-view-skeleton'
+import { OrganizationsEmpty } from './organizations-empty'
 
 export type OrganizationsProps = {
   className?: string

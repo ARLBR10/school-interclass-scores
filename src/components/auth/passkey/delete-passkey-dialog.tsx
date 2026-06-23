@@ -2,9 +2,9 @@ import {
   type PasskeyAuthClient,
   useAuth,
   useAuthPlugin,
-  useDeletePasskey
-} from "@better-auth-ui/react"
-import { Fingerprint } from "lucide-react"
+  useDeletePasskey,
+} from '@better-auth-ui/react'
+import { Fingerprint } from 'lucide-react'
 
 import {
   AlertDialog,
@@ -14,14 +14,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogMedia,
-  AlertDialogTitle
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
-import { Field } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Spinner } from "@/components/ui/spinner"
-import { passkeyPlugin } from "@/lib/auth/passkey-plugin"
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { Field } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Spinner } from '@/components/ui/spinner'
+import { passkeyPlugin } from '@/lib/auth/passkey-plugin'
 
 export type ListedPasskey = {
   id: string
@@ -38,7 +38,7 @@ export type DeletePasskeyDialogProps = {
 export function DeletePasskeyDialog({
   open,
   onOpenChange,
-  passkey
+  passkey,
 }: DeletePasskeyDialogProps) {
   const { authClient, localization } = useAuth()
   const { localization: passkeyLocalization } = useAuthPlugin(passkeyPlugin)
@@ -49,8 +49,8 @@ export function DeletePasskeyDialog({
   const { mutate: deletePasskey, isPending: isDeleting } = useDeletePasskey(
     authClient as PasskeyAuthClient,
     {
-      onSuccess: () => onOpenChange(false)
-    }
+      onSuccess: () => onOpenChange(false),
+    },
   )
 
   return (

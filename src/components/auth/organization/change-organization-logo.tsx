@@ -1,34 +1,34 @@
-import { fileToBase64 } from "@better-auth-ui/core"
+import { fileToBase64 } from '@better-auth-ui/core'
 import {
   type OrganizationAuthClient,
   useActiveOrganization,
   useAuth,
   useAuthPlugin,
-  useUpdateOrganization
-} from "@better-auth-ui/react"
-import { Trash2, Upload } from "lucide-react"
-import { type ChangeEvent, useRef, useState } from "react"
-import { toast } from "sonner"
+  useUpdateOrganization,
+} from '@better-auth-ui/react'
+import { Trash2, Upload } from 'lucide-react'
+import { type ChangeEvent, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu"
-import { Label } from "@/components/ui/label"
-import { Spinner } from "@/components/ui/spinner"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
-import { cn } from "@/lib/utils"
-import { OrganizationLogo } from "./organization-logo"
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Label } from '@/components/ui/label'
+import { Spinner } from '@/components/ui/spinner'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
+import { cn } from '@/lib/utils'
+import { OrganizationLogo } from './organization-logo'
 
 export type ChangeOrganizationLogoProps = {
   className?: string
 }
 
 export function ChangeOrganizationLogo({
-  className
+  className,
 }: ChangeOrganizationLogoProps) {
   const { authClient } = useAuth()
   const { logo, localization: organizationLocalization } =
@@ -50,7 +50,7 @@ export function ChangeOrganizationLogo({
     const file = e.target.files?.[0]
     if (!file || !activeOrganization) return
 
-    e.target.value = ""
+    e.target.value = ''
 
     setIsUploading(true)
 
@@ -66,8 +66,8 @@ export function ChangeOrganizationLogo({
         {
           onSuccess: () =>
             toast.success(organizationLocalization.logoChangedSuccess),
-          onSettled: () => setIsUploading(false)
-        }
+          onSettled: () => setIsUploading(false),
+        },
       )
     } catch (error) {
       setIsUploading(false)
@@ -81,7 +81,7 @@ export function ChangeOrganizationLogo({
     const currentLogo = activeOrganization?.logo
 
     updateOrganization(
-      { data: { logo: "" } },
+      { data: { logo: '' } },
       {
         onSuccess: async () => {
           if (!currentLogo) {
@@ -100,8 +100,8 @@ export function ChangeOrganizationLogo({
           } finally {
             setIsDeleting(false)
           }
-        }
-      }
+        },
+      },
     )
   }
 
@@ -110,7 +110,7 @@ export function ChangeOrganizationLogo({
   }
 
   return (
-    <div className={cn("flex flex-col gap-1", className)}>
+    <div className={cn('flex flex-col gap-1', className)}>
       <Label aria-disabled={!activeOrganization}>
         {organizationLocalization.logo}
       </Label>
@@ -141,7 +141,7 @@ export function ChangeOrganizationLogo({
 
         <DropdownMenu>
           <DropdownMenuTrigger
-            className={cn(buttonVariants({ size: "sm", variant: "secondary" }))}
+            className={cn(buttonVariants({ size: 'sm', variant: 'secondary' }))}
             disabled={!activeOrganization || isPending}
           >
             {isPending && <Spinner />}

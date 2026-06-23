@@ -5,35 +5,35 @@ import {
   useAuthPlugin,
   useListOrganizations,
   useSession,
-  useSetActiveOrganization
-} from "@better-auth-ui/react"
-import type { Organization } from "better-auth/client"
+  useSetActiveOrganization,
+} from '@better-auth-ui/react'
+import type { Organization } from 'better-auth/client'
 import {
   ChevronsUpDown,
   PlusCircle,
-  Settings as SettingsIcon
-} from "lucide-react"
-import { type ComponentProps, type ReactElement, useState } from "react"
+  Settings as SettingsIcon,
+} from 'lucide-react'
+import { type ComponentProps, type ReactElement, useState } from 'react'
 
-import { buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
-import { cn } from "@/lib/utils"
-import { UserView } from "../user/user-view"
-import { CreateOrganizationDialog } from "./create-organization-dialog"
-import { OrganizationView } from "./organization-view"
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
+import { cn } from '@/lib/utils'
+import { UserView } from '../user/user-view'
+import { CreateOrganizationDialog } from './create-organization-dialog'
+import { OrganizationView } from './organization-view'
 
 /** Props for the `OrganizationSwitcher` component. */
 export type OrganizationSwitcherProps = {
   className?: string
-  align?: "center" | "end" | "start"
-  side?: "top" | "right" | "bottom" | "left"
+  align?: 'center' | 'end' | 'start'
+  side?: 'top' | 'right' | 'bottom' | 'left'
   sideOffset?: number
   trigger?: ReactElement<ComponentProps<typeof DropdownMenuTrigger>>
   hideCreate?: boolean
@@ -57,7 +57,7 @@ export function OrganizationSwitcher({
   hideSettings,
   hideSlug = true,
   setActive,
-  trigger
+  trigger,
 }: OrganizationSwitcherProps) {
   const { authClient, navigate, basePaths, localization, viewPaths, Link } =
     useAuth()
@@ -66,7 +66,7 @@ export function OrganizationSwitcher({
     localization: organizationLocalization,
     viewPaths: organizationViewPaths,
     slug,
-    slugPrefix
+    slugPrefix,
   } = useAuthPlugin(organizationPlugin)
 
   const { data: activeOrganization, isPending: activeOrganizationPending } =
@@ -76,7 +76,7 @@ export function OrganizationSwitcher({
     useListOrganizations(authClient as OrganizationAuthClient)
 
   const { mutate: setActiveOrganization } = useSetActiveOrganization(
-    authClient as OrganizationAuthClient
+    authClient as OrganizationAuthClient,
   )
 
   const isPending =
@@ -88,7 +88,7 @@ export function OrganizationSwitcher({
 
   const otherOrganizations =
     organizations?.filter(
-      (organization) => organization.id !== activeOrganization?.id
+      (organization) => organization.id !== activeOrganization?.id,
     ) ?? []
 
   const hasOtherEntries =
@@ -103,7 +103,7 @@ export function OrganizationSwitcher({
       navigate({
         to: organization
           ? `${basePaths.organization}/${slugPrefix}${organization.slug}/${organizationViewPaths.organization.settings}`
-          : `${basePaths.settings}/${viewPaths.settings.account}`
+          : `${basePaths.settings}/${viewPaths.settings.account}`,
       })
     } else {
       setActiveOrganization({ organizationId: organization?.id ?? null })
@@ -116,9 +116,9 @@ export function OrganizationSwitcher({
         {trigger ?? (
           <DropdownMenuTrigger
             className={cn(
-              buttonVariants({ variant: "ghost" }),
-              "h-auto px-2 py-2 text-left",
-              className
+              buttonVariants({ variant: 'ghost' }),
+              'h-auto px-2 py-2 text-left',
+              className,
             )}
             disabled={!session || isPending}
           >
@@ -162,7 +162,7 @@ export function OrganizationSwitcher({
                       : `${basePaths.organization}/${organizationViewPaths.organization.settings}`
                   }
                   className={cn(
-                    buttonVariants({ variant: "outline", size: "sm" })
+                    buttonVariants({ variant: 'outline', size: 'sm' }),
                   )}
                 >
                   <SettingsIcon className="text-muted-foreground" />
@@ -179,7 +179,7 @@ export function OrganizationSwitcher({
                 <Link
                   href={`${basePaths.settings}/${viewPaths.settings.account}`}
                   className={cn(
-                    buttonVariants({ variant: "outline", size: "sm" })
+                    buttonVariants({ variant: 'outline', size: 'sm' }),
                   )}
                 >
                   <SettingsIcon className="text-muted-foreground" />

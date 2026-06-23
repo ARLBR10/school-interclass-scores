@@ -1,18 +1,18 @@
-"use client"
+'use client'
 
 import {
   type OrganizationAuthClient,
   useAuth,
   useAuthPlugin,
-  useSetActiveOrganization
-} from "@better-auth-ui/react"
-import type { Organization } from "better-auth/client"
-import { Settings as SettingsIcon } from "lucide-react"
+  useSetActiveOrganization,
+} from '@better-auth-ui/react'
+import type { Organization } from 'better-auth/client'
+import { Settings as SettingsIcon } from 'lucide-react'
 
-import { Button } from "@/components/ui/button"
-import { Spinner } from "@/components/ui/spinner"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
-import { OrganizationView } from "./organization-view"
+import { Button } from '@/components/ui/button'
+import { Spinner } from '@/components/ui/spinner'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
+import { OrganizationView } from './organization-view'
 
 export type OrganizationRowProps = {
   organization: Organization
@@ -27,22 +27,22 @@ export function OrganizationRow({ organization }: OrganizationRowProps) {
     localization: organizationLocalization,
     viewPaths: organizationViewPaths,
     slug,
-    slugPrefix
+    slugPrefix,
   } = useAuthPlugin(organizationPlugin)
 
   const { mutate: setActiveOrganization, isPending: setActivePending } =
     useSetActiveOrganization(authClient as OrganizationAuthClient, {
       onSuccess: () => {
         navigate({
-          to: `${basePaths.organization}/${organizationViewPaths.organization.settings}`
+          to: `${basePaths.organization}/${organizationViewPaths.organization.settings}`,
         })
-      }
+      },
     })
 
   function manageOrganization() {
     if (slug !== undefined) {
       navigate({
-        to: `${basePaths.organization}/${slugPrefix}${organization.slug}/${organizationViewPaths.organization.settings}`
+        to: `${basePaths.organization}/${slugPrefix}${organization.slug}/${organizationViewPaths.organization.settings}`,
       })
     } else {
       setActiveOrganization({ organizationId: organization.id })

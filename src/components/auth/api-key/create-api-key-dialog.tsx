@@ -1,13 +1,13 @@
-"use client"
+'use client'
 
 import {
   type ApiKeyAuthClient,
   useAuth,
   useAuthPlugin,
-  useCreateApiKey
-} from "@better-auth-ui/react"
-import { Key } from "lucide-react"
-import { type SyntheticEvent, useState } from "react"
+  useCreateApiKey,
+} from '@better-auth-ui/react'
+import { Key } from 'lucide-react'
+import { type SyntheticEvent, useState } from 'react'
 
 import {
   AlertDialog,
@@ -17,15 +17,15 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogMedia,
-  AlertDialogTitle
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
-import { Field, FieldError } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Spinner } from "@/components/ui/spinner"
-import { apiKeyPlugin } from "@/lib/auth/api-key-plugin"
-import { NewApiKeyDialog } from "./new-api-key-dialog"
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { Field, FieldError } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Spinner } from '@/components/ui/spinner'
+import { apiKeyPlugin } from '@/lib/auth/api-key-plugin'
+import { NewApiKeyDialog } from './new-api-key-dialog'
 
 export type CreateApiKeyDialogProps = {
   open: boolean
@@ -37,13 +37,13 @@ export type CreateApiKeyDialogProps = {
 export function CreateApiKeyDialog({
   open,
   onOpenChange,
-  organizationId
+  organizationId,
 }: CreateApiKeyDialogProps) {
   const { authClient, localization } = useAuth()
   const { localization: apiKeyLocalization } = useAuthPlugin(apiKeyPlugin)
 
   const { mutate: createApiKey, isPending: isCreating } = useCreateApiKey(
-    authClient as ApiKeyAuthClient
+    authClient as ApiKeyAuthClient,
   )
 
   const [isNewKeyDialogOpen, setIsNewKeyDialogOpen] = useState(false)
@@ -63,15 +63,15 @@ export function CreateApiKeyDialog({
     e.preventDefault()
 
     const formData = new FormData(e.target as HTMLFormElement)
-    const name = (formData.get("name") as string).trim()
+    const name = (formData.get('name') as string).trim()
 
     const payload =
       name || organizationId
         ? {
             ...(name ? { name } : {}),
             ...(organizationId
-              ? { organizationId, configId: "organization" }
-              : {})
+              ? { organizationId, configId: 'organization' }
+              : {}),
           }
         : undefined
 
@@ -81,7 +81,7 @@ export function CreateApiKeyDialog({
         setKeyName(name)
         setSecretKey(result.key)
         setIsNewKeyDialogOpen(true)
-      }
+      },
     })
   }
 

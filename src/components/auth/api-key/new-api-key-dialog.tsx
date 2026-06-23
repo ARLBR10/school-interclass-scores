@@ -1,7 +1,7 @@
-import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
-import { Check, Copy, Key } from "lucide-react"
-import { useState } from "react"
-import { toast } from "sonner"
+import { useAuth, useAuthPlugin } from '@better-auth-ui/react'
+import { Check, Copy, Key } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 import {
   AlertDialog,
@@ -11,15 +11,15 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogMedia,
-  AlertDialogTitle
-} from "@/components/ui/alert-dialog"
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import {
   InputGroup,
   InputGroupButton,
-  InputGroupInput
-} from "@/components/ui/input-group"
-import { Label } from "@/components/ui/label"
-import { apiKeyPlugin } from "@/lib/auth/api-key-plugin"
+  InputGroupInput,
+} from '@/components/ui/input-group'
+import { Label } from '@/components/ui/label'
+import { apiKeyPlugin } from '@/lib/auth/api-key-plugin'
 
 export type NewApiKeyDialogProps = {
   open: boolean
@@ -32,7 +32,7 @@ export function NewApiKeyDialog({
   open,
   onOpenChange,
   name,
-  secretKey
+  secretKey,
 }: NewApiKeyDialogProps) {
   const { localization } = useAuth()
   const { localization: apiKeyLocalization } = useAuthPlugin(apiKeyPlugin)
@@ -74,7 +74,7 @@ export function NewApiKeyDialog({
           <InputGroup>
             <InputGroupInput
               id="new-api-key-secret"
-              value={secretKey ?? ""}
+              value={secretKey ?? ''}
               readOnly
               className="font-mono text-xs"
             />

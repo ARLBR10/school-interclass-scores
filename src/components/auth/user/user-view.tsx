@@ -1,13 +1,13 @@
 import {
   type UsernameAuthClient,
   useAuth,
-  useSession
-} from "@better-auth-ui/react"
-import type { User } from "better-auth"
+  useSession,
+} from '@better-auth-ui/react'
+import type { User } from 'better-auth'
 
-import { Skeleton } from "@/components/ui/skeleton"
-import { cn } from "@/lib/utils"
-import { UserAvatar } from "./user-avatar"
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
+import { UserAvatar } from './user-avatar'
 
 export type UserViewProps = {
   className?: string
@@ -37,19 +37,19 @@ export function UserView({
   className,
   isPending,
   hideSubtitle = false,
-  user
+  user,
 }: UserViewProps) {
   const { authClient } = useAuth()
   const { data: session, isPending: sessionPending } = useSession(
     authClient as UsernameAuthClient,
-    { enabled: !user && !isPending }
+    { enabled: !user && !isPending },
   )
 
   const resolvedUser = user ?? session?.user
 
   if ((isPending || sessionPending) && !user) {
     return (
-      <div className={cn("flex items-center gap-2 min-w-0", className)}>
+      <div className={cn('flex items-center gap-2 min-w-0', className)}>
         <UserAvatar isPending />
 
         <div className="grid flex-1 gap-1 text-left text-sm">
@@ -62,7 +62,7 @@ export function UserView({
   }
 
   return (
-    <div className={cn("flex items-center gap-2 min-w-0", className)}>
+    <div className={cn('flex items-center gap-2 min-w-0', className)}>
       <UserAvatar user={resolvedUser as User | undefined} />
 
       <div className="grid min-w-0 flex-1 text-left text-sm leading-tight">

@@ -4,28 +4,28 @@ import {
   useAuthPlugin,
   useHasPermission,
   useSession,
-  useUpdateMemberRole
-} from "@better-auth-ui/react"
-import type { Member, Organization, User } from "better-auth/client"
-import { LogOut, Pencil, Trash2 } from "lucide-react"
-import { useState } from "react"
-import { toast } from "sonner"
+  useUpdateMemberRole,
+} from '@better-auth-ui/react'
+import type { Member, Organization, User } from 'better-auth/client'
+import { LogOut, Pencil, Trash2 } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu"
-import { Spinner } from "@/components/ui/spinner"
-import { TableCell, TableRow } from "@/components/ui/table"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
-import { cn } from "@/lib/utils"
-import { UserView } from "../user/user-view"
-import { LeaveOrganizationDialog } from "./leave-organization-dialog"
-import { OrganizationMemberRowSkeleton } from "./organization-member-row-skeleton"
-import { RemoveMemberDialog } from "./remove-member-dialog"
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Spinner } from '@/components/ui/spinner'
+import { TableCell, TableRow } from '@/components/ui/table'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
+import { cn } from '@/lib/utils'
+import { UserView } from '../user/user-view'
+import { LeaveOrganizationDialog } from './leave-organization-dialog'
+import { OrganizationMemberRowSkeleton } from './organization-member-row-skeleton'
+import { RemoveMemberDialog } from './remove-member-dialog'
 
 export type OrganizationMemberRowProps = {
   member: Member & { user: Partial<User> }
@@ -36,7 +36,7 @@ export type OrganizationMemberRowProps = {
 export function OrganizationMemberRow({
   member,
   isOwner,
-  organization
+  organization,
 }: OrganizationMemberRowProps) {
   const { authClient } = useAuth()
   const { localization: organizationLocalization, roles } =
@@ -46,25 +46,26 @@ export function OrganizationMemberRow({
 
   const { data: hasUpdatePermission, isPending: updatePermissionPending } =
     useHasPermission(authClient as OrganizationAuthClient, {
-      permissions: { member: ["update"] }
+      permissions: { member: ['update'] },
     })
 
   const { data: hasDeletePermission, isPending: deletePermissionPending } =
     useHasPermission(authClient as OrganizationAuthClient, {
-      permissions: { member: ["delete"] }
+      permissions: { member: ['delete'] },
     })
 
   const isPending = updatePermissionPending || deletePermissionPending
 
   const { mutate: updateMemberRole, isPending: isUpdatingRole } =
     useUpdateMemberRole(authClient as OrganizationAuthClient, {
-      onSuccess: () => toast.success(organizationLocalization.memberRoleUpdated)
+      onSuccess: () =>
+        toast.success(organizationLocalization.memberRoleUpdated),
     })
 
   const roleLabel = roles?.[member.role] ?? member.role
 
   const assignableRoles = Object.entries(roles).filter(
-    ([key]) => isOwner || key !== "owner"
+    ([key]) => isOwner || key !== 'owner',
   )
 
   const isCurrentUser = session?.user.id === member.userId
@@ -90,8 +91,8 @@ export function OrganizationMemberRow({
             <DropdownMenu>
               <DropdownMenuTrigger
                 className={cn(
-                  buttonVariants({ size: "icon", variant: "ghost" }),
-                  "size-8"
+                  buttonVariants({ size: 'icon', variant: 'ghost' }),
+                  'size-8',
                 )}
                 disabled={isUpdatingRole}
                 aria-label={organizationLocalization.changeMemberRole}

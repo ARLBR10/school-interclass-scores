@@ -1,14 +1,14 @@
-import { authQueryKeys } from "@better-auth-ui/core"
+import { authQueryKeys } from '@better-auth-ui/core'
 import {
   useAuth,
   useAuthPlugin,
   useDeleteUser,
-  useListAccounts
-} from "@better-auth-ui/react"
-import { useQueryClient } from "@tanstack/react-query"
-import { TriangleAlert } from "lucide-react"
-import { type SyntheticEvent, useState } from "react"
-import { toast } from "sonner"
+  useListAccounts,
+} from '@better-auth-ui/react'
+import { useQueryClient } from '@tanstack/react-query'
+import { TriangleAlert } from 'lucide-react'
+import { type SyntheticEvent, useState } from 'react'
+import { toast } from 'sonner'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -18,16 +18,16 @@ import {
   AlertDialogHeader,
   AlertDialogMedia,
   AlertDialogTitle,
-  AlertDialogTrigger
-} from "@/components/ui/alert-dialog"
-import { Button, buttonVariants } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Field, FieldError } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Spinner } from "@/components/ui/spinner"
-import { deleteUserPlugin } from "@/lib/auth/delete-user-plugin"
-import { cn } from "@/lib/utils"
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Field, FieldError } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Spinner } from '@/components/ui/spinner'
+import { deleteUserPlugin } from '@/lib/auth/delete-user-plugin'
+import { cn } from '@/lib/utils'
 
 export type DeleteAccountProps = {
   className?: string
@@ -41,7 +41,7 @@ export function DeleteAccount({ className }: DeleteAccountProps) {
 
   const {
     localization: deleteUserLocalization,
-    sendDeleteAccountVerification
+    sendDeleteAccountVerification,
   } = useAuthPlugin(deleteUserPlugin)
 
   const { data: accounts } = useListAccounts(authClient)
@@ -49,10 +49,10 @@ export function DeleteAccount({ className }: DeleteAccountProps) {
   const queryClient = useQueryClient()
 
   const [confirmOpen, setConfirmOpen] = useState(false)
-  const [password, setPassword] = useState("")
+  const [password, setPassword] = useState('')
 
   const hasCredentialAccount = accounts?.some(
-    (account) => account.providerId === "credential"
+    (account) => account.providerId === 'credential',
   )
   const needsPassword = !sendDeleteAccountVerification && hasCredentialAccount
 
@@ -60,20 +60,18 @@ export function DeleteAccount({ className }: DeleteAccountProps) {
 
   const handleDialogOpenChange = (open: boolean) => {
     setConfirmOpen(open)
-    setPassword("")
+    setPassword('')
   }
 
   const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const params = {
-      ...(needsPassword ? { password } : {})
-    }
+    const params = needsPassword ? { password } : {}
 
     deleteUser(params, {
       onSuccess: () => {
         setConfirmOpen(false)
-        setPassword("")
+        setPassword('')
 
         if (sendDeleteAccountVerification) {
           toast.success(deleteUserLocalization.deleteUserVerificationSent)
@@ -82,15 +80,15 @@ export function DeleteAccount({ className }: DeleteAccountProps) {
           queryClient.removeQueries({ queryKey: authQueryKeys.all })
           navigate({
             to: `${basePaths.auth}/${viewPaths.auth.signIn}`,
-            replace: true
+            replace: true,
           })
         }
-      }
+      },
     })
   }
 
   return (
-    <Card className={cn("border-destructive", className)}>
+    <Card className={cn('border-destructive', className)}>
       <CardContent className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm font-medium leading-tight">
@@ -105,7 +103,7 @@ export function DeleteAccount({ className }: DeleteAccountProps) {
         <AlertDialog open={confirmOpen} onOpenChange={handleDialogOpenChange}>
           <AlertDialogTrigger
             className={cn(
-              buttonVariants({ variant: "destructive", size: "sm" })
+              buttonVariants({ variant: 'destructive', size: 'sm' }),
             )}
             disabled={!accounts}
           >

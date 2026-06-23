@@ -10,5 +10,5 @@ export const {
   convexUrl: process.env.VITE_CONVEX_URL!,
   convexSiteUrl: process.env.VITE_CONVEX_SITE_URL!,
   // Optional, defaults to "/api/auth"
-  basePath: "/custom/auth/path",
+  basePath: '/custom/auth/path',
 })

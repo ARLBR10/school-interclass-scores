@@ -1,19 +1,19 @@
-"use client"
+'use client'
 
 import {
   type OrganizationAuthClient,
   useAcceptInvitation,
   useAuth,
   useAuthPlugin,
-  useRejectInvitation
-} from "@better-auth-ui/react"
-import type { Invitation } from "better-auth/client"
-import { Check, Clock, X } from "lucide-react"
+  useRejectInvitation,
+} from '@better-auth-ui/react'
+import type { Invitation } from 'better-auth/client'
+import { Check, Clock, X } from 'lucide-react'
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Spinner } from "@/components/ui/spinner"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Spinner } from '@/components/ui/spinner'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
 
 export type UserInvitationRowProps = {
   invitation: Invitation & { organizationName?: string }
@@ -52,8 +52,8 @@ export function UserInvitationRow({ invitation }: UserInvitationRowProps) {
 
         <span className="truncate text-muted-foreground text-xs">
           {new Date(invitation.createdAt).toLocaleString(undefined, {
-            dateStyle: "medium",
-            timeStyle: "short"
+            dateStyle: 'medium',
+            timeStyle: 'short',
           })}
         </span>
       </div>

@@ -1,21 +1,21 @@
-import { viewPaths } from "@better-auth-ui/core"
-import { ensureSession as ensureSessionClient } from "@better-auth-ui/react"
+import { viewPaths } from '@better-auth-ui/core'
+import { ensureSession as ensureSessionClient } from '@better-auth-ui/react'
 // import { ensureSession as ensureSessionServer } from "@better-auth-ui/react/server"
-import { createFileRoute, notFound, redirect } from "@tanstack/react-router"
-import { createIsomorphicFn } from "@tanstack/react-start"
+import { createFileRoute, notFound, redirect } from '@tanstack/react-router'
+import { createIsomorphicFn } from '@tanstack/react-start'
 // import { getRequestHeaders } from "@tanstack/react-start/server"
 
-import { Settings } from "@/components/auth/settings/settings"
+import { Settings } from '@/components/auth/settings/settings'
 // import { auth } from "@/lib/auth"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
-import { authClient } from "@/lib/auth-client"
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
+import { authClient } from '@/lib/auth-client'
 
 const validSettingsPaths = [
   ...Object.values(viewPaths.settings),
-  ...Object.values(organizationPlugin().viewPaths.settings)
+  ...Object.values(organizationPlugin().viewPaths.settings),
 ]
 
-export const Route = createFileRoute("/settings/$path")({
+export const Route = createFileRoute('/settings/$path')({
   async beforeLoad({ params: { path }, context: { queryClient }, location }) {
     if (!validSettingsPaths.includes(path)) {
       throw notFound()
@@ -31,15 +31,15 @@ export const Route = createFileRoute("/settings/$path")({
 
     if (!session) {
       throw redirect({
-        to: "/auth/$path",
-        params: { path: "sign-in" },
-        search: { redirectTo: location.href }
+        to: '/auth/$path',
+        params: { path: 'sign-in' },
+        search: { redirectTo: location.href },
       })
     }
 
     return { session }
   },
-  component: SettingsPage
+  component: SettingsPage,
 })
 
 function SettingsPage() {

@@ -1,21 +1,21 @@
-"use client"
+'use client'
 
 import {
   type MultiSessionAuthClient,
   useAuth,
   useAuthPlugin,
   useListDeviceSessions,
-  useSession
-} from "@better-auth-ui/react"
-import { Check, CirclePlus } from "lucide-react"
-import { UserView } from "@/components/auth/user/user-view"
+  useSession,
+} from '@better-auth-ui/react'
+import { Check, CirclePlus } from 'lucide-react'
+import { UserView } from '@/components/auth/user/user-view'
 import {
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuSubContent
-} from "@/components/ui/dropdown-menu"
-import { multiSessionPlugin } from "@/lib/auth/multi-session-plugin"
-import { SwitchAccountSubmenuItem } from "./switch-account-submenu-item"
+  DropdownMenuSubContent,
+} from '@/components/ui/dropdown-menu'
+import { multiSessionPlugin } from '@/lib/auth/multi-session-plugin'
+import { SwitchAccountSubmenuItem } from './switch-account-submenu-item'
 
 /**
  * Render the submenu content for switching between multiple authenticated sessions.
@@ -32,7 +32,7 @@ export function SwitchAccountSubmenuContent() {
     useAuthPlugin(multiSessionPlugin)
   const { data: session } = useSession(authClient)
   const { data: deviceSessions, isPending } = useListDeviceSessions(
-    authClient as MultiSessionAuthClient
+    authClient as MultiSessionAuthClient,
   )
 
   return (
@@ -45,7 +45,7 @@ export function SwitchAccountSubmenuContent() {
 
       {deviceSessions
         ?.filter(
-          (deviceSession) => deviceSession.session.id !== session?.session.id
+          (deviceSession) => deviceSession.session.id !== session?.session.id,
         )
         .map((deviceSession) => (
           <SwitchAccountSubmenuItem

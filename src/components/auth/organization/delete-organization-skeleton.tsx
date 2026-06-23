@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from '@/components/ui/skeleton'
 
 /**
  * Placeholder matching `DeleteOrganization` while the delete permission resolves.

@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import { useAuthPlugin } from "@better-auth-ui/react"
-import { Send } from "lucide-react"
+import { useAuthPlugin } from '@better-auth-ui/react'
+import { Send } from 'lucide-react'
 
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
 
 /**
  * Empty state for `UserInvitations`.

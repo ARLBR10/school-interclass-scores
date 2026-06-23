@@ -1,11 +1,11 @@
-import { createAuthPlugin } from "@better-auth-ui/core"
+import { createAuthPlugin } from '@better-auth-ui/core'
 import {
   themePlugin as coreThemePlugin,
-  type ThemeLocalization
-} from "@better-auth-ui/core/plugins"
+  type ThemeLocalization,
+} from '@better-auth-ui/core/plugins'
 
-import { Appearance } from "@/components/auth/theme/appearance"
-import { ThemeToggleItem } from "@/components/auth/theme/theme-toggle-item"
+import { Appearance } from '@/components/auth/theme/appearance'
+import { ThemeToggleItem } from '@/components/auth/theme/theme-toggle-item'
 
 /**
  * Hook shape compatible with `next-themes`' `useTheme` and similar APIs. The
@@ -82,10 +82,10 @@ export const themePlugin = createAuthPlugin(
         (() => ({
           theme: base.theme,
           setTheme: base.setTheme,
-          themes: base.themes
+          themes: base.themes,
         })),
       userMenuItems: [ThemeToggleItem],
-      accountCards: [Appearance]
+      accountCards: [Appearance],
     }
-  }
+  },
 )

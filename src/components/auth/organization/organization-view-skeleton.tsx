@@ -1,13 +1,13 @@
-"use client"
+'use client'
 
-import type { ComponentProps } from "react"
+import type { ComponentProps } from 'react'
 
-import { Skeleton } from "@/components/ui/skeleton"
-import { cn } from "@/lib/utils"
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
 import {
   OrganizationLogo,
-  type OrganizationLogoSize
-} from "./organization-logo"
+  type OrganizationLogoSize,
+} from './organization-logo'
 
 export type OrganizationViewSkeletonProps = {
   className?: string
@@ -21,18 +21,18 @@ export type OrganizationViewSkeletonProps = {
 export function OrganizationViewSkeleton({
   className,
   hideSlug,
-  size = "md",
+  size = 'md',
   ...props
-}: OrganizationViewSkeletonProps & ComponentProps<"div">) {
+}: OrganizationViewSkeletonProps & ComponentProps<'div'>) {
   return (
     <div
-      className={cn("flex min-w-0 items-center gap-2", className)}
+      className={cn('flex min-w-0 items-center gap-2', className)}
       {...props}
     >
       <OrganizationLogo
         isPending
-        className={size === "sm" ? "size-5" : undefined}
-        size={size === "lg" ? "md" : "sm"}
+        className={size === 'sm' ? 'size-5' : undefined}
+        size={size === 'lg' ? 'md' : 'sm'}
       />
 
       <div className="flex flex-col min-w-0 gap-1">

@@ -1,17 +1,17 @@
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from '@/components/app-sidebar'
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
+} from '@/components/ui/breadcrumb'
+import { Separator } from '@/components/ui/separator'
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { TooltipProvider } from "./ui/tooltip";
+} from '@/components/ui/sidebar'
+import { TooltipProvider } from './ui/tooltip'
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -36,5 +36,5 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>
-  );
+  )
 }

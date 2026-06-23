@@ -3,14 +3,14 @@ import {
   useAuth,
   useAuthPlugin,
   useListDeviceSessions,
-  useSession
-} from "@better-auth-ui/react"
+  useSession,
+} from '@better-auth-ui/react'
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { multiSessionPlugin } from "@/lib/auth/multi-session-plugin"
-import { cn } from "@/lib/utils"
-import { ManageAccount } from "./manage-account"
+import { Card, CardContent } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { multiSessionPlugin } from '@/lib/auth/multi-session-plugin'
+import { cn } from '@/lib/utils'
+import { ManageAccount } from './manage-account'
 
 export type ManageAccountsProps = {
   className?: string
@@ -31,24 +31,24 @@ export function ManageAccounts({ className }: ManageAccountsProps) {
   const { data: session } = useSession(authClient)
 
   const { data: deviceSessions, isPending } = useListDeviceSessions(
-    authClient as MultiSessionAuthClient
+    authClient as MultiSessionAuthClient,
   )
 
   const otherSessions = deviceSessions?.filter(
-    (deviceSession) => deviceSession.session.id !== session?.session.id
+    (deviceSession) => deviceSession.session.id !== session?.session.id,
   )
 
   const allRows = [
     {
-      key: session?.session.id ?? "current",
+      key: session?.session.id ?? 'current',
       deviceSession: !isPending ? session : null,
-      isPending
+      isPending,
     },
     ...(otherSessions?.map((deviceSession) => ({
       key: deviceSession.session.id,
       deviceSession,
-      isPending: false
-    })) ?? [])
+      isPending: false,
+    })) ?? []),
   ]
 
   return (
@@ -57,7 +57,7 @@ export function ManageAccounts({ className }: ManageAccountsProps) {
         {multiSessionLocalization.manageAccounts}
       </h2>
 
-      <Card className={cn("p-0", className)}>
+      <Card className={cn('p-0', className)}>
         <CardContent className="p-0">
           {allRows.map((row, index) => (
             <div key={row.key}>

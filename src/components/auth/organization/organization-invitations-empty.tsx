@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import { useAuthPlugin } from "@better-auth-ui/react"
-import { Send } from "lucide-react"
+import { useAuthPlugin } from '@better-auth-ui/react'
+import { Send } from 'lucide-react'
 
-import { Button } from "@/components/ui/button"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
+import { Button } from '@/components/ui/button'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
 
 export type OrganizationInvitationsEmptyProps = {
   onInvitePress: () => void
@@ -14,7 +14,7 @@ export type OrganizationInvitationsEmptyProps = {
  * Empty state for `OrganizationInvitations`.
  */
 export function OrganizationInvitationsEmpty({
-  onInvitePress
+  onInvitePress,
 }: OrganizationInvitationsEmptyProps) {
   const { localization: organizationLocalization } =
     useAuthPlugin(organizationPlugin)

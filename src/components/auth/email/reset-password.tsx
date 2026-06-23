@@ -12,30 +12,30 @@ import {
   pixelBasedPreset,
   Section,
   Tailwind,
-  Text
-} from "@react-email/components"
-import type { ReactNode } from "react"
+  Text,
+} from '@react-email/components'
+import type { ReactNode } from 'react'
 
-import { cn } from "../../../lib/utils"
+import { cn } from '../../../lib/utils'
 import {
   type EmailClassNames,
   type EmailColors,
-  EmailStyles
-} from "./email-styles"
+  EmailStyles,
+} from './email-styles'
 
 const resetPasswordEmailLocalization = {
-  RESET_YOUR_PASSWORD: "Reset your password",
-  LOGO: "Logo",
+  RESET_YOUR_PASSWORD: 'Reset your password',
+  LOGO: 'Logo',
   WE_RECEIVED_REQUEST_TO_RESET_PASSWORD:
-    "We received a request to reset the password for your {appName} account {email}.",
-  RESET_PASSWORD: "Reset password",
-  OR_COPY_AND_PASTE_URL: "Or copy and paste this URL into your browser:",
+    'We received a request to reset the password for your {appName} account {email}.',
+  RESET_PASSWORD: 'Reset password',
+  OR_COPY_AND_PASTE_URL: 'Or copy and paste this URL into your browser:',
   THIS_LINK_EXPIRES_IN_MINUTES:
-    "This link expires in {expirationMinutes} minutes.",
-  EMAIL_SENT_BY: "Email sent by {appName}.",
+    'This link expires in {expirationMinutes} minutes.',
+  EMAIL_SENT_BY: 'Email sent by {appName}.',
   IF_YOU_DIDNT_REQUEST_PASSWORD_RESET:
     "If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.",
-  POWERED_BY_BETTER_AUTH: "Powered by {betterAuth}"
+  POWERED_BY_BETTER_AUTH: 'Powered by {betterAuth}',
 }
 
 /**
@@ -114,7 +114,7 @@ export const ResetPasswordEmail = ({
 }: ResetPasswordEmailProps) => {
   const localization = {
     ...ResetPasswordEmail.localization,
-    ...props.localization
+    ...props.localization,
   }
 
   const previewText = localization.RESET_YOUR_PASSWORD
@@ -133,27 +133,27 @@ export const ResetPasswordEmail = ({
       <Preview>{previewText}</Preview>
 
       <Tailwind config={{ presets: [pixelBasedPreset] }}>
-        <Body className={cn("bg-background font-sans", classNames?.body)}>
+        <Body className={cn('bg-background font-sans', classNames?.body)}>
           <Container
             className={cn(
-              "mx-auto my-auto max-w-xl px-2 py-10",
-              classNames?.container
+              'mx-auto my-auto max-w-xl px-2 py-10',
+              classNames?.container,
             )}
           >
             <Section
               className={cn(
-                "bg-card text-card-foreground rounded-none border border-border p-8",
-                classNames?.card
+                'bg-card text-card-foreground rounded-none border border-border p-8',
+                classNames?.card,
               )}
             >
               {logoURL &&
-                (typeof logoURL === "string" ? (
+                (typeof logoURL === 'string' ? (
                   <Img
                     src={logoURL}
                     width={48}
                     height={48}
                     alt={appName || localization.LOGO}
-                    className={cn("mx-auto mb-8", classNames?.logo)}
+                    className={cn('mx-auto mb-8', classNames?.logo)}
                   />
                 ) : (
                   <>
@@ -163,8 +163,8 @@ export const ResetPasswordEmail = ({
                       height={48}
                       alt={appName || localization.LOGO}
                       className={cn(
-                        "mx-auto mb-8 logo-light",
-                        classNames?.logo
+                        'mx-auto mb-8 logo-light',
+                        classNames?.logo,
                       )}
                     />
                     <Img
@@ -173,8 +173,8 @@ export const ResetPasswordEmail = ({
                       height={48}
                       alt={appName || localization.LOGO}
                       className={cn(
-                        "hidden mx-auto mb-8 logo-dark",
-                        classNames?.logo
+                        'hidden mx-auto mb-8 logo-dark',
+                        classNames?.logo,
                       )}
                     />
                   </>
@@ -182,25 +182,25 @@ export const ResetPasswordEmail = ({
 
               <Heading
                 className={cn(
-                  "m-0 mb-5 text-2xl font-semibold",
-                  classNames?.title
+                  'm-0 mb-5 text-2xl font-semibold',
+                  classNames?.title,
                 )}
               >
                 {localization.RESET_YOUR_PASSWORD}
               </Heading>
 
-              <Text className={cn("text-sm", classNames?.content)}>
+              <Text className={cn('text-sm', classNames?.content)}>
                 {(() => {
                   const textWithAppName =
                     localization.WE_RECEIVED_REQUEST_TO_RESET_PASSWORD.replace(
-                      "{appName}",
-                      appName || ""
+                      '{appName}',
+                      appName || '',
                     )
-                      .replace(/\s{2,}/g, " ")
-                      .replace(" .", ".")
+                      .replace(/\s{2,}/g, ' ')
+                      .replace(' .', '.')
 
                   const [beforeEmail, afterEmail] =
-                    textWithAppName.split("{email}")
+                    textWithAppName.split('{email}')
 
                   return email ? (
                     <>
@@ -217,9 +217,9 @@ export const ResetPasswordEmail = ({
                     </>
                   ) : (
                     textWithAppName
-                      .replace("{email}", "")
-                      .replace(/\s{2,}/g, " ")
-                      .replace(" .", ".")
+                      .replace('{email}', '')
+                      .replace(/\s{2,}/g, ' ')
+                      .replace(' .', '.')
                   )
                 })()}
               </Text>
@@ -228,8 +228,8 @@ export const ResetPasswordEmail = ({
                 <Button
                   href={url}
                   className={cn(
-                    "inline-block whitespace-nowrap rounded-none text-sm font-medium py-2.5 px-6 bg-primary text-primary-foreground no-underline",
-                    classNames?.button
+                    'inline-block whitespace-nowrap rounded-none text-sm font-medium py-2.5 px-6 bg-primary text-primary-foreground no-underline',
+                    classNames?.button,
                   )}
                 >
                   {localization.RESET_PASSWORD}
@@ -238,8 +238,8 @@ export const ResetPasswordEmail = ({
 
               <Text
                 className={cn(
-                  "m-0 mb-3 text-xs text-muted-foreground",
-                  classNames?.description
+                  'm-0 mb-3 text-xs text-muted-foreground',
+                  classNames?.description,
                 )}
               >
                 {localization.OR_COPY_AND_PASTE_URL}
@@ -247,8 +247,8 @@ export const ResetPasswordEmail = ({
 
               <Link
                 className={cn(
-                  "break-all text-xs text-primary",
-                  classNames?.link
+                  'break-all text-xs text-primary',
+                  classNames?.link,
                 )}
                 href={url}
               >
@@ -257,29 +257,29 @@ export const ResetPasswordEmail = ({
 
               <Hr
                 className={cn(
-                  "my-6 w-full border border-solid border-border",
-                  classNames?.separator
+                  'my-6 w-full border border-solid border-border',
+                  classNames?.separator,
                 )}
               />
 
               {expirationMinutes || appName ? (
                 <Text
                   className={cn(
-                    "m-0 mb-3 text-xs text-muted-foreground",
-                    classNames?.description
+                    'm-0 mb-3 text-xs text-muted-foreground',
+                    classNames?.description,
                   )}
                 >
                   {expirationMinutes
                     ? localization.THIS_LINK_EXPIRES_IN_MINUTES.replace(
-                        "{expirationMinutes}",
-                        expirationMinutes.toString()
+                        '{expirationMinutes}',
+                        expirationMinutes.toString(),
                       )
                     : null}
 
                   {appName && (
                     <>
-                      {expirationMinutes ? " " : ""}
-                      {localization.EMAIL_SENT_BY.replace("{appName}", appName)}
+                      {expirationMinutes ? ' ' : ''}
+                      {localization.EMAIL_SENT_BY.replace('{appName}', appName)}
                     </>
                   )}
                 </Text>
@@ -287,8 +287,8 @@ export const ResetPasswordEmail = ({
 
               <Text
                 className={cn(
-                  "m-0 text-xs text-muted-foreground",
-                  classNames?.description
+                  'm-0 text-xs text-muted-foreground',
+                  classNames?.description,
                 )}
               >
                 {localization.IF_YOU_DIDNT_REQUEST_PASSWORD_RESET}
@@ -297,13 +297,13 @@ export const ResetPasswordEmail = ({
               {poweredBy && (
                 <Text
                   className={cn(
-                    "m-0 mt-4 text-center text-[11px] text-muted-foreground",
-                    classNames?.poweredBy
+                    'm-0 mt-4 text-center text-[11px] text-muted-foreground',
+                    classNames?.poweredBy,
                   )}
                 >
                   {(() => {
                     const [beforeBetterAuth, afterBetterAuth] =
-                      localization.POWERED_BY_BETTER_AUTH.split("{betterAuth}")
+                      localization.POWERED_BY_BETTER_AUTH.split('{betterAuth}')
 
                     return (
                       <>
@@ -311,8 +311,8 @@ export const ResetPasswordEmail = ({
                         <Link
                           href="https://better-auth.com"
                           className={cn(
-                            "text-primary underline",
-                            classNames?.link
+                            'text-primary underline',
+                            classNames?.link,
                           )}
                         >
                           better-auth
@@ -334,10 +334,10 @@ export const ResetPasswordEmail = ({
 ResetPasswordEmail.localization = resetPasswordEmailLocalization
 
 ResetPasswordEmail.PreviewProps = {
-  url: "https://better-auth-ui.com/auth/reset-password?token=example-token",
-  email: "m@example.com",
-  appName: "Better Auth",
-  darkMode: true
+  url: 'https://better-auth-ui.com/auth/reset-password?token=example-token',
+  email: 'm@example.com',
+  appName: 'Better Auth',
+  darkMode: true,
 } as ResetPasswordEmailProps
 
 export default ResetPasswordEmail

@@ -1,11 +1,11 @@
-"use client"
+'use client'
 
-import { useAuthPlugin } from "@better-auth-ui/react"
-import { Fingerprint } from "lucide-react"
+import { useAuthPlugin } from '@better-auth-ui/react'
+import { Fingerprint } from 'lucide-react'
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { passkeyPlugin } from "@/lib/auth/passkey-plugin"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { passkeyPlugin } from '@/lib/auth/passkey-plugin'
 
 export type PasskeysEmptyProps = {
   onAddPress: () => void

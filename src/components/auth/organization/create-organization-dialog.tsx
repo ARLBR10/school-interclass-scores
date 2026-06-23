@@ -2,10 +2,10 @@ import {
   type OrganizationAuthClient,
   useAuth,
   useAuthPlugin,
-  useCreateOrganization
-} from "@better-auth-ui/react"
-import { Briefcase } from "lucide-react"
-import { type SyntheticEvent, useEffect, useState } from "react"
+  useCreateOrganization,
+} from '@better-auth-ui/react'
+import { Briefcase } from 'lucide-react'
+import { type SyntheticEvent, useEffect, useState } from 'react'
 
 import {
   AlertDialog,
@@ -15,15 +15,15 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogMedia,
-  AlertDialogTitle
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
-import { Field, FieldError } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Spinner } from "@/components/ui/spinner"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
-import { SlugField, sanitizeSlug } from "./slug-field"
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { Field, FieldError } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Spinner } from '@/components/ui/spinner'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
+import { SlugField, sanitizeSlug } from './slug-field'
 
 /** Props for the `CreateOrganizationDialog` component. */
 export type CreateOrganizationDialogProps = {
@@ -33,20 +33,20 @@ export type CreateOrganizationDialogProps = {
 
 export function CreateOrganizationDialog({
   open,
-  onOpenChange
+  onOpenChange,
 }: CreateOrganizationDialogProps) {
   const { authClient, localization } = useAuth()
   const { localization: organizationLocalization } =
     useAuthPlugin(organizationPlugin)
 
-  const [name, setName] = useState("")
-  const [slug, setSlug] = useState("")
+  const [name, setName] = useState('')
+  const [slug, setSlug] = useState('')
   const [slugEdited, setSlugEdited] = useState(false)
   const [nameError, setNameError] = useState<string>()
 
   const { mutate: createOrganization, isPending: isCreating } =
     useCreateOrganization(authClient as OrganizationAuthClient, {
-      onSuccess: () => onOpenChange(false)
+      onSuccess: () => onOpenChange(false),
     })
 
   const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
@@ -56,8 +56,8 @@ export function CreateOrganizationDialog({
 
   useEffect(() => {
     if (!open) {
-      setSlug("")
-      setName("")
+      setSlug('')
+      setName('')
       setSlugEdited(false)
       setNameError(undefined)
     }

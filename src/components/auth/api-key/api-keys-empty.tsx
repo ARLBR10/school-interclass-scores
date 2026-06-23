@@ -1,11 +1,11 @@
-"use client"
+'use client'
 
-import { useAuthPlugin } from "@better-auth-ui/react"
-import { Key } from "lucide-react"
+import { useAuthPlugin } from '@better-auth-ui/react'
+import { Key } from 'lucide-react'
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { apiKeyPlugin } from "@/lib/auth/api-key-plugin"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { apiKeyPlugin } from '@/lib/auth/api-key-plugin'
 
 export type ApiKeysEmptyProps = {
   onCreatePress: () => void

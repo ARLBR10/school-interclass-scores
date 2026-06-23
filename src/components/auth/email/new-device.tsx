@@ -12,16 +12,16 @@ import {
   pixelBasedPreset,
   Section,
   Tailwind,
-  Text
-} from "@react-email/components"
-import type { ReactNode } from "react"
+  Text,
+} from '@react-email/components'
+import type { ReactNode } from 'react'
 
-import { cn } from "../../../lib/utils"
+import { cn } from '../../../lib/utils'
 import {
   type EmailClassNames,
   type EmailColors,
-  EmailStyles
-} from "./email-styles"
+  EmailStyles,
+} from './email-styles'
 
 /**
  * Device information displayed in the new device email notification.
@@ -40,23 +40,23 @@ export interface DeviceInfo {
 }
 
 const newDeviceEmailLocalization = {
-  NEW_SIGN_IN_DETECTED: "New sign-in detected",
-  LOGO: "Logo",
+  NEW_SIGN_IN_DETECTED: 'New sign-in detected',
+  LOGO: 'Logo',
   NEW_SIGN_IN_TO_YOUR_ACCOUNT:
     "We detected a new sign-in to your {appName} account {userEmail} from a device we don't recognize.",
-  DEVICE_DETAILS: "Device details",
-  BROWSER: "Browser",
-  OPERATING_SYSTEM: "Operating System",
-  LOCATION: "Location",
-  IP_ADDRESS: "IP Address",
-  TIME: "Time",
+  DEVICE_DETAILS: 'Device details',
+  BROWSER: 'Browser',
+  OPERATING_SYSTEM: 'Operating System',
+  LOCATION: 'Location',
+  IP_ADDRESS: 'IP Address',
+  TIME: 'Time',
   IF_THIS_WAS_YOU:
     "If this was you, you can safely ignore this email. If you don't recognize this activity, please secure your account immediately.",
-  SECURE_MY_ACCOUNT: "Secure my account",
-  EMAIL_SENT_BY: "Email sent by {appName}.",
+  SECURE_MY_ACCOUNT: 'Secure my account',
+  EMAIL_SENT_BY: 'Email sent by {appName}.',
   IF_YOU_DIDNT_SIGN_IN:
     "If you didn't sign in, please contact support immediately {supportEmail} to secure your account.",
-  POWERED_BY_BETTER_AUTH: "Powered by {betterAuth}"
+  POWERED_BY_BETTER_AUTH: 'Powered by {betterAuth}',
 }
 
 /**
@@ -143,7 +143,7 @@ export const NewDeviceEmail = ({
 }: NewDeviceEmailProps) => {
   const localization = {
     ...NewDeviceEmail.localization,
-    ...props.localization
+    ...props.localization,
   }
 
   const previewText = localization.NEW_SIGN_IN_DETECTED
@@ -162,27 +162,27 @@ export const NewDeviceEmail = ({
       <Preview>{previewText}</Preview>
 
       <Tailwind config={{ presets: [pixelBasedPreset] }}>
-        <Body className={cn("bg-background font-sans", classNames?.body)}>
+        <Body className={cn('bg-background font-sans', classNames?.body)}>
           <Container
             className={cn(
-              "mx-auto my-auto max-w-xl px-2 py-10",
-              classNames?.container
+              'mx-auto my-auto max-w-xl px-2 py-10',
+              classNames?.container,
             )}
           >
             <Section
               className={cn(
-                "bg-card text-card-foreground rounded-none border border-border p-8",
-                classNames?.card
+                'bg-card text-card-foreground rounded-none border border-border p-8',
+                classNames?.card,
               )}
             >
               {logoURL &&
-                (typeof logoURL === "string" ? (
+                (typeof logoURL === 'string' ? (
                   <Img
                     src={logoURL}
                     width={48}
                     height={48}
                     alt={appName || localization.LOGO}
-                    className={cn("mx-auto mb-8", classNames?.logo)}
+                    className={cn('mx-auto mb-8', classNames?.logo)}
                   />
                 ) : (
                   <>
@@ -192,8 +192,8 @@ export const NewDeviceEmail = ({
                       height={48}
                       alt={appName || localization.LOGO}
                       className={cn(
-                        "mx-auto mb-8 logo-light",
-                        classNames?.logo
+                        'mx-auto mb-8 logo-light',
+                        classNames?.logo,
                       )}
                     />
                     <Img
@@ -202,8 +202,8 @@ export const NewDeviceEmail = ({
                       height={48}
                       alt={appName || localization.LOGO}
                       className={cn(
-                        "hidden mx-auto mb-8 logo-dark",
-                        classNames?.logo
+                        'hidden mx-auto mb-8 logo-dark',
+                        classNames?.logo,
                       )}
                     />
                   </>
@@ -211,25 +211,25 @@ export const NewDeviceEmail = ({
 
               <Heading
                 className={cn(
-                  "m-0 mb-5 text-2xl font-semibold",
-                  classNames?.title
+                  'm-0 mb-5 text-2xl font-semibold',
+                  classNames?.title,
                 )}
               >
                 {localization.NEW_SIGN_IN_DETECTED}
               </Heading>
 
-              <Text className={cn("text-sm font-normal", classNames?.content)}>
+              <Text className={cn('text-sm font-normal', classNames?.content)}>
                 {(() => {
                   const textWithAppName =
                     localization.NEW_SIGN_IN_TO_YOUR_ACCOUNT.replace(
-                      "{appName}",
-                      appName || ""
+                      '{appName}',
+                      appName || '',
                     )
-                      .replace(/\s{2,}/g, " ")
-                      .replace(" .", ".")
+                      .replace(/\s{2,}/g, ' ')
+                      .replace(' .', '.')
 
                   const [beforeUserEmail, afterUserEmail] =
-                    textWithAppName.split("{userEmail}")
+                    textWithAppName.split('{userEmail}')
 
                   return userEmail ? (
                     <>
@@ -246,9 +246,9 @@ export const NewDeviceEmail = ({
                     </>
                   ) : (
                     textWithAppName
-                      .replace("{userEmail}", "")
-                      .replace(/\s{2,}/g, " ")
-                      .replace(" .", ".")
+                      .replace('{userEmail}', '')
+                      .replace(/\s{2,}/g, ' ')
+                      .replace(' .', '.')
                   )
                 })()}
               </Text>
@@ -256,14 +256,14 @@ export const NewDeviceEmail = ({
               {deviceInfo && (
                 <Section
                   className={cn(
-                    "my-6 border border-border bg-muted p-4",
-                    classNames?.codeBlock
+                    'my-6 border border-border bg-muted p-4',
+                    classNames?.codeBlock,
                   )}
                 >
                   <Text
                     className={cn(
-                      "m-0 mb-3 text-xs text-muted-foreground",
-                      classNames?.description
+                      'm-0 mb-3 text-xs text-muted-foreground',
+                      classNames?.description,
                     )}
                   >
                     {localization.DEVICE_DETAILS}:
@@ -271,60 +271,60 @@ export const NewDeviceEmail = ({
 
                   {deviceInfo.browser && (
                     <Text
-                      className={cn("m-0 mb-2 text-sm", classNames?.content)}
+                      className={cn('m-0 mb-2 text-sm', classNames?.content)}
                     >
                       <span className="font-semibold">
                         {localization.BROWSER}:
-                      </span>{" "}
+                      </span>{' '}
                       {deviceInfo.browser}
                     </Text>
                   )}
 
                   {deviceInfo.os && (
                     <Text
-                      className={cn("m-0 mb-2 text-sm", classNames?.content)}
+                      className={cn('m-0 mb-2 text-sm', classNames?.content)}
                     >
                       <span className="font-semibold">
                         {localization.OPERATING_SYSTEM}:
-                      </span>{" "}
+                      </span>{' '}
                       {deviceInfo.os}
                     </Text>
                   )}
 
                   {deviceInfo.location && (
                     <Text
-                      className={cn("m-0 mb-2 text-sm", classNames?.content)}
+                      className={cn('m-0 mb-2 text-sm', classNames?.content)}
                     >
                       <span className="font-semibold">
                         {localization.LOCATION}:
-                      </span>{" "}
+                      </span>{' '}
                       {deviceInfo.location}
                     </Text>
                   )}
 
                   {deviceInfo.ipAddress && (
                     <Text
-                      className={cn("m-0 mb-2 text-sm", classNames?.content)}
+                      className={cn('m-0 mb-2 text-sm', classNames?.content)}
                     >
                       <span className="font-semibold">
                         {localization.IP_ADDRESS}:
-                      </span>{" "}
+                      </span>{' '}
                       {deviceInfo.ipAddress}
                     </Text>
                   )}
 
                   {deviceInfo.timestamp && (
-                    <Text className={cn("m-0 text-sm", classNames?.content)}>
+                    <Text className={cn('m-0 text-sm', classNames?.content)}>
                       <span className="font-semibold">
                         {localization.TIME}:
-                      </span>{" "}
+                      </span>{' '}
                       {deviceInfo.timestamp}
                     </Text>
                   )}
                 </Section>
               )}
 
-              <Text className={cn("text-sm font-normal", classNames?.content)}>
+              <Text className={cn('text-sm font-normal', classNames?.content)}>
                 {localization.IF_THIS_WAS_YOU}
               </Text>
 
@@ -333,8 +333,8 @@ export const NewDeviceEmail = ({
                   <Button
                     href={secureAccountLink}
                     className={cn(
-                      "inline-block whitespace-nowrap rounded-none text-sm font-medium py-2.5 px-6 bg-primary text-primary-foreground no-underline",
-                      classNames?.button
+                      'inline-block whitespace-nowrap rounded-none text-sm font-medium py-2.5 px-6 bg-primary text-primary-foreground no-underline',
+                      classNames?.button,
                     )}
                   >
                     {localization.SECURE_MY_ACCOUNT}
@@ -344,31 +344,31 @@ export const NewDeviceEmail = ({
 
               <Hr
                 className={cn(
-                  "my-6 w-full border border-solid border-border",
-                  classNames?.separator
+                  'my-6 w-full border border-solid border-border',
+                  classNames?.separator,
                 )}
               />
 
               {appName && (
                 <Text
                   className={cn(
-                    "mb-3 text-xs text-muted-foreground",
-                    classNames?.description
+                    'mb-3 text-xs text-muted-foreground',
+                    classNames?.description,
                   )}
                 >
-                  {localization.EMAIL_SENT_BY.replace("{appName}", appName)}
+                  {localization.EMAIL_SENT_BY.replace('{appName}', appName)}
                 </Text>
               )}
 
               <Text
                 className={cn(
-                  "mt-3 text-xs text-muted-foreground",
-                  classNames?.description
+                  'mt-3 text-xs text-muted-foreground',
+                  classNames?.description,
                 )}
               >
                 {(() => {
                   const [beforeSupportEmail, afterSupportEmail] =
-                    localization.IF_YOU_DIDNT_SIGN_IN.split("{supportEmail}")
+                    localization.IF_YOU_DIDNT_SIGN_IN.split('{supportEmail}')
 
                   return supportEmail ? (
                     <>
@@ -376,8 +376,8 @@ export const NewDeviceEmail = ({
                       <Link
                         href={`mailto:${supportEmail}`}
                         className={cn(
-                          "text-primary underline",
-                          classNames?.link
+                          'text-primary underline',
+                          classNames?.link,
                         )}
                       >
                         {supportEmail}
@@ -386,11 +386,11 @@ export const NewDeviceEmail = ({
                     </>
                   ) : (
                     localization.IF_YOU_DIDNT_SIGN_IN.replace(
-                      "{supportEmail}",
-                      ""
+                      '{supportEmail}',
+                      '',
                     )
-                      .replace(/\s{2,}/g, " ")
-                      .replace(" .", ".")
+                      .replace(/\s{2,}/g, ' ')
+                      .replace(' .', '.')
                   )
                 })()}
               </Text>
@@ -398,13 +398,13 @@ export const NewDeviceEmail = ({
               {poweredBy && (
                 <Text
                   className={cn(
-                    "mt-4 mb-0 text-center text-[11px] text-muted-foreground",
-                    classNames?.poweredBy
+                    'mt-4 mb-0 text-center text-[11px] text-muted-foreground',
+                    classNames?.poweredBy,
                   )}
                 >
                   {(() => {
                     const [beforeBetterAuth, afterBetterAuth] =
-                      localization.POWERED_BY_BETTER_AUTH.split("{betterAuth}")
+                      localization.POWERED_BY_BETTER_AUTH.split('{betterAuth}')
 
                     return (
                       <>
@@ -412,8 +412,8 @@ export const NewDeviceEmail = ({
                         <Link
                           href="https://better-auth.com"
                           className={cn(
-                            "text-primary underline",
-                            classNames?.link
+                            'text-primary underline',
+                            classNames?.link,
                           )}
                         >
                           better-auth
@@ -435,18 +435,18 @@ export const NewDeviceEmail = ({
 NewDeviceEmail.localization = newDeviceEmailLocalization
 
 NewDeviceEmail.PreviewProps = {
-  userEmail: "m@example.com",
+  userEmail: 'm@example.com',
   deviceInfo: {
-    browser: "Chrome on macOS",
-    os: "macOS 26.2",
-    location: "San Francisco, CA, United States",
-    ipAddress: "127.0.0.1",
-    timestamp: "February 10, 2025 at 4:20 PM UTC"
+    browser: 'Chrome on macOS',
+    os: 'macOS 26.2',
+    location: 'San Francisco, CA, United States',
+    ipAddress: '127.0.0.1',
+    timestamp: 'February 10, 2025 at 4:20 PM UTC',
   },
-  secureAccountLink: "https://better-auth-ui.com/auth/secure-account",
-  appName: "Better Auth",
-  supportEmail: "support@example.com",
-  darkMode: true
+  secureAccountLink: 'https://better-auth-ui.com/auth/secure-account',
+  appName: 'Better Auth',
+  supportEmail: 'support@example.com',
+  darkMode: true,
 } as NewDeviceEmailProps
 
 export default NewDeviceEmail

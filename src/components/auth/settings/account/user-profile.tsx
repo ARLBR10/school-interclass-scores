@@ -1,26 +1,26 @@
 import {
   type AdditionalFieldValue,
-  parseAdditionalFieldValue
-} from "@better-auth-ui/core"
+  parseAdditionalFieldValue,
+} from '@better-auth-ui/core'
 import {
   type UsernameAuthClient,
   useAuth,
   useSession,
-  useUpdateUser
-} from "@better-auth-ui/react"
-import { type SyntheticEvent, useState } from "react"
-import { toast } from "sonner"
+  useUpdateUser,
+} from '@better-auth-ui/react'
+import { type SyntheticEvent, useState } from 'react'
+import { toast } from 'sonner'
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Field, FieldError } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Spinner } from "@/components/ui/spinner"
-import { cn } from "@/lib/utils"
-import { AdditionalField } from "../../additional-field"
-import { ChangeAvatar } from "./change-avatar"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { Field, FieldError } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Spinner } from '@/components/ui/spinner'
+import { cn } from '@/lib/utils'
+import { AdditionalField } from '../../additional-field'
+import { ChangeAvatar } from './change-avatar'
 
 export type UserProfileProps = {
   className?: string
@@ -37,7 +37,7 @@ export function UserProfile({ className }: UserProfileProps) {
   const { data: session } = useSession(authClient as UsernameAuthClient)
 
   const { mutate: updateUser, isPending } = useUpdateUser(authClient, {
-    onSuccess: () => toast.success(localization.settings.profileUpdatedSuccess)
+    onSuccess: () => toast.success(localization.settings.profileUpdatedSuccess),
   })
 
   const [fieldErrors, setFieldErrors] = useState<{
@@ -48,7 +48,7 @@ export function UserProfile({ className }: UserProfileProps) {
     e.preventDefault()
 
     const formData = new FormData(e.currentTarget)
-    const name = formData.get("name") as string
+    const name = formData.get('name') as string
 
     const additionalFieldValues: Record<string, unknown> = {}
 
@@ -56,7 +56,7 @@ export function UserProfile({ className }: UserProfileProps) {
       if (field.profile === false || field.readOnly) continue
       const value = parseAdditionalFieldValue(
         field,
-        formData.get(field.name) as string | null
+        formData.get(field.name) as string | null,
       )
 
       if (field.validate) {
@@ -76,7 +76,7 @@ export function UserProfile({ className }: UserProfileProps) {
 
     updateUser({
       name,
-      ...additionalFieldValues
+      ...additionalFieldValues,
     })
   }
 
@@ -107,7 +107,7 @@ export function UserProfile({ className }: UserProfileProps) {
                   onChange={() => {
                     setFieldErrors((prev) => ({
                       ...prev,
-                      name: undefined
+                      name: undefined,
                     }))
                   }}
                   onInvalid={(e) => {
@@ -115,7 +115,7 @@ export function UserProfile({ className }: UserProfileProps) {
 
                     setFieldErrors((prev) => ({
                       ...prev,
-                      name: (e.target as HTMLInputElement).validationMessage
+                      name: (e.target as HTMLInputElement).validationMessage,
                     }))
                   }}
                   aria-invalid={!!fieldErrors.name}
@@ -133,7 +133,7 @@ export function UserProfile({ className }: UserProfileProps) {
               if (field.profile === false) return null
 
               if (!session) {
-                if (field.inputType === "hidden") {
+                if (field.inputType === 'hidden') {
                   return null
                 }
 
@@ -153,7 +153,7 @@ export function UserProfile({ className }: UserProfileProps) {
               const key = `${field.name}:${
                 value instanceof Date
                   ? value.toISOString()
-                  : String(value ?? "")
+                  : String(value ?? '')
               }`
 
               return (
@@ -164,7 +164,7 @@ export function UserProfile({ className }: UserProfileProps) {
                     ...field,
                     // `defaultValue` is sign-up-only; on the profile we
                     // always seed from the session.
-                    defaultValue: value as AdditionalFieldValue | null
+                    defaultValue: value as AdditionalFieldValue | null,
                   }}
                   isPending={isPending}
                 />

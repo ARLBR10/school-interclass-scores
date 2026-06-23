@@ -1,22 +1,22 @@
-"use client"
+'use client'
 
-import { fileToBase64 } from "@better-auth-ui/core"
-import { useAuth, useSession, useUpdateUser } from "@better-auth-ui/react"
-import { Trash2, Upload } from "lucide-react"
-import { type ChangeEvent, useRef, useState } from "react"
-import { toast } from "sonner"
-import { UserAvatar } from "@/components/auth/user/user-avatar"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { fileToBase64 } from '@better-auth-ui/core'
+import { useAuth, useSession, useUpdateUser } from '@better-auth-ui/react'
+import { Trash2, Upload } from 'lucide-react'
+import { type ChangeEvent, useRef, useState } from 'react'
+import { toast } from 'sonner'
+import { UserAvatar } from '@/components/auth/user/user-avatar'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu"
-import { Field } from "@/components/ui/field"
-import { Label } from "@/components/ui/label"
-import { Spinner } from "@/components/ui/spinner"
-import { cn } from "@/lib/utils"
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Field } from '@/components/ui/field'
+import { Label } from '@/components/ui/label'
+import { Spinner } from '@/components/ui/spinner'
+import { cn } from '@/lib/utils'
 
 export type ChangeAvatarProps = {
   className?: string
@@ -39,7 +39,7 @@ export function ChangeAvatar({ className }: ChangeAvatarProps) {
     const file = e.target.files?.[0]
     if (!file) return
 
-    e.target.value = ""
+    e.target.value = ''
 
     setIsUploading(true)
 
@@ -54,8 +54,8 @@ export function ChangeAvatar({ className }: ChangeAvatarProps) {
         { image },
         {
           onSuccess: () =>
-            toast.success(localization.settings.avatarChangedSuccess)
-        }
+            toast.success(localization.settings.avatarChangedSuccess),
+        },
       )
     } catch (error) {
       if (error instanceof Error) {
@@ -83,8 +83,8 @@ export function ChangeAvatar({ className }: ChangeAvatarProps) {
           }
 
           toast.success(localization.settings.avatarDeletedSuccess)
-        }
-      }
+        },
+      },
     )
   }
 
@@ -113,7 +113,7 @@ export function ChangeAvatar({ className }: ChangeAvatarProps) {
 
         <DropdownMenu>
           <DropdownMenuTrigger
-            className={cn(buttonVariants({ variant: "secondary", size: "sm" }))}
+            className={cn(buttonVariants({ variant: 'secondary', size: 'sm' }))}
             disabled={!session || isPending}
           >
             {isPending && <Spinner />}

@@ -1,13 +1,13 @@
-"use client"
+'use client'
 
 import {
   type ApiKeyAuthClient,
   type ListedApiKey,
   useAuth,
   useAuthPlugin,
-  useDeleteApiKey
-} from "@better-auth-ui/react"
-import { Key } from "lucide-react"
+  useDeleteApiKey,
+} from '@better-auth-ui/react'
+import { Key } from 'lucide-react'
 
 import {
   AlertDialog,
@@ -17,14 +17,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogMedia,
-  AlertDialogTitle
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
-import { Field } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Spinner } from "@/components/ui/spinner"
-import { apiKeyPlugin } from "@/lib/auth/api-key-plugin"
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { Field } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Spinner } from '@/components/ui/spinner'
+import { apiKeyPlugin } from '@/lib/auth/api-key-plugin'
 
 export type DeleteApiKeyDialogProps = {
   open: boolean
@@ -38,17 +38,17 @@ export function DeleteApiKeyDialog({
   open,
   onOpenChange,
   apiKey,
-  organizationId
+  organizationId,
 }: DeleteApiKeyDialogProps) {
   const { authClient, localization } = useAuth()
   const { localization: apiKeyLocalization } = useAuthPlugin(apiKeyPlugin)
-  const preview = `${apiKey.start}${"*".repeat(16)}`
+  const preview = `${apiKey.start}${'*'.repeat(16)}`
   const previewId = `delete-api-key-preview-${apiKey.id}`
   const { mutate: deleteApiKey, isPending: isDeleting } = useDeleteApiKey(
     authClient as ApiKeyAuthClient,
     {
-      onSuccess: () => onOpenChange(false)
-    }
+      onSuccess: () => onOpenChange(false),
+    },
   )
 
   return (
@@ -92,7 +92,7 @@ export function DeleteApiKeyDialog({
             onClick={() =>
               deleteApiKey({
                 keyId: apiKey.id,
-                ...(organizationId ? { configId: "organization" } : {})
+                ...(organizationId ? { configId: 'organization' } : {}),
               })
             }
           >

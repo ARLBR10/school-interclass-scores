@@ -1,15 +1,15 @@
 import {
   type UsernameAuthClient,
   useAuth,
-  useSession
-} from "@better-auth-ui/react"
-import type { User } from "better-auth"
-import { User2 } from "lucide-react"
-import type { ReactNode } from "react"
+  useSession,
+} from '@better-auth-ui/react'
+import type { User } from 'better-auth'
+import { User2 } from 'lucide-react'
+import type { ReactNode } from 'react'
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Skeleton } from "@/components/ui/skeleton"
-import { cn } from "@/lib/utils"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
 
 export type UserAvatarProps = {
   className?: string
@@ -34,16 +34,16 @@ export function UserAvatar({
   className,
   user,
   isPending,
-  fallback
+  fallback,
 }: UserAvatarProps) {
   const { authClient } = useAuth()
   const { data: session, isPending: sessionPending } = useSession(
     authClient as UsernameAuthClient,
-    { enabled: !user && !isPending }
+    { enabled: !user && !isPending },
   )
 
   if ((isPending || sessionPending) && !user) {
-    return <Skeleton className={cn("size-8 rounded-full", className)} />
+    return <Skeleton className={cn('size-8 rounded-full', className)} />
   }
 
   const resolvedUser = user ?? session?.user
@@ -59,8 +59,8 @@ export function UserAvatar({
   return (
     <Avatar
       className={cn(
-        "size-8 bg-muted text-foreground text-sm rounded-full",
-        className
+        'size-8 bg-muted text-foreground text-sm rounded-full',
+        className,
       )}
     >
       <AvatarImage

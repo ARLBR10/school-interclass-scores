@@ -3,10 +3,10 @@ import {
   useActiveOrganization,
   useAuth,
   useListOrganizationMembers,
-  useSession
-} from "@better-auth-ui/react"
+  useSession,
+} from '@better-auth-ui/react'
 
-import { ApiKeys } from "./api-keys"
+import { ApiKeys } from './api-keys'
 
 export type OrganizationApiKeysProps = {
   className?: string
@@ -28,11 +28,11 @@ export function OrganizationApiKeys({ className }: OrganizationApiKeysProps) {
     useActiveOrganization(authClient as OrganizationAuthClient)
 
   const { data: membersData } = useListOrganizationMembers(
-    authClient as OrganizationAuthClient
+    authClient as OrganizationAuthClient,
   )
 
   const canManageApiKeys = membersData?.members.some(
-    (member) => member.role === "owner" && member.userId === session?.user.id
+    (member) => member.role === 'owner' && member.userId === session?.user.id,
   )
 
   if (!canManageApiKeys) {

@@ -1,11 +1,11 @@
-"use client"
+'use client'
 
-import { getEmailProviderLink } from "@better-auth-ui/core"
-import { useAuth } from "@better-auth-ui/react"
-import { SquareArrowOutUpRight } from "lucide-react"
+import { getEmailProviderLink } from '@better-auth-ui/core'
+import { useAuth } from '@better-auth-ui/react'
+import { SquareArrowOutUpRight } from 'lucide-react'
 
-import { buttonVariants } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 export type OpenEmailButtonProps = {
   /** Email address used to detect the provider, e.g. from the verify-email flow. */
@@ -36,11 +36,11 @@ export function OpenEmailButton({ email, className }: OpenEmailButtonProps) {
       href={provider.loginUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className={cn(buttonVariants(), "w-full", className)}
+      className={cn(buttonVariants(), 'w-full', className)}
     >
       {localization.auth.openEmailProvider.replace(
-        "{{provider}}",
-        provider.companyProvider
+        '{{provider}}',
+        provider.companyProvider,
       )}
 
       <SquareArrowOutUpRight />

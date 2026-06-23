@@ -2,15 +2,15 @@ import {
   type OrganizationAuthClient,
   useAuth,
   useAuthPlugin,
-  useListUserInvitations
-} from "@better-auth-ui/react"
+  useListUserInvitations,
+} from '@better-auth-ui/react'
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
-import { UserInvitationRow } from "./user-invitation-row"
-import { UserInvitationRowSkeleton } from "./user-invitation-row-skeleton"
-import { UserInvitationsEmpty } from "./user-invitations-empty"
+import { Card, CardContent } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
+import { UserInvitationRow } from './user-invitation-row'
+import { UserInvitationRowSkeleton } from './user-invitation-row-skeleton'
+import { UserInvitationsEmpty } from './user-invitations-empty'
 
 export type UserInvitationsProps = {
   className?: string
@@ -26,7 +26,7 @@ export function UserInvitations({ className }: UserInvitationsProps) {
     useAuthPlugin(organizationPlugin)
 
   const { data: invitations, isPending } = useListUserInvitations(
-    authClient as OrganizationAuthClient
+    authClient as OrganizationAuthClient,
   )
 
   return (

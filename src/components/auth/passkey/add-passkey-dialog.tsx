@@ -1,13 +1,13 @@
-"use client"
+'use client'
 
 import {
   type PasskeyAuthClient,
   useAddPasskey,
   useAuth,
-  useAuthPlugin
-} from "@better-auth-ui/react"
-import { Fingerprint } from "lucide-react"
-import type { SyntheticEvent } from "react"
+  useAuthPlugin,
+} from '@better-auth-ui/react'
+import { Fingerprint } from 'lucide-react'
+import type { SyntheticEvent } from 'react'
 
 import {
   AlertDialog,
@@ -17,14 +17,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogMedia,
-  AlertDialogTitle
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
-import { Field, FieldError } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Spinner } from "@/components/ui/spinner"
-import { passkeyPlugin } from "@/lib/auth/passkey-plugin"
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { Field, FieldError } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Spinner } from '@/components/ui/spinner'
+import { passkeyPlugin } from '@/lib/auth/passkey-plugin'
 
 export type AddPasskeyDialogProps = {
   open: boolean
@@ -33,23 +33,23 @@ export type AddPasskeyDialogProps = {
 
 export function AddPasskeyDialog({
   open,
-  onOpenChange
+  onOpenChange,
 }: AddPasskeyDialogProps) {
   const { authClient, localization } = useAuth()
   const { localization: passkeyLocalization } = useAuthPlugin(passkeyPlugin)
 
   const { mutate: addPasskey, isPending: isAdding } = useAddPasskey(
-    authClient as PasskeyAuthClient
+    authClient as PasskeyAuthClient,
   )
 
   const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     const formData = new FormData(e.target as HTMLFormElement)
-    const name = (formData.get("name") as string)?.trim()
+    const name = (formData.get('name') as string)?.trim()
 
     addPasskey(name ? { name } : undefined, {
-      onSuccess: () => onOpenChange(false)
+      onSuccess: () => onOpenChange(false),
     })
   }
 

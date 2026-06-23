@@ -2,21 +2,21 @@ import {
   type UsernameAuthClient,
   useAuth,
   useAuthPlugin,
-  useIsUsernameAvailable
-} from "@better-auth-ui/react"
-import { useDebouncer } from "@tanstack/react-pacer"
-import { Check, X } from "lucide-react"
-import { useState } from "react"
-import type { AdditionalFieldProps } from "@/components/auth/additional-field"
-import { Field, FieldError } from "@/components/ui/field"
+  useIsUsernameAvailable,
+} from '@better-auth-ui/react'
+import { useDebouncer } from '@tanstack/react-pacer'
+import { Check, X } from 'lucide-react'
+import { useState } from 'react'
+import type { AdditionalFieldProps } from '@/components/auth/additional-field'
+import { Field, FieldError } from '@/components/ui/field'
 import {
   InputGroup,
   InputGroupAddon,
-  InputGroupInput
-} from "@/components/ui/input-group"
-import { Label } from "@/components/ui/label"
-import { Spinner } from "@/components/ui/spinner"
-import { usernamePlugin } from "@/lib/auth/username-plugin"
+  InputGroupInput,
+} from '@/components/ui/input-group'
+import { Label } from '@/components/ui/label'
+import { Spinner } from '@/components/ui/spinner'
+import { usernamePlugin } from '@/lib/auth/username-plugin'
 
 /**
  * Renderer for the `username` additional field. Owns availability checking,
@@ -27,7 +27,7 @@ import { usernamePlugin } from "@/lib/auth/username-plugin"
 export function UsernameField({
   name,
   field,
-  isPending
+  isPending,
 }: AdditionalFieldProps) {
   const { authClient, localization: authLocalization } = useAuth()
   const {
@@ -35,10 +35,10 @@ export function UsernameField({
     minUsernameLength,
     maxUsernameLength,
     isUsernameAvailable: checkAvailability,
-    usernamePrefix
+    usernamePrefix,
   } = useAuthPlugin(usernamePlugin)
 
-  const currentUsername = String(field.defaultValue ?? "")
+  const currentUsername = String(field.defaultValue ?? '')
   const [value, setValue] = useState(currentUsername)
   const [error, setError] = useState<string>()
 
@@ -46,9 +46,9 @@ export function UsernameField({
     mutate: requestAvailability,
     data: availability,
     error: availabilityError,
-    reset: resetAvailability
+    reset: resetAvailability,
   } = useIsUsernameAvailable(authClient as UsernameAuthClient, {
-    onError: () => {}
+    onError: () => {},
   })
 
   const debouncer = useDebouncer(
@@ -61,7 +61,7 @@ export function UsernameField({
 
       requestAvailability({ username: trimmed })
     },
-    { wait: 500 }
+    { wait: 500 },
   )
 
   function handleChange(next: string) {
@@ -107,12 +107,12 @@ export function UsernameField({
               ? authLocalization.auth.fieldRequired
               : el.validity.tooShort
                 ? authLocalization.auth.tooShort.replace(
-                    "{{min}}",
-                    String(minUsernameLength)
+                    '{{min}}',
+                    String(minUsernameLength),
                   )
                 : authLocalization.auth.tooLong.replace(
-                    "{{max}}",
-                    String(maxUsernameLength)
+                    '{{max}}',
+                    String(maxUsernameLength),
                   )
             setError(msg)
           }}

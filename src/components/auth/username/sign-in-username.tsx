@@ -1,40 +1,40 @@
-"use client"
+'use client'
 
-import { authMutationKeys } from "@better-auth-ui/core"
+import { authMutationKeys } from '@better-auth-ui/core'
 import {
   type UsernameAuthClient,
   useAuth,
   useAuthPlugin,
   useFetchOptions,
   useSignInEmail,
-  useSignInUsername
-} from "@better-auth-ui/react"
-import { useIsMutating } from "@tanstack/react-query"
-import { type SyntheticEvent, useState } from "react"
+  useSignInUsername,
+} from '@better-auth-ui/react'
+import { useIsMutating } from '@tanstack/react-query'
+import { type SyntheticEvent, useState } from 'react'
 import {
   ProviderButtons,
-  type SocialLayout
-} from "@/components/auth/provider-buttons"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
+  type SocialLayout,
+} from '@/components/auth/provider-buttons'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Field,
   FieldDescription,
   FieldError,
   FieldGroup,
-  FieldSeparator
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Spinner } from "@/components/ui/spinner"
-import { usernamePlugin } from "@/lib/auth/username-plugin"
-import { cn } from "@/lib/utils"
+  FieldSeparator,
+} from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Spinner } from '@/components/ui/spinner'
+import { usernamePlugin } from '@/lib/auth/username-plugin'
+import { cn } from '@/lib/utils'
 
 export type SignInUsernameProps = {
   className?: string
   socialLayout?: SocialLayout
-  socialPosition?: "top" | "bottom"
+  socialPosition?: 'top' | 'bottom'
 }
 
 function isEmail(value: string): boolean {
@@ -49,7 +49,7 @@ function isEmail(value: string): boolean {
 export function SignInUsername({
   className,
   socialLayout,
-  socialPosition = "bottom"
+  socialPosition = 'bottom',
 }: SignInUsernameProps) {
   const {
     authClient,
@@ -61,67 +61,67 @@ export function SignInUsername({
     socialProviders,
     viewPaths,
     navigate,
-    Link
+    Link,
   } = useAuth()
 
   const { fetchOptions, resetFetchOptions } = useFetchOptions()
 
   const { localization: usernameLocalization } = useAuthPlugin(usernamePlugin)
 
-  const [password, setPassword] = useState("")
+  const [password, setPassword] = useState('')
 
   const { mutate: signInEmail, isPending: isSignInEmailPending } =
     useSignInEmail(authClient, {
       onError: (error, { email }) => {
-        setPassword("")
+        setPassword('')
 
-        if (error.error?.code === "EMAIL_NOT_VERIFIED") {
-          sessionStorage.setItem("better-auth-ui.verify-email", email)
+        if (error.error?.code === 'EMAIL_NOT_VERIFIED') {
+          sessionStorage.setItem('better-auth-ui.verify-email', email)
           navigate({
-            to: `${basePaths.auth}/${viewPaths.auth.verifyEmail}`
+            to: `${basePaths.auth}/${viewPaths.auth.verifyEmail}`,
           })
         }
 
         resetFetchOptions()
       },
       onSuccess: () => {
-        sessionStorage.removeItem("better-auth-ui.verify-email")
+        sessionStorage.removeItem('better-auth-ui.verify-email')
         navigate({ to: redirectTo })
-      }
+      },
     })
 
   const { mutate: signInUsername, isPending: isSignInUsernamePending } =
     useSignInUsername(authClient as UsernameAuthClient, {
       onError: (error) => {
-        setPassword("")
+        setPassword('')
 
-        if (error.error?.code === "EMAIL_NOT_VERIFIED") {
-          sessionStorage.removeItem("better-auth-ui.verify-email")
+        if (error.error?.code === 'EMAIL_NOT_VERIFIED') {
+          sessionStorage.removeItem('better-auth-ui.verify-email')
 
           navigate({
-            to: `${basePaths.auth}/${viewPaths.auth.verifyEmail}`
+            to: `${basePaths.auth}/${viewPaths.auth.verifyEmail}`,
           })
         }
 
         resetFetchOptions()
       },
       onSuccess: () => {
-        sessionStorage.removeItem("better-auth-ui.verify-email")
+        sessionStorage.removeItem('better-auth-ui.verify-email')
         navigate({ to: redirectTo })
-      }
+      },
     })
 
   const signInMutating = useIsMutating({
-    mutationKey: authMutationKeys.signIn.all
+    mutationKey: authMutationKeys.signIn.all,
   })
   const signUpMutating = useIsMutating({
-    mutationKey: authMutationKeys.signUp.all
+    mutationKey: authMutationKeys.signUp.all,
   })
   const isPending = signInMutating + signUpMutating > 0
   const isSignInPending = isSignInEmailPending || isSignInUsernamePending
 
   const Captcha = plugins.find(
-    (plugin) => plugin.captchaComponent
+    (plugin) => plugin.captchaComponent,
   )?.captchaComponent
 
   const [fieldErrors, setFieldErrors] = useState<{
@@ -133,22 +133,22 @@ export function SignInUsername({
     e.preventDefault()
 
     const formData = new FormData(e.currentTarget)
-    const email = formData.get("email") as string
-    const rememberMe = formData.get("rememberMe") === "on"
+    const email = formData.get('email') as string
+    const rememberMe = formData.get('rememberMe') === 'on'
 
     if (isEmail(email)) {
       signInEmail({
         email,
         password,
         ...(emailAndPassword?.rememberMe ? { rememberMe } : {}),
-        fetchOptions
+        fetchOptions,
       })
     } else {
       signInUsername({
         username: email,
         password,
         ...(emailAndPassword?.rememberMe ? { rememberMe } : {}),
-        fetchOptions
+        fetchOptions,
       })
     }
   }
@@ -157,7 +157,7 @@ export function SignInUsername({
     emailAndPassword?.enabled && socialProviders && socialProviders.length > 0
 
   return (
-    <Card className={cn("w-full max-w-sm", className)}>
+    <Card className={cn('w-full max-w-sm', className)}>
       <CardHeader>
         <CardTitle className="text-xl font-semibold">
           {localization.auth.signIn}
@@ -166,7 +166,7 @@ export function SignInUsername({
 
       <CardContent>
         <div className="flex flex-col gap-6">
-          {socialPosition === "top" && (
+          {socialPosition === 'top' && (
             <>
               {socialProviders && socialProviders.length > 0 && (
                 <ProviderButtons socialLayout={socialLayout} />
@@ -199,7 +199,7 @@ export function SignInUsername({
                     onChange={() => {
                       setFieldErrors((prev) => ({
                         ...prev,
-                        email: undefined
+                        email: undefined,
                       }))
                     }}
                     onInvalid={(e) => {
@@ -207,7 +207,7 @@ export function SignInUsername({
 
                       setFieldErrors((prev) => ({
                         ...prev,
-                        email: localization.auth.fieldRequired
+                        email: localization.auth.fieldRequired,
                       }))
                     }}
                     aria-invalid={!!fieldErrors.email}
@@ -230,7 +230,7 @@ export function SignInUsername({
 
                       setFieldErrors((prev) => ({
                         ...prev,
-                        password: undefined
+                        password: undefined,
                       }))
                     }}
                     placeholder={localization.auth.passwordPlaceholder}
@@ -247,17 +247,17 @@ export function SignInUsername({
                         ? localization.auth.fieldRequired
                         : el.validity.tooShort
                           ? localization.auth.tooShort.replace(
-                              "{{min}}",
-                              String(min)
+                              '{{min}}',
+                              String(min),
                             )
                           : localization.auth.tooLong.replace(
-                              "{{max}}",
-                              String(max)
+                              '{{max}}',
+                              String(max),
                             )
 
                       setFieldErrors((prev) => ({
                         ...prev,
-                        password: msg
+                        password: msg,
                       }))
                     }}
                     aria-invalid={!!fieldErrors.password}
@@ -302,14 +302,14 @@ export function SignInUsername({
                         key={`${plugin.id}-${index.toString()}`}
                         view="signIn"
                       />
-                    ))
+                    )),
                   )}
                 </div>
               </FieldGroup>
             </form>
           )}
 
-          {socialPosition === "bottom" && (
+          {socialPosition === 'bottom' && (
             <>
               {showSeparator && (
                 <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card text-xs flex items-center">
@@ -336,7 +336,7 @@ export function SignInUsername({
 
           {emailAndPassword?.enabled && (
             <FieldDescription className="text-center">
-              {localization.auth.needToCreateAnAccount}{" "}
+              {localization.auth.needToCreateAnAccount}{' '}
               <Link
                 href={`${basePaths.auth}/${viewPaths.auth.signUp}`}
                 className="underline underline-offset-4"

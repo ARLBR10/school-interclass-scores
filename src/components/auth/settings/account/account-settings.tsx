@@ -1,9 +1,9 @@
-import { useAuth } from "@better-auth-ui/react"
-import type { ComponentProps } from "react"
+import { useAuth } from '@better-auth-ui/react'
+import type { ComponentProps } from 'react'
 
-import { cn } from "@/lib/utils"
-import { ChangeEmail } from "./change-email"
-import { UserProfile } from "./user-profile"
+import { cn } from '@/lib/utils'
+import { ChangeEmail } from './change-email'
+import { UserProfile } from './user-profile'
 
 export type AccountSettingsProps = {
   className?: string
@@ -23,14 +23,14 @@ export type AccountSettingsProps = {
 export function AccountSettings({
   className,
   ...props
-}: AccountSettingsProps & ComponentProps<"div">) {
+}: AccountSettingsProps & ComponentProps<'div'>) {
   const { emailAndPassword, plugins } = useAuth()
 
-  const hasMagicLink = plugins.some((plugin) => plugin.id === "magicLink")
+  const hasMagicLink = plugins.some((plugin) => plugin.id === 'magicLink')
 
   return (
     <div
-      className={cn("flex w-full flex-col gap-4 md:gap-6", className)}
+      className={cn('flex w-full flex-col gap-4 md:gap-6', className)}
       {...props}
     >
       <UserProfile />
@@ -39,7 +39,7 @@ export function AccountSettings({
         (plugin) =>
           plugin.accountCards?.map((Card, index) => (
             <Card key={`${plugin.id}-${index.toString()}`} />
-          )) ?? []
+          )) ?? [],
       )}
     </div>
   )

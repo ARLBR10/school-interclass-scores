@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import {
   type OrganizationAuthClient,
@@ -7,41 +7,41 @@ import {
   useAuthPlugin,
   useHasPermission,
   useListOrganizationMembers,
-  useSession
-} from "@better-auth-ui/react"
-import type { Member } from "better-auth/client"
-import { ChevronUp, Filter, Search, X } from "lucide-react"
-import { type ComponentProps, type ReactNode, useMemo, useState } from "react"
+  useSession,
+} from '@better-auth-ui/react'
+import type { Member } from 'better-auth/client'
+import { ChevronUp, Filter, Search, X } from 'lucide-react'
+import { type ComponentProps, type ReactNode, useMemo, useState } from 'react'
 
-import { Badge } from "@/components/ui/badge"
-import { Button, buttonVariants } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { Badge } from '@/components/ui/badge'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu"
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
   InputGroup,
   InputGroupAddon,
-  InputGroupInput
-} from "@/components/ui/input-group"
+  InputGroupInput,
+} from '@/components/ui/input-group'
 import {
   Table,
   TableBody,
   TableHead,
   TableHeader,
-  TableRow
-} from "@/components/ui/table"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
-import { cn } from "@/lib/utils"
-import { InviteMemberDialog } from "./invite-member-dialog"
-import { OrganizationMemberRow } from "./organization-member-row"
-import { OrganizationMemberRowSkeleton } from "./organization-member-row-skeleton"
+  TableRow,
+} from '@/components/ui/table'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
+import { cn } from '@/lib/utils'
+import { InviteMemberDialog } from './invite-member-dialog'
+import { OrganizationMemberRow } from './organization-member-row'
+import { OrganizationMemberRowSkeleton } from './organization-member-row-skeleton'
 
-type SortDirection = "ascending" | "descending"
+type SortDirection = 'ascending' | 'descending'
 
 type SortDescriptor = {
   column: string
@@ -59,7 +59,7 @@ export type OrganizationMembersProps = {
 export function OrganizationMembers({
   className,
   ...props
-}: OrganizationMembersProps & ComponentProps<"div">) {
+}: OrganizationMembersProps & ComponentProps<'div'>) {
   const { authClient } = useAuth()
   const { localization: organizationLocalization, roles } =
     useAuthPlugin(organizationPlugin)
@@ -73,14 +73,14 @@ export function OrganizationMembers({
   const { isPending: updatePermissionPending } = useHasPermission(
     authClient as OrganizationAuthClient,
     {
-      permissions: { member: ["update"] }
-    }
+      permissions: { member: ['update'] },
+    },
   )
   const { isPending: deletePermissionPending } = useHasPermission(
     authClient as OrganizationAuthClient,
     {
-      permissions: { member: ["delete"] }
-    }
+      permissions: { member: ['delete'] },
+    },
   )
 
   const isPending =
@@ -90,15 +90,15 @@ export function OrganizationMembers({
     deletePermissionPending
 
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>()
-  const [roleFilter, setRoleFilter] = useState("all")
-  const [search, setSearch] = useState("")
+  const [roleFilter, setRoleFilter] = useState('all')
+  const [search, setSearch] = useState('')
 
   const filteredMembers = useMemo(() => {
     return membersData?.members.filter(
       (member) =>
-        (roleFilter === "all" || member.role === roleFilter) &&
+        (roleFilter === 'all' || member.role === roleFilter) &&
         (member.user.name.toLowerCase().includes(search.toLowerCase()) ||
-          member.user.email.toLowerCase().includes(search.toLowerCase()))
+          member.user.email.toLowerCase().includes(search.toLowerCase())),
     )
   }, [search, membersData?.members, roleFilter])
 
@@ -106,15 +106,15 @@ export function OrganizationMembers({
     if (!sortDescriptor) return filteredMembers
     if (!filteredMembers) return filteredMembers
 
-    return [...filteredMembers].sort((a, b) => {
-      const col = sortDescriptor.column as keyof Member | "user"
+    return filteredMembers.toSorted((a, b) => {
+      const col = sortDescriptor.column as keyof Member | 'user'
       const first =
-        col === "user" ? a.user.name || a.user.email : String(a[col])
+        col === 'user' ? a.user.name || a.user.email : String(a[col])
       const second =
-        col === "user" ? b.user.name || b.user.email : String(b[col])
+        col === 'user' ? b.user.name || b.user.email : String(b[col])
 
       let cmp = first.localeCompare(second)
-      if (sortDescriptor.direction === "descending") {
+      if (sortDescriptor.direction === 'descending') {
         cmp *= -1
       }
 
@@ -125,23 +125,23 @@ export function OrganizationMembers({
   const [inviteOpen, setInviteOpen] = useState(false)
 
   const isOwner = membersData?.members.some(
-    (member) => member.role === "owner" && member.userId === session?.user.id
+    (member) => member.role === 'owner' && member.userId === session?.user.id,
   )
 
   function toggleSort(column: string) {
     setSortDescriptor((current) => {
       if (current?.column !== column) {
-        return { column, direction: "ascending" }
+        return { column, direction: 'ascending' }
       }
-      if (current.direction === "ascending") {
-        return { column, direction: "descending" }
+      if (current.direction === 'ascending') {
+        return { column, direction: 'descending' }
       }
       return undefined
     })
   }
 
   return (
-    <div className={cn("flex flex-col gap-3", className)} {...props}>
+    <div className={cn('flex flex-col gap-3', className)} {...props}>
       <div className="flex items-end justify-between gap-3">
         <h3 className="truncate text-sm font-semibold">
           {organizationLocalization.members}
@@ -176,7 +176,7 @@ export function OrganizationMembers({
 
           <DropdownMenu>
             <DropdownMenuTrigger
-              className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
+              className={cn(buttonVariants({ size: 'sm', variant: 'outline' }))}
               disabled={isPending}
             >
               <Filter />
@@ -203,9 +203,9 @@ export function OrganizationMembers({
           </DropdownMenu>
         </div>
 
-        {roleFilter !== "all" && (
+        {roleFilter !== 'all' && (
           <Badge variant="secondary" className="w-fit gap-1">
-            {organizationLocalization.role}:{" "}
+            {organizationLocalization.role}:{' '}
             <span className="capitalize">
               {roles?.[roleFilter] ?? roleFilter}
             </span>
@@ -213,7 +213,7 @@ export function OrganizationMembers({
               type="button"
               aria-label={organizationLocalization.clear}
               className="inline-flex cursor-pointer items-center text-muted-foreground hover:text-foreground"
-              onClick={() => setRoleFilter("all")}
+              onClick={() => setRoleFilter('all')}
             >
               <X className="size-3" />
             </button>
@@ -226,22 +226,22 @@ export function OrganizationMembers({
               <TableRow>
                 <SortableTableHead
                   sortDirection={
-                    sortDescriptor?.column === "user"
+                    sortDescriptor?.column === 'user'
                       ? sortDescriptor.direction
                       : undefined
                   }
-                  onClick={() => toggleSort("user")}
+                  onClick={() => toggleSort('user')}
                 >
                   {organizationLocalization.member}
                 </SortableTableHead>
 
                 <SortableTableHead
                   sortDirection={
-                    sortDescriptor?.column === "role"
+                    sortDescriptor?.column === 'role'
                       ? sortDescriptor.direction
                       : undefined
                   }
-                  onClick={() => toggleSort("role")}
+                  onClick={() => toggleSort('role')}
                 >
                   {organizationLocalization.role}
                 </SortableTableHead>
@@ -279,14 +279,14 @@ export function OrganizationMembers({
 function SortableTableHead({
   children,
   sortDirection,
-  onClick
+  onClick,
 }: {
   children: ReactNode
   sortDirection?: SortDirection
   onClick: () => void
 }) {
   return (
-    <TableHead aria-sort={sortDirection ?? "none"}>
+    <TableHead aria-sort={sortDirection ?? 'none'}>
       <button
         type="button"
         onClick={onClick}
@@ -297,8 +297,8 @@ function SortableTableHead({
         {!!sortDirection && (
           <ChevronUp
             className={cn(
-              "size-3 transition-transform duration-100 ease-out",
-              sortDirection === "descending" ? "rotate-180" : ""
+              'size-3 transition-transform duration-100 ease-out',
+              sortDirection === 'descending' ? 'rotate-180' : '',
             )}
           />
         )}

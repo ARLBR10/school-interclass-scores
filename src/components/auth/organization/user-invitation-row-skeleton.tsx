@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from '@/components/ui/skeleton'
 
 /**
  * Placeholder row matching `UserInvitationRow` while invitations load.

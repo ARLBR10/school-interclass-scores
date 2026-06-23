@@ -1,9 +1,9 @@
-import { useAuth, useListAccounts } from "@better-auth-ui/react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { Skeleton } from "@/components/ui/skeleton"
-import { cn } from "@/lib/utils"
-import { LinkedAccount } from "./linked-account"
+import { useAuth, useListAccounts } from '@better-auth-ui/react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
+import { LinkedAccount } from './linked-account'
 
 export type LinkedAccountsProps = {
   className?: string
@@ -23,13 +23,13 @@ export function LinkedAccounts({ className }: LinkedAccountsProps) {
     authClient,
     localization,
     multipleAccountsPerProvider,
-    socialProviders
+    socialProviders,
   } = useAuth()
 
   const { data: accounts, isPending } = useListAccounts(authClient)
 
   const linkedAccounts = accounts?.filter(
-    (account) => account.providerId !== "credential"
+    (account) => account.providerId !== 'credential',
   )
 
   const linkedProviderIds = new Set(linkedAccounts?.map((a) => a.providerId))
@@ -43,13 +43,13 @@ export function LinkedAccounts({ className }: LinkedAccountsProps) {
     ...(linkedAccounts?.map((account) => ({
       key: account.id,
       account,
-      provider: account.providerId
+      provider: account.providerId,
     })) ?? []),
     ...(availableProviders?.map((provider) => ({
       key: provider,
       account: undefined,
-      provider
-    })) ?? [])
+      provider,
+    })) ?? []),
   ]
 
   return (
@@ -58,7 +58,7 @@ export function LinkedAccounts({ className }: LinkedAccountsProps) {
         {localization.settings.linkedAccounts}
       </h2>
 
-      <Card className={cn("p-0", className)}>
+      <Card className={cn('p-0', className)}>
         <CardContent className="p-0">
           {isPending
             ? socialProviders?.map((provider, index) => (

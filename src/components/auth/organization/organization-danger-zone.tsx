@@ -1,16 +1,16 @@
 import {
   type OrganizationAuthClient,
   useAuth,
-  useHasPermission
-} from "@better-auth-ui/react"
-import type { ComponentProps } from "react"
+  useHasPermission,
+} from '@better-auth-ui/react'
+import type { ComponentProps } from 'react'
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { cn } from "@/lib/utils"
-import { DeleteOrganization } from "./delete-organization"
-import { DeleteOrganizationSkeleton } from "./delete-organization-skeleton"
-import { LeaveOrganization } from "./leave-organization"
+import { Card, CardContent } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { cn } from '@/lib/utils'
+import { DeleteOrganization } from './delete-organization'
+import { DeleteOrganizationSkeleton } from './delete-organization-skeleton'
+import { LeaveOrganization } from './leave-organization'
 
 export type OrganizationDangerZoneProps = {
   className?: string
@@ -27,18 +27,18 @@ export type OrganizationDangerZoneProps = {
 export function OrganizationDangerZone({
   className,
   ...props
-}: OrganizationDangerZoneProps & ComponentProps<"div">) {
+}: OrganizationDangerZoneProps & ComponentProps<'div'>) {
   const { authClient, localization } = useAuth()
 
   const { data: deletePermission, isPending: deletePermissionPending } =
     useHasPermission(authClient as OrganizationAuthClient, {
-      permissions: { organization: ["delete"] }
+      permissions: { organization: ['delete'] },
     })
 
   const canDelete = !!deletePermission?.success
 
   return (
-    <div className={cn("flex w-full flex-col", className)} {...props}>
+    <div className={cn('flex w-full flex-col', className)} {...props}>
       <h2 className="mb-3 text-sm font-semibold text-destructive">
         {localization.settings.dangerZone}
       </h2>

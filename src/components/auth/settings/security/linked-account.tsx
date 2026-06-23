@@ -1,22 +1,22 @@
-"use client"
+'use client'
 
-import { getProviderName } from "@better-auth-ui/core"
+import { getProviderName } from '@better-auth-ui/core'
 import {
   providerIcons,
   useAccountInfo,
   useAuth,
   useLinkSocial,
-  useUnlinkAccount
-} from "@better-auth-ui/react"
-import type { Account, SocialProvider } from "better-auth"
-import { Link2, Link2Off, Plug } from "lucide-react"
-import { toast } from "sonner"
+  useUnlinkAccount,
+} from '@better-auth-ui/react'
+import type { Account, SocialProvider } from 'better-auth'
+import { Link2, Link2Off, Plug } from 'lucide-react'
+import { toast } from 'sonner'
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Spinner } from "@/components/ui/spinner"
-import { cn } from "@/lib/utils"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Spinner } from '@/components/ui/spinner'
+import { cn } from '@/lib/utils'
 
 export type LinkedAccountProps = {
   account?: Account
@@ -38,7 +38,7 @@ export function LinkedAccount({ account, provider }: LinkedAccountProps) {
 
   const { data: accountInfo, isPending: isLoadingInfo } = useAccountInfo(
     authClient,
-    { query: { accountId: account?.accountId } }
+    { query: { accountId: account?.accountId } },
   )
 
   const { mutate: linkSocial, isPending: isLinking } = useLinkSocial(authClient)
@@ -46,8 +46,8 @@ export function LinkedAccount({ account, provider }: LinkedAccountProps) {
   const { mutate: unlinkAccount, isPending: isUnlinking } = useUnlinkAccount(
     authClient,
     {
-      onSuccess: () => toast.success(localization.settings.accountUnlinked)
-    }
+      onSuccess: () => toast.success(localization.settings.accountUnlinked),
+    },
   )
 
   const ProviderIcon = providerIcons[provider]
@@ -66,10 +66,10 @@ export function LinkedAccount({ account, provider }: LinkedAccountProps) {
         <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-muted">
           {ProviderIcon ? (
             <ProviderIcon
-              className={cn("size-4.5", !account && "opacity-50")}
+              className={cn('size-4.5', !account && 'opacity-50')}
             />
           ) : (
-            <Plug className={cn("size-4.5", !account && "opacity-50")} />
+            <Plug className={cn('size-4.5', !account && 'opacity-50')} />
           )}
         </div>
 
@@ -85,8 +85,8 @@ export function LinkedAccount({ account, provider }: LinkedAccountProps) {
               {account
                 ? displayName
                 : localization.settings.linkProvider.replace(
-                    "{{provider}}",
-                    providerName
+                    '{{provider}}',
+                    providerName,
                   )}
             </span>
           )}
@@ -100,13 +100,13 @@ export function LinkedAccount({ account, provider }: LinkedAccountProps) {
             onClick={() => unlinkAccount({ providerId: account.providerId })}
             disabled={isUnlinking}
             aria-label={localization.settings.unlinkProvider.replace(
-              "{{provider}}",
-              providerName
+              '{{provider}}',
+              providerName,
             )}
           >
             {isUnlinking ? <Spinner /> : <Link2Off />}
             {localization.settings.unlinkProvider
-              .replace("{{provider}}", "")
+              .replace('{{provider}}', '')
               .trim()}
           </Button>
         ) : (
@@ -117,13 +117,13 @@ export function LinkedAccount({ account, provider }: LinkedAccountProps) {
             onClick={() =>
               linkSocial({
                 provider,
-                callbackURL: `${baseURL}${window.location.pathname}`
+                callbackURL: `${baseURL}${window.location.pathname}`,
               })
             }
             disabled={isLinking}
             aria-label={localization.settings.linkProvider.replace(
-              "{{provider}}",
-              providerName
+              '{{provider}}',
+              providerName,
             )}
           >
             {isLinking ? <Spinner /> : <Link2 />}

@@ -1,15 +1,15 @@
 import {
   type ListedApiKey,
   useAuth,
-  useAuthPlugin
-} from "@better-auth-ui/react"
-import { Key, X } from "lucide-react"
-import { useState } from "react"
+  useAuthPlugin,
+} from '@better-auth-ui/react'
+import { Key, X } from 'lucide-react'
+import { useState } from 'react'
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { apiKeyPlugin } from "@/lib/auth/api-key-plugin"
-import { DeleteApiKeyDialog } from "./delete-api-key-dialog"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { apiKeyPlugin } from '@/lib/auth/api-key-plugin'
+import { DeleteApiKeyDialog } from './delete-api-key-dialog'
 
 export type ApiKeyProps = {
   apiKey: ListedApiKey
@@ -24,7 +24,7 @@ export function ApiKey({ apiKey, hideDelete, organizationId }: ApiKeyProps) {
   const { localization: apiKeyLocalization } = useAuthPlugin(apiKeyPlugin)
   const [deleteOpen, setDeleteOpen] = useState(false)
 
-  const preview = `${apiKey.start}${"*".repeat(16)}`
+  const preview = `${apiKey.start}${'*'.repeat(16)}`
 
   return (
     <Card className="bg-transparent border-0 ring-0 shadow-none">
@@ -44,8 +44,8 @@ export function ApiKey({ apiKey, hideDelete, organizationId }: ApiKeyProps) {
 
           <span className="text-muted-foreground text-xs">
             {new Date(apiKey.createdAt).toLocaleString(undefined, {
-              dateStyle: "medium",
-              timeStyle: "short"
+              dateStyle: 'medium',
+              timeStyle: 'short',
             })}
           </span>
         </div>

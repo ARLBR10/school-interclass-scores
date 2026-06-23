@@ -1,8 +1,8 @@
-import type { ComponentProps } from "react"
+import type { ComponentProps } from 'react'
 
-import { cn } from "@/lib/utils"
-import { OrganizationInvitations } from "./organization-invitations"
-import { OrganizationMembers } from "./organization-members"
+import { cn } from '@/lib/utils'
+import { OrganizationInvitations } from './organization-invitations'
+import { OrganizationMembers } from './organization-members'
 
 /** Props for the `OrganizationPeople` component. */
 export type OrganizationPeopleProps = {
@@ -16,9 +16,9 @@ export type OrganizationPeopleProps = {
 export function OrganizationPeople({
   className,
   ...props
-}: OrganizationPeopleProps & ComponentProps<"div">) {
+}: OrganizationPeopleProps & ComponentProps<'div'>) {
   return (
-    <div className={cn("flex flex-col gap-4 md:gap-6", className)} {...props}>
+    <div className={cn('flex flex-col gap-4 md:gap-6', className)} {...props}>
       <OrganizationMembers />
       <OrganizationInvitations />
     </div>

@@ -1,15 +1,15 @@
-import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
-import { Fingerprint, X } from "lucide-react"
-import { useState } from "react"
+import { useAuth, useAuthPlugin } from '@better-auth-ui/react'
+import { Fingerprint, X } from 'lucide-react'
+import { useState } from 'react'
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { passkeyPlugin } from "@/lib/auth/passkey-plugin"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { passkeyPlugin } from '@/lib/auth/passkey-plugin'
 
 import {
   DeletePasskeyDialog,
-  type ListedPasskey
-} from "./delete-passkey-dialog"
+  type ListedPasskey,
+} from './delete-passkey-dialog'
 
 export type PasskeyProps = {
   passkey: ListedPasskey
@@ -36,8 +36,8 @@ export function Passkey({ passkey }: PasskeyProps) {
 
           <span className="text-muted-foreground text-xs">
             {new Date(passkey.createdAt).toLocaleString(undefined, {
-              dateStyle: "medium",
-              timeStyle: "short"
+              dateStyle: 'medium',
+              timeStyle: 'short',
             })}
           </span>
         </div>
@@ -48,8 +48,8 @@ export function Passkey({ passkey }: PasskeyProps) {
           size="sm"
           onClick={() => setDeleteOpen(true)}
           aria-label={passkeyLocalization.deletePasskey.replace(
-            "{{name}}",
-            passkeyName
+            '{{name}}',
+            passkeyName,
           )}
         >
           <X />

@@ -1,14 +1,14 @@
-"use client"
+'use client'
 
 import {
   type OrganizationAuthClient,
   useAuth,
   useAuthPlugin,
-  useLeaveOrganization
-} from "@better-auth-ui/react"
-import type { Organization } from "better-auth/client"
-import { LogOut } from "lucide-react"
-import { toast } from "sonner"
+  useLeaveOrganization,
+} from '@better-auth-ui/react'
+import type { Organization } from 'better-auth/client'
+import { LogOut } from 'lucide-react'
+import { toast } from 'sonner'
 
 import {
   AlertDialog,
@@ -18,13 +18,13 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogMedia,
-  AlertDialogTitle
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Spinner } from "@/components/ui/spinner"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
-import { OrganizationView } from "./organization-view"
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Spinner } from '@/components/ui/spinner'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
+import { OrganizationView } from './organization-view'
 
 export type LeaveOrganizationDialogProps = {
   open: boolean
@@ -35,12 +35,12 @@ export type LeaveOrganizationDialogProps = {
 export function LeaveOrganizationDialog({
   open,
   onOpenChange,
-  organization
+  organization,
 }: LeaveOrganizationDialogProps) {
   const { authClient, basePaths, localization, navigate } = useAuth()
   const {
     localization: organizationLocalization,
-    viewPaths: organizationPluginViewPaths
+    viewPaths: organizationPluginViewPaths,
   } = useAuthPlugin(organizationPlugin)
 
   const { mutate: leaveOrganization, isPending } = useLeaveOrganization(
@@ -52,10 +52,10 @@ export function LeaveOrganizationDialog({
 
         navigate({
           to: `${basePaths.settings}/${organizationPluginViewPaths.settings.organizations}`,
-          replace: true
+          replace: true,
         })
-      }
-    }
+      },
+    },
   )
 
   return (

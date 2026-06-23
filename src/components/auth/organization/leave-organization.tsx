@@ -2,13 +2,13 @@ import {
   type OrganizationAuthClient,
   useActiveOrganization,
   useAuth,
-  useAuthPlugin
-} from "@better-auth-ui/react"
-import { useState } from "react"
+  useAuthPlugin,
+} from '@better-auth-ui/react'
+import { useState } from 'react'
 
-import { Button } from "@/components/ui/button"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
-import { LeaveOrganizationDialog } from "./leave-organization-dialog"
+import { Button } from '@/components/ui/button'
+import { organizationPlugin } from '@/lib/auth/organization-plugin'
+import { LeaveOrganizationDialog } from './leave-organization-dialog'
 
 /**
  * Danger-zone row to leave the active organization.
@@ -19,7 +19,7 @@ export function LeaveOrganization() {
     useAuthPlugin(organizationPlugin)
 
   const { data: activeOrganization } = useActiveOrganization(
-    authClient as OrganizationAuthClient
+    authClient as OrganizationAuthClient,
   )
 
   const [confirmOpen, setConfirmOpen] = useState(false)

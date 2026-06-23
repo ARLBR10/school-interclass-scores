@@ -1,12 +1,12 @@
-import { useAuth, useAuthPlugin, useSession } from "@better-auth-ui/react"
-import { ArrowLeftRight } from "lucide-react"
+import { useAuth, useAuthPlugin, useSession } from '@better-auth-ui/react'
+import { ArrowLeftRight } from 'lucide-react'
 
 import {
   DropdownMenuSub,
-  DropdownMenuSubTrigger
-} from "@/components/ui/dropdown-menu"
-import { multiSessionPlugin } from "@/lib/auth/multi-session-plugin"
-import { SwitchAccountSubmenuContent } from "./switch-account-submenu-content"
+  DropdownMenuSubTrigger,
+} from '@/components/ui/dropdown-menu'
+import { multiSessionPlugin } from '@/lib/auth/multi-session-plugin'
+import { SwitchAccountSubmenuContent } from './switch-account-submenu-content'
 
 export type SwitchAccountSubmenuProps = {
   className?: string
