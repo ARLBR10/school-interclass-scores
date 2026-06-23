@@ -12,6 +12,7 @@
     "vite:preview": "vite preview",
     "convex:dev": "convex dev",
     "tanstack:generate-routes": "tsr generate",
+    "betterauth:gen": "cd convex/betterAuth && bunx auth generate",
     "test": "vitest run",
     "lint": "oxlint",
     "format": "oxfmt && oxlint --fix",
