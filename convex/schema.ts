@@ -40,10 +40,11 @@ export default defineSchema({
         }),
       ),
     ),
-  }),
+  }).index('by_status', ['status']),
   teams: defineTable({
     name: v.string(),
     sport: v.string(), // Create a LIST at the page
+    color: v.optional(v.string()),
     type: v.union(v.literal('Feminine'), v.literal('Masculine')),
     players: v.array(v.id('players')),
   }),

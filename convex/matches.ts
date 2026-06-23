@@ -17,35 +17,81 @@ export const getAll = query({
   },
 })
 
+// Returns all matches with their team data resolved
+export const getAllWithTeams = query({
+  args: {},
+  handler: async (ctx) => {
+    const matches = await ctx.db.query('matches').collect()
+
+    const result = await Promise.all(
+      matches.map(async (match) => {
+        const teams = await Promise.all(
+          match.teams.map((teamId) => ctx.db.get(teamId)),
+        )
+        return {
+          ...match,
+          teamsData: teams.filter(Boolean),
+        }
+      }),
+    )
+
+    return result
+  },
+})
+
+// Returns a single match with full team and player data resolved
+export const getWithDetails = query({
+  args: {
+    ID: v.id('matches'),
+  },
+  handler: async (ctx, args) => {
+    const match = await ctx.db.get(args.ID)
+    if (!match) return null
+
+    const teams = await Promise.all(
+      match.teams.map(async (teamId) => {
+        const team = await ctx.db.get(teamId)
+        if (!team) return null
+        const players = await Promise.all(
+          team.players.map((playerId) => ctx.db.get(playerId)),
+        )
+        return {
+          ...team,
+          playersData: players.filter(Boolean),
+        }
+      }),
+    )
+
+    return {
+      ...match,
+      teamsData: teams.filter(Boolean),
+    }
+  },
+})
+
 export const nextMatch = query({
   args: {},
   async handler(ctx) {
-    const Matches = await ctx.db
+    // Use index for Scheduled matches
+    const scheduled = await ctx.db
       .query('matches')
-      .filter((q) =>
-        q.or(
-          q.eq(q.field('status'), 'Scheduled'),
-          q.eq(q.field('status'), 'Started'),
-        ),
-      )
+      .withIndex('by_status', (q) => q.eq('status', 'Scheduled'))
       .collect()
 
-    // Filter out matches without a scheduled timestamp on the server side.
-    const MatchesWithSchedule = Matches.filter(
-      (m) => m.scheduledData !== null && m.scheduledData !== undefined,
-    )
+    // Use index for Started matches
+    const started = await ctx.db
+      .query('matches')
+      .withIndex('by_status', (q) => q.eq('status', 'Started'))
+      .collect()
 
-    const sorted = MatchesWithSchedule.toSorted((a, b) => {
-      const ta =
-        typeof a.scheduledData === 'number'
-          ? a.scheduledData
-          : Number(a.scheduledData)
-      const tb =
-        typeof b.scheduledData === 'number'
-          ? b.scheduledData
-          : Number(b.scheduledData)
-      return ta - tb
-    })
+    const matches = [...scheduled, ...started]
+
+    // Filter out matches without a scheduled timestamp
+    const withSchedule = matches.filter((m) => m.scheduledData != null)
+
+    const sorted = withSchedule.toSorted(
+      (a, b) => a.scheduledData! - b.scheduledData!,
+    )
 
     return sorted
   },
