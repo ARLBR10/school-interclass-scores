@@ -15,7 +15,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { Input } from '@/components/ui/input'
-import { requireAdminMember } from '@/lib/admin-auth'
+import { requireAdminMember, useRequireAdminMember } from '@/lib/admin-auth'
 import { ChevronDownIcon } from 'lucide-react'
 import { api } from '../../../convex/_generated/api'
 import type { AuthUser } from '../../../convex/auth'
@@ -395,11 +395,16 @@ function getMemberColumns(
 }
 
 function MembersPage() {
-  const membersData = useQuery(api.members.getAll)
-  const usersData = useQuery(api.auth_admin.getAll)
+  const isAdmin = useRequireAdminMember()
+  const membersData = useQuery(api.members.getAll, isAdmin ? {} : 'skip')
+  const usersData = useQuery(api.auth_admin.getAll, isAdmin ? {} : 'skip')
   const createMember = useMutation(api.members.create)
   const updateMember = useMutation(api.members.update)
   const deleteMember = useMutation(api.members.purge)
+
+  if (!isAdmin) {
+    return null
+  }
 
   const userOptions = getUserOptions(usersData ?? undefined)
   const memberColumns = getMemberColumns(userOptions)

@@ -10,7 +10,7 @@ import {
   createDateColumn,
   parseBooleanValue,
 } from '@/components/admin/DynamicTableFields'
-import { requireAdminMember } from '@/lib/admin-auth'
+import { requireAdminMember, useRequireAdminMember } from '@/lib/admin-auth'
 import { useMutation, useQuery } from 'convex/react'
 import { toast } from 'sonner'
 
@@ -103,10 +103,15 @@ export const Route = createFileRoute('/admin/users')({
 })
 
 function UsersPage() {
-  const usersData = useQuery(api.auth_admin.getAll)
+  const isAdmin = useRequireAdminMember()
+  const usersData = useQuery(api.auth_admin.getAll, isAdmin ? {} : 'skip')
   const createUser = useMutation(api.auth_admin.create)
   const editUser = useMutation(api.auth_admin.edit)
   const deleteUser = useMutation(api.auth_admin.purge)
+
+  if (!isAdmin) {
+    return null
+  }
 
   return (
     <DynamicTable<AuthUserWithPass>
