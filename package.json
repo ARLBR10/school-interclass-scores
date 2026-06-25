@@ -16,7 +16,9 @@
     "test": "vitest run",
     "lint": "oxlint",
     "format": "oxfmt && oxlint --fix",
-    "check": "oxfmt --check && oxlint"
+    "check": "oxfmt --check && oxlint",
+    "cf-deploy": "wrangler deploy",
+    "cf-build": "convex deploy --check-build-environment disable --cmd \"convex codegen && bun run vite:build\""
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
