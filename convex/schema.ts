@@ -1,7 +1,11 @@
-import { defineSchema, defineTable } from "convex/server";
-import { v } from "convex/values";
+import { defineSchema, defineTable } from 'convex/server'
+import { v } from 'convex/values'
 
-const additionalRole = v.union(v.literal("admin"), v.literal("press"));
+const additionalRole = v.union(
+  v.literal('admin'),
+  v.literal('press'),
+  v.literal('judge'),
+)
 
 export default defineSchema({
   members: defineTable({
@@ -26,55 +30,55 @@ export default defineSchema({
       }),
     ),
   })
-    .index("by_userId", ["userId"])
-    .index("by_tuitionId", ["tuitionId"]),
+    .index('by_userId', ['userId'])
+    .index('by_tuitionId', ['tuitionId']),
   matches: defineTable({
-    teams: v.array(v.id("teams")),
+    teams: v.array(v.id('teams')),
     scheduledData: v.optional(v.number()), // UNIX Timestamp
     status: v.union(
-      v.literal("Scheduled"),
-      v.literal("Started"),
+      v.literal('Scheduled'),
+      v.literal('Started'),
       //v.literal("Delayed"), // Have to do through scheduleData
-      v.literal("Canceled"),
-      v.literal("Finished"),
+      v.literal('Canceled'),
+      v.literal('Finished'),
     ),
     events: v.array(
       v.union(
         v.object({
-          type: v.union(v.literal("AddScore"), v.literal("RemScore")),
+          type: v.union(v.literal('AddScore'), v.literal('RemScore')),
           time: v.number(), // UNIX Timestamp
-          team: v.id("teams"),
+          team: v.id('teams'),
           score: v.number(),
-          member: v.optional(v.id("members")),
+          member: v.optional(v.id('members')),
           player: v.optional(v.string()),
         }),
         v.object({
-          type: v.literal("KickedPlayer"),
+          type: v.literal('KickedPlayer'),
           time: v.number(), // UNIX Timestamp
-          team: v.id("teams"),
-          member: v.optional(v.id("members")),
+          team: v.id('teams'),
+          member: v.optional(v.id('members')),
           player: v.optional(v.string()),
         }),
         v.object({
-          type: v.union(v.literal("StartedMatch"), v.literal("FinishedMatch")),
+          type: v.union(v.literal('StartedMatch'), v.literal('FinishedMatch')),
           time: v.number(), // UNIX Timestamp
         }),
         v.object({
-          type: v.literal("SwitchPlayers"),
+          type: v.literal('SwitchPlayers'),
           time: v.number(), // UNIX Timestamp
-          team: v.id("teams"),
-          members: v.optional(v.array(v.id("members"))),
+          team: v.id('teams'),
+          members: v.optional(v.array(v.id('members'))),
           players: v.optional(v.array(v.string())),
         }),
       ),
     ),
-  }).index("by_status", ["status"]),
+  }).index('by_status', ['status']),
   teams: defineTable({
     name: v.string(),
     sport: v.string(), // Create a LIST at the page
     color: v.optional(v.string()),
-    type: v.union(v.literal("Feminine"), v.literal("Masculine")),
-    members: v.optional(v.array(v.id("members"))),
+    type: v.union(v.literal('Feminine'), v.literal('Masculine')),
+    members: v.optional(v.array(v.id('members'))),
     players: v.optional(v.array(v.string())),
   }),
-});
+})

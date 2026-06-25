@@ -19,7 +19,11 @@ type ClassAssignmentResult = {
   duplicateMembers: string[]
 }
 
-const mutableAdditionalRole = v.union(v.literal('press'), v.null())
+const mutableAdditionalRole = v.union(
+  v.literal('press'),
+  v.literal('judge'),
+  v.null(),
+)
 const playerArgs = v.object({
   alias: v.optional(v.array(v.string())),
   height: v.optional(v.string()),
@@ -38,7 +42,7 @@ const memberCreateArgs = {
   userId: v.optional(v.string()),
   name: v.string(),
   tuitionId: v.optional(v.string()),
-  additionalRole: v.optional(v.literal('press')),
+  additionalRole: v.optional(v.union(v.literal('press'), v.literal('judge'))),
   schoolClass: v.optional(v.string()),
   player: v.optional(playerArgs),
 }

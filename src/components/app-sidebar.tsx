@@ -20,6 +20,7 @@ import {
   TrophyIcon,
   UserCogIcon,
   UsersIcon,
+  ClipboardPenLineIcon,
 } from 'lucide-react'
 
 const data = {
@@ -38,6 +39,11 @@ const data = {
   ],
   navAdmin: [
     {
+      title: 'Partidas',
+      url: '/admin/matches',
+      icon: <ClipboardPenLineIcon />,
+    },
+    {
       title: 'Membros',
       url: '/admin/members',
       icon: <UsersIcon />,
@@ -46,6 +52,13 @@ const data = {
       title: 'Usuários',
       url: '/admin/users',
       icon: <UserCogIcon />,
+    },
+  ],
+  navJudge: [
+    {
+      title: 'Partidas',
+      url: '/judge/matches',
+      icon: <ClipboardPenLineIcon />,
     },
   ],
 }
@@ -70,6 +83,7 @@ function AppBrand() {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const userInfo = useQuery(api.auth.getCurrentUser)
   const isAdmin = userInfo?.member?.additionalRole === 'admin'
+  const canJudge = isAdmin || userInfo?.member?.additionalRole === 'judge'
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -79,6 +93,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
         {isAdmin ? <NavMain label="Admin" items={data.navAdmin} /> : null}
+        {canJudge ? <NavMain label="Juiz" items={data.navJudge} /> : null}
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

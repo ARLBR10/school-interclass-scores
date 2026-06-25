@@ -27,6 +27,7 @@ const noUserOptionValue = '__no_user__'
 const additionalRoleOptions: AdminTableSelectOption[] = [
   { value: noRoleOptionValue, label: 'Sem permissão extra' },
   { value: 'press', label: 'Imprensa' },
+  { value: 'judge', label: 'Juiz' },
   { value: 'admin', label: 'Administrador', disabled: true },
 ]
 
@@ -38,7 +39,7 @@ type MemberRow = {
   tuitionId?: string
   schoolClass?: string
   userId?: string
-  additionalRole?: 'admin' | 'press'
+  additionalRole?: 'admin' | 'press' | 'judge'
   playerSection?: string
   playerAlias?: string
   playerHeight?: string
@@ -99,7 +100,7 @@ function normalizeOptionalRole(value: string | undefined) {
     return undefined
   }
 
-  return value === 'press' ? value : undefined
+  return value === 'press' || value === 'judge' ? value : undefined
 }
 
 function normalizeNullableRole(value: string | undefined) {

@@ -8,6 +8,7 @@ import { CalendarIcon, CircleCheck, CircleX } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -129,7 +130,48 @@ export function renderDateValue(value: DateValue) {
     return "-";
   }
 
-  return format(date, "dd/MM/yyyy H:m", { locale: ptBR });
+  return format(date, "dd/MM/yyyy HH:mm", { locale: ptBR });
+}
+
+function getTimeInputValue(date: Date | undefined) {
+  if (!date) {
+    return "";
+  }
+
+  return format(date, "HH:mm");
+}
+
+function updateDatePart(
+  currentDate: Date | undefined,
+  nextDate: Date | undefined,
+) {
+  if (!nextDate) {
+    return "";
+  }
+
+  const mergedDate = new Date(nextDate);
+  mergedDate.setHours(currentDate?.getHours() ?? 0);
+  mergedDate.setMinutes(currentDate?.getMinutes() ?? 0);
+  mergedDate.setSeconds(0);
+  mergedDate.setMilliseconds(0);
+
+  return String(mergedDate.getTime());
+}
+
+function updateTimePart(currentDate: Date | undefined, nextTime: string) {
+  const [hours, minutes] = nextTime.split(":").map(Number);
+
+  if (!Number.isFinite(hours) || !Number.isFinite(minutes)) {
+    return currentDate ? String(currentDate.getTime()) : "";
+  }
+
+  const nextDate = currentDate ? new Date(currentDate) : new Date();
+  nextDate.setHours(hours);
+  nextDate.setMinutes(minutes);
+  nextDate.setSeconds(0);
+  nextDate.setMilliseconds(0);
+
+  return String(nextDate.getTime());
 }
 
 /**
@@ -155,24 +197,40 @@ export function DatePickerInput({
         >
           <CalendarIcon data-icon="inline-start" />
           {selectedDate ? (
-            format(selectedDate, "PPP", { locale: ptBR })
+            format(selectedDate, "PPP HH:mm", { locale: ptBR })
           ) : (
-            <span>Selecione uma data</span>
+            <span>Selecione data e hora</span>
           )}
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-auto p-0" align="start">
+      <PopoverContent className="w-auto space-y-3 p-3" align="start">
         <Calendar
           mode="single"
           captionLayout="dropdown"
           locale={ptBR}
           selected={selectedDate}
           onSelect={(date) => {
-            onChange(date ? String(date.getTime()) : "");
-            setOpen(false);
+            onChange(updateDatePart(selectedDate, date));
           }}
         />
+        <div className="flex items-center gap-2 border-t pt-3">
+          <Input
+            type="time"
+            value={getTimeInputValue(selectedDate)}
+            aria-label="Hora"
+            onChange={(event) => {
+              onChange(updateTimePart(selectedDate, event.target.value));
+            }}
+          />
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => setOpen(false)}
+          >
+            Fechar
+          </Button>
+        </div>
       </PopoverContent>
     </Popover>
   );
