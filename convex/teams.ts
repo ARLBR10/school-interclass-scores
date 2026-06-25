@@ -15,11 +15,11 @@ export const get = query({
   },
 })
 
-export const playerTeams = query({
-  args: { ID: v.id('players') },
+export const memberTeams = query({
+  args: { ID: v.id('members') },
   handler: async (ctx, args) => {
     const teams = await ctx.db.query('teams').collect()
 
-    return teams.filter((t) => t.players.includes(args.ID))
+    return teams.filter((t) => t.members?.includes(args.ID))
   },
 })

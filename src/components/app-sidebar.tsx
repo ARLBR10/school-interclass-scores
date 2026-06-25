@@ -12,7 +12,15 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import { HomeIcon, SwordsIcon, TrophyIcon } from 'lucide-react'
+import { api } from '../../convex/_generated/api'
+import { useQuery } from 'convex/react'
+import {
+  HomeIcon,
+  SwordsIcon,
+  TrophyIcon,
+  UserCogIcon,
+  UsersIcon,
+} from 'lucide-react'
 
 const data = {
   navMain: [
@@ -26,6 +34,18 @@ const data = {
       url: '/matches',
       icon: <SwordsIcon />,
       isActive: true,
+    },
+  ],
+  navAdmin: [
+    {
+      title: 'Membros',
+      url: '/admin/members',
+      icon: <UsersIcon />,
+    },
+    {
+      title: 'Usuários',
+      url: '/admin/users',
+      icon: <UserCogIcon />,
     },
   ],
 }
@@ -48,6 +68,9 @@ function AppBrand() {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const userInfo = useQuery(api.auth.getCurrentUser)
+  const isAdmin = userInfo?.member?.additionalRole === 'admin'
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -55,6 +78,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
+        {isAdmin ? <NavMain label="Admin" items={data.navAdmin} /> : null}
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

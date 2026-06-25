@@ -21,11 +21,13 @@ import {
 
 import type { Id } from '../../convex/_generated/dataModel'
 
-type PlayerData = {
-  _id: Id<'players'>
+type MemberData = {
+  _id: Id<'members'>
   name: string
-  class: string
-  alias: string[]
+  player?: {
+    schoolClass?: string
+    alias?: string[]
+  }
 }
 
 type TeamData = {
@@ -34,7 +36,7 @@ type TeamData = {
   sport: string
   color?: string
   type: 'Feminine' | 'Masculine'
-  playersData: PlayerData[]
+  membersData: MemberData[]
 }
 
 type MatchEvent =
@@ -43,13 +45,13 @@ type MatchEvent =
       time: number
       team: Id<'teams'>
       score: number
-      player?: Id<'players'>
+      member?: Id<'members'>
     }
   | {
       type: 'KickedPlayer'
       time: number
       team: Id<'teams'>
-      player: Id<'players'>
+      member?: Id<'members'>
     }
   | {
       type: 'StartedMatch' | 'FinishedMatch'
@@ -59,18 +61,18 @@ type MatchEvent =
       type: 'SwitchPlayers'
       time: number
       team: Id<'teams'>
-      players: Id<'players'>[]
+      members?: Id<'members'>[]
     }
 
-function PlayerLink({ id, teams }: { id: Id<'players'>; teams: TeamData[] }) {
-  const player = teams.flatMap((t) => t.playersData).find((p) => p._id === id)
+function MemberLink({ id, teams }: { id: Id<'members'>; teams: TeamData[] }) {
+  const member = teams.flatMap((t) => t.membersData).find((p) => p._id === id)
 
   return (
     <a
-      href={`/players/${id}`}
+      href={`/members/${id}`}
       className="font-medium text-foreground underline-offset-4 hover:underline"
     >
-      {player?.name ?? 'Jogador'}
+      {member?.name ?? 'Membro'}
     </a>
   )
 }
@@ -156,10 +158,10 @@ function EventLabel({
       return (
         <span>
           +{event.score} para <TeamName teamId={event.team} teams={teams} />
-          {event.player && (
+          {event.member && (
             <>
               <PlayerSeparator />
-              <PlayerLink id={event.player} teams={teams} />
+              <MemberLink id={event.member} teams={teams} />
             </>
           )}
         </span>
@@ -168,10 +170,10 @@ function EventLabel({
       return (
         <span>
           -{event.score} para <TeamName teamId={event.team} teams={teams} />
-          {event.player && (
+          {event.member && (
             <>
               <PlayerSeparator />
-              <PlayerLink id={event.player} teams={teams} />
+              <MemberLink id={event.member} teams={teams} />
             </>
           )}
         </span>
@@ -179,15 +181,20 @@ function EventLabel({
     case 'SwitchPlayers':
       return (
         <span>
-          <PlayerLink id={event.players[0]} teams={teams} />
+          {event.members?.[0] && (
+            <MemberLink id={event.members[0]} teams={teams} />
+          )}
           <ArrowRightIcon className="mx-1.5 inline-block size-3.5 align-[-0.125em] text-muted-foreground" />
-          <PlayerLink id={event.players[1]} teams={teams} />
+          {event.members?.[1] && (
+            <MemberLink id={event.members[1]} teams={teams} />
+          )}
         </span>
       )
     case 'KickedPlayer':
       return (
         <span>
-          Jogador expulso: <PlayerLink id={event.player} teams={teams} />
+          Membro expulso:{' '}
+          {event.member && <MemberLink id={event.member} teams={teams} />}
         </span>
       )
     default:

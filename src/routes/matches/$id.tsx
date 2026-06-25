@@ -284,30 +284,32 @@ function MatchDetail() {
                   {team.name}
                 </CardTitle>
                 <CardDescription>
-                  {team.playersData.length}{' '}
-                  {team.playersData.length === 1 ? 'jogador' : 'jogadores'}
+                  {team.membersData.length}{' '}
+                  {team.membersData.length === 1 ? 'membro' : 'membros'}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {team.playersData.length === 0 ? (
+                {team.membersData.length === 0 ? (
                   <p className="text-sm text-muted-foreground">
-                    Nenhum jogador registrado.
+                    Nenhum membro registrado.
                   </p>
                 ) : (
                   <ul className="space-y-1.5">
-                    {team.playersData.map((player) => {
-                      if (!player) return null
+                    {team.membersData.map((member) => {
+                      if (!member) return null
                       return (
-                        <li key={player._id}>
+                        <li key={member._id}>
                           <a
-                            href={`/players/${player._id}`}
+                            href={`/members/${member._id}`}
                             className="text-sm text-foreground underline-offset-4 hover:underline"
                           >
-                            {player.name}
+                            {member.name}
                           </a>
-                          <span className="ml-1.5 text-xs text-muted-foreground">
-                            {player.class}
-                          </span>
+                          {member.schoolClass && (
+                            <span className="ml-1.5 text-xs text-muted-foreground">
+                              {member.schoolClass}
+                            </span>
+                          )}
                         </li>
                       )
                     })}

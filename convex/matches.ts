@@ -39,7 +39,7 @@ export const getAllWithTeams = query({
   },
 })
 
-// Returns a single match with full team and player data resolved
+// Returns a single match with full team and member data resolved
 export const getWithDetails = query({
   args: {
     ID: v.id('matches'),
@@ -52,12 +52,12 @@ export const getWithDetails = query({
       match.teams.map(async (teamId) => {
         const team = await ctx.db.get(teamId)
         if (!team) return null
-        const players = await Promise.all(
-          team.players.map((playerId) => ctx.db.get(playerId)),
+        const members = await Promise.all(
+          (team.members ?? []).map((memberId) => ctx.db.get(memberId)),
         )
         return {
           ...team,
-          playersData: players.filter(Boolean),
+          membersData: members.filter(Boolean),
         }
       }),
     )
@@ -130,13 +130,13 @@ export const createOrEdit = mutation({
           time: v.number(), // UNIX Timestamp
           team: v.id('teams'),
           score: v.number(),
-          player: v.optional(v.id('players')),
+          member: v.optional(v.id('members')),
         }),
         v.object({
           type: v.literal('KickedPlayer'),
           time: v.number(), // UNIX Timestamp
           team: v.id('teams'),
-          player: v.id('players'),
+          member: v.id('members'),
         }),
         v.object({
           type: v.union(v.literal('StartedMatch'), v.literal('FinishedMatch')),
@@ -146,7 +146,7 @@ export const createOrEdit = mutation({
           type: v.literal('SwitchPlayers'),
           time: v.number(), // UNIX Timestamp
           team: v.id('teams'),
-          players: v.array(v.id('players')),
+          members: v.array(v.id('members')),
         }),
       ),
     ),
