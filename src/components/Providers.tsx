@@ -1,12 +1,13 @@
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
-import { authClient } from "@/lib/auth-client";
+import { TooltipProvider } from '@/components/ui/tooltip'
+import { ConvexBetterAuthProvider } from '@convex-dev/better-auth/react'
+import { authClient } from '@/lib/auth-client'
+import { useEffect, useRef, useState } from 'react'
 import {
   Link,
   useNavigate,
   //useParams
-} from "@tanstack/react-router";
-import { ThemeProvider, useTheme } from "next-themes";
+} from '@tanstack/react-router'
+import { ThemeProvider, useTheme } from 'next-themes'
 // import { apiKeyPlugin } from "@/lib/auth/api-key-plugin";
 // import { deleteUserPlugin } from "@/lib/auth/delete-user-plugin";
 // import { magicLinkPlugin } from "@/lib/auth/magic-link-plugin";
@@ -14,20 +15,25 @@ import { ThemeProvider, useTheme } from "next-themes";
 // import { organizationPlugin } from "@/lib/auth/organization-plugin";
 // import { passkeyPlugin } from "@/lib/auth/passkey-plugin";
 // import { usernamePlugin } from "@/lib/auth/username-plugin";
-import { themePlugin } from "@/lib/auth/theme-plugin";
-import { AuthProvider } from "./auth/auth-provider";
-import { Toaster } from "./ui/sonner";
+import { themePlugin } from '@/lib/auth/theme-plugin'
+import { AuthProvider } from './auth/auth-provider'
+import { Toaster } from './ui/sonner'
 
-function AuthLink({ href, ...props }: React.ComponentProps<"a">) {
-  return <Link to={href} {...props} />;
+import { PostHogProvider } from '@posthog/react'
+import posthog from 'posthog-js'
+import { AuthSync, PostHogReadyContext } from './Posthog_Auth'
+import type { PostHogAuthSession } from './Posthog_Auth'
+
+function AuthLink({ href, ...props }: React.ComponentProps<'a'>) {
+  return <Link to={href} {...props} />
 }
 
 function ConvexBetterAuthComponent({
   children,
-  context
+  context,
 }: {
-  context: any; // @todo
-  children: React.ReactNode;
+  context: any // @todo
+  children: React.ReactNode
 }) {
   return (
     <ConvexBetterAuthProvider
@@ -37,7 +43,7 @@ function ConvexBetterAuthComponent({
     >
       {children}
     </ConvexBetterAuthProvider>
-  );
+  )
 }
 
 function ThemeProviderComponent({ children }: { children: React.ReactNode }) {
@@ -53,10 +59,14 @@ function ThemeProviderComponent({ children }: { children: React.ReactNode }) {
   )
 }
 
-function BetterAuthUIProviderComponent({ children }: { children: React.ReactNode }) {
-  const navigate = useNavigate();
+function BetterAuthUIProviderComponent({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const navigate = useNavigate()
   //const { slug } = useParams({ strict: false });
-  
+
   return (
     <AuthProvider
       authClient={authClient as any}
@@ -87,27 +97,86 @@ function BetterAuthUIProviderComponent({ children }: { children: React.ReactNode
   )
 }
 
+function PostHogComponent({ children }: { children: React.ReactNode }) {
+  const { data: rawSession, isPending } = authClient.useSession()
+  const session = rawSession as PostHogAuthSession | null | undefined
+  const hasInitialized = useRef(false)
+  const previousUserId = useRef<string | null>(null)
+  const [isReady, setIsReady] = useState(false)
+  const userId = session?.user.id
+  const authSessionId = session?.session.id
+
+  useEffect(() => {
+    if (isPending || hasInitialized.current) {
+      return
+    }
+
+    const posthogKey = import.meta.env.VITE_POSTHOG_KEY
+
+    if (!posthogKey) {
+      return
+    }
+
+    posthog.init(posthogKey, {
+      api_host: import.meta.env.VITE_POSTHOG_HOST,
+      defaults: '2026-01-30',
+    })
+
+    hasInitialized.current = true
+    setIsReady(true)
+  }, [isPending])
+
+  useEffect(() => {
+    if (!hasInitialized.current) {
+      return
+    }
+
+    if (!userId || !authSessionId) {
+      if (previousUserId.current) {
+        posthog.reset()
+        previousUserId.current = null
+      }
+      return
+    }
+
+    posthog.identify(userId)
+    posthog.register({
+      distinctID: userId,
+      sessionID: authSessionId,
+    })
+    previousUserId.current = userId
+  }, [authSessionId, userId])
+
+  return (
+    <PostHogProvider client={posthog}>
+      <PostHogReadyContext value={isReady}>
+        <AuthSync />
+        {children}
+      </PostHogReadyContext>
+    </PostHogProvider>
+  )
+}
 
 export default function Providers({
   context,
   children,
 }: {
-  context: any; // @todo
-  children: React.ReactNode;
+  context: any // @todo
+  children: React.ReactNode
 }) {
   return (
     <ConvexBetterAuthComponent context={context}>
-      <TooltipProvider>
-        <ThemeProviderComponent
-        >
-          <BetterAuthUIProviderComponent
-          >
-            {children}
+      <PostHogComponent>
+        <TooltipProvider>
+          <ThemeProviderComponent>
+            <BetterAuthUIProviderComponent>
+              {children}
 
-            <Toaster />
-          </BetterAuthUIProviderComponent>
-        </ThemeProviderComponent>
-      </TooltipProvider>
+              <Toaster />
+            </BetterAuthUIProviderComponent>
+          </ThemeProviderComponent>
+        </TooltipProvider>
+      </PostHogComponent>
     </ConvexBetterAuthComponent>
-  );
+  )
 }

@@ -27,6 +27,8 @@
     "@convex-dev/better-auth": "^0.12.4",
     "@convex-dev/react-query": "0.1.0",
     "@fontsource-variable/inter": "^5.2.8",
+    "@posthog/convex": "^2.0.29",
+    "@posthog/react": "^1.10.3",
     "@react-email/components": "^1.0.12",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "latest",
