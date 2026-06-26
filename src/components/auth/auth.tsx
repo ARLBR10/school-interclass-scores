@@ -12,6 +12,7 @@ import { VerifyEmail } from './verify-email'
 
 export type AuthProps = {
   className?: string
+  allowCredentials?: boolean
   path?: string
   socialLayout?: SocialLayout
   socialPosition?: 'top' | 'bottom'
@@ -51,6 +52,7 @@ const AUTH_VIEWS: Partial<Record<AuthView, ComponentType<AuthProps>>> = {
  */
 export function Auth({
   className,
+  allowCredentials = true,
   path,
   socialLayout,
   socialPosition,
@@ -74,7 +76,7 @@ export function Auth({
   // where a plugin's `fallbackViews.auth.signIn` (e.g. magic link) takes
   // over as the primary entry point.
   const shouldRedirectToSignIn =
-    !emailAndPassword?.enabled &&
+    (!emailAndPassword?.enabled || !allowCredentials) &&
     authView &&
     PASSWORD_ONLY_VIEWS.includes(authView)
 
@@ -149,6 +151,7 @@ export function Auth({
   return (
     <AuthView
       className={className}
+      allowCredentials={allowCredentials}
       socialLayout={socialLayout}
       socialPosition={socialPosition}
     />

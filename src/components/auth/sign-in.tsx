@@ -21,6 +21,7 @@ import { ProviderButtons, type SocialLayout } from './provider-buttons'
 
 export type SignInProps = {
   className?: string
+  allowCredentials?: boolean
   socialLayout?: SocialLayout
   socialPosition?: 'top' | 'bottom'
 }
@@ -35,6 +36,7 @@ export type SignInProps = {
  */
 export function SignIn({
   className,
+  allowCredentials = true,
   socialLayout,
   socialPosition = 'bottom',
 }: SignInProps) {
@@ -107,7 +109,10 @@ export function SignIn({
   }
 
   const showSeparator =
-    emailAndPassword?.enabled && socialProviders && socialProviders.length > 0
+    allowCredentials &&
+    emailAndPassword?.enabled &&
+    socialProviders &&
+    socialProviders.length > 0
 
   return (
     <Card className={cn('w-full max-w-sm', className)}>
@@ -133,7 +138,7 @@ export function SignIn({
             </>
           )}
 
-          {emailAndPassword?.enabled && (
+          {allowCredentials && emailAndPassword?.enabled && (
             <form onSubmit={handleSubmit}>
               <FieldGroup>
                 <Field data-invalid={!!fieldErrors.email}>
@@ -280,7 +285,9 @@ export function SignIn({
         </div>
 
         <div className="flex flex-col gap-3 items-center w-full mt-4">
-          {emailAndPassword?.enabled && emailAndPassword?.forgotPassword && (
+          {allowCredentials &&
+            emailAndPassword?.enabled &&
+            emailAndPassword?.forgotPassword && (
             <Link
               href={`${basePaths.auth}/${viewPaths.auth.forgotPassword}`}
               className="self-center text-sm underline-offset-4 hover:underline"
@@ -289,7 +296,7 @@ export function SignIn({
             </Link>
           )}
 
-          {emailAndPassword?.enabled && (
+          {allowCredentials && emailAndPassword?.enabled && (
             <FieldDescription className="text-center">
               {localization.auth.needToCreateAnAccount}{' '}
               <Link

@@ -71,7 +71,7 @@ function BetterAuthUIProviderComponent({
     <AuthProvider
       authClient={authClient as any}
       redirectTo="/settings/account"
-      // socialProviders={["github"]}
+      socialProviders={['google']}
       emailAndPassword={{ requireEmailVerification: false }}
       navigate={navigate}
       plugins={[

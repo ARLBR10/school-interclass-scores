@@ -39,8 +39,9 @@ function getAuthRedirectTo(search: Record<string, unknown>) {
 
 function AuthPage() {
   const { path } = Route.useParams()
-  const search = Route.useSearch()
+  const search = Route.useSearch() as Record<string, unknown>
   const { data: session, isPending } = authClient.useSession()
+  const allowCredentials = search.credentials === 'true'
 
   const shouldRedirectAuthenticatedUser =
     path === viewPaths.auth.signIn || path === viewPaths.auth.signUp
@@ -58,7 +59,7 @@ function AuthPage() {
 
   return (
     <div className="flex justify-center my-auto p-4 md:p-6">
-      <Auth path={path} />
+      <Auth path={path} allowCredentials={allowCredentials} />
     </div>
   )
 }
