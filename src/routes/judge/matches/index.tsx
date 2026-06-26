@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useRequireJudgeMember } from '@/lib/admin-auth'
+import { formatSport } from '@/lib/sports'
 import { api } from '../../../../convex/_generated/api'
 
 export const Route = createFileRoute('/judge/matches/')({
@@ -83,7 +84,7 @@ function JudgeMatchesPage() {
                 {suggested.teamsData[1]?.name ?? 'Time B'}
               </p>
               <p className="text-sm text-muted-foreground">
-                {suggested.teamsData[0]?.sport ?? 'Esporte'} -{' '}
+                {formatSport(suggested.teamsData[0]?.sport)} -{' '}
                 {formatDate(suggested.scheduledData)}
               </p>
             </div>
@@ -112,7 +113,7 @@ function JudgeMatchesPage() {
                 <div className="flex items-center justify-between gap-2">
                   <CardTitle className="flex items-center gap-2 text-sm">
                     <SwordsIcon className="size-4 text-muted-foreground" />
-                    {match.teamsData[0]?.sport ?? 'Esporte'}
+                    {formatSport(match.teamsData[0]?.sport)}
                   </CardTitle>
                   <Badge
                     variant={match.status === 'Started' ? 'default' : 'outline'}

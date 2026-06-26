@@ -36,6 +36,11 @@ const data = {
       icon: <SwordsIcon />,
       isActive: true,
     },
+    {
+      title: 'Times',
+      url: '/teams',
+      icon: <UsersIcon />,
+    },
   ],
   navAdmin: [
     {

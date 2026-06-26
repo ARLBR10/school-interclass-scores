@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button'
 import { MatchTimeline } from '@/components/MatchTimeline'
 import { ArrowLeftIcon, CalendarIcon, UsersIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { formatSport } from '@/lib/sports'
 import { Suspense } from 'react'
 
 import type { Id } from '../../../convex/_generated/dataModel'
@@ -200,7 +201,7 @@ function MatchDetail() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground">
-              {team0?.sport ?? 'Esporte'}
+              {formatSport(team0?.sport)}
               {team0?.type && (
                 <span className="ml-1.5 text-xs text-muted-foreground/60">
                   ({team0.type === 'Feminine' ? 'Feminino' : 'Masculino'})

@@ -13,6 +13,7 @@ import {
   createSelectColumn,
 } from '@/components/admin/DynamicTableFields'
 import { requireAdminMember, useRequireAdminMember } from '@/lib/admin-auth'
+import { formatSport } from '@/lib/sports'
 import { api } from '../../../convex/_generated/api'
 import type { Doc, Id } from '../../../convex/_generated/dataModel'
 
@@ -63,7 +64,7 @@ function normalizeTimestamp(value: string | undefined) {
 function getTeamOptions(teams: Doc<'teams'>[] | undefined) {
   return (teams ?? []).map((team) => ({
     value: team._id,
-    label: `${team.name} - ${team.sport} (${team.type === 'Feminine' ? 'Fem.' : 'Masc.'})`,
+    label: `${team.name} - ${formatSport(team.sport)} (${team.type === 'Feminine' ? 'Fem.' : 'Masc.'})`,
   }))
 }
 
@@ -71,7 +72,7 @@ function getMatchRows(matches: MatchWithTeams[] | undefined): MatchRow[] {
   return (matches ?? []).map((match) => ({
     _id: match._id,
     _creationTime: match._creationTime,
-    sport: match.teamsData[0]?.sport,
+    sport: formatSport(match.teamsData[0]?.sport),
     teamA: match.teams[0],
     teamB: match.teams[1],
     scheduledData: match.scheduledData ? match.scheduledData * 1000 : undefined,

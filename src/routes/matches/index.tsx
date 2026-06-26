@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CalendarIcon, SwordsIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { formatSport } from '@/lib/sports'
 import { Suspense } from 'react'
 
 export const Route = createFileRoute('/matches/')({
@@ -145,7 +146,7 @@ function MatchesList() {
               <CardHeader className="pb-0">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {team0?.sport ?? 'Esporte'}
+                    {formatSport(team0?.sport)}
                     {team0?.type && (
                       <span className="ml-1.5 text-xs text-muted-foreground/60">
                         ({team0.type === 'Feminine' ? 'Feminino' : 'Masculino'})

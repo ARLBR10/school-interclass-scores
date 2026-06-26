@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useRequireJudgeMember } from '@/lib/admin-auth'
+import { formatSport } from '@/lib/sports'
 import { api } from '../../../../convex/_generated/api'
 import type { Doc, Id } from '../../../../convex/_generated/dataModel'
 
@@ -215,10 +216,7 @@ function JudgeMatchEditPage() {
             type: 'SwitchPlayers',
             time: now,
             team: selectedTeam as Id<'teams'>,
-            players: [
-              `Saiu: ${playerOut.name}`,
-              `Entrou: ${playerIn.name}`,
-            ],
+            players: [`Saiu: ${playerOut.name}`, `Entrou: ${playerIn.name}`],
             members: [playerOut._id, playerIn._id],
           },
         })
@@ -250,7 +248,7 @@ function JudgeMatchEditPage() {
                 {team0?.name ?? 'Time A'} x {team1?.name ?? 'Time B'}
               </CardTitle>
               <p className="text-sm text-muted-foreground">
-                {team0?.sport ?? 'Esporte'} -{' '}
+                {formatSport(team0?.sport)} -{' '}
                 {match.scheduledData
                   ? new Date(match.scheduledData * 1000).toLocaleString('pt-BR')
                   : 'Sem horário'}
