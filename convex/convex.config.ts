@@ -7,6 +7,8 @@ const app = defineApp({
   env: {
     // Better Auth
     SITE_URL: v.string(),
+    GOOGLE_OAUTH_CLIENT_ID: v.optional(v.string()),
+    GOOGLE_OAUTH_CLIENT_SECRET: v.optional(v.string()),
     // Posthog
     POSTHOG_PROJECT_TOKEN: v.string(),
     POSTHOG_HOST: v.optional(v.string()),

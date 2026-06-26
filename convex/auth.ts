@@ -1,12 +1,12 @@
-import { betterAuth, type BetterAuthOptions } from 'better-auth/minimal'
-import { createClient } from '@convex-dev/better-auth'
-import { convex } from '@convex-dev/better-auth/plugins'
-import authConfig from './auth.config'
-import { components, internal } from './_generated/api'
-import { env, query } from './_generated/server'
-import type { GenericCtx } from '@convex-dev/better-auth'
-import type { DataModel, Doc } from './_generated/dataModel'
-import authSchema from './betterAuth/schema'
+import { betterAuth, type BetterAuthOptions } from "better-auth/minimal";
+import { createClient } from "@convex-dev/better-auth";
+import { convex } from "@convex-dev/better-auth/plugins";
+import authConfig from "./auth.config";
+import { components, internal } from "./_generated/api";
+import { env, query } from "./_generated/server";
+import type { GenericCtx } from "@convex-dev/better-auth";
+import type { DataModel, Doc } from "./_generated/dataModel";
+import authSchema from "./betterAuth/schema";
 
 export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
   return {
@@ -17,14 +17,23 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
       enabled: true,
       requireEmailVerification: false,
     },
+    socialProviders: {
+      google:
+        env?.GOOGLE_OAUTH_CLIENT_ID && env?.GOOGLE_OAUTH_CLIENT_SECRET
+          ? {
+              clientId: env?.GOOGLE_OAUTH_CLIENT_ID,
+              clientSecret: env?.GOOGLE_OAUTH_CLIENT_SECRET,
+            }
+          : undefined,
+    },
     plugins: [
       // The Convex plugin is required for Convex compatibility
       convex({ authConfig }),
     ],
-  } satisfies BetterAuthOptions
-}
+  } satisfies BetterAuthOptions;
+};
 
-const siteUrl = env.SITE_URL
+const siteUrl = env.SITE_URL;
 
 // The component client has methods needed for integrating Convex with Better Auth,
 // as well as helper methods for general use.
@@ -35,11 +44,11 @@ export const authComponent = createClient<DataModel, typeof authSchema>(
       schema: authSchema,
     },
   },
-)
+);
 
 export const createAuth = (ctx: GenericCtx<DataModel>) => {
-  return betterAuth(createAuthOptions(ctx))
-}
+  return betterAuth(createAuthOptions(ctx));
+};
 
 export type AuthUser = Awaited<ReturnType<typeof authComponent.getAuthUser>>;
 
@@ -68,4 +77,3 @@ export const getCurrentUser = query({
     };
   },
 });
-
