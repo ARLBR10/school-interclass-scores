@@ -46,11 +46,33 @@ export const Route = createRootRouteWithContext<{
       {
         title: 'Interclasse AACSA',
       },
+      {
+        name: 'apple-mobile-web-app-title',
+        content: 'Interclasse AACH',
+      },
     ],
     links: [
       {
         rel: 'stylesheet',
         href: appCss,
+      },
+      {
+        rel: 'icon',
+        href: '/favicon.ico',
+        sizes: 'any',
+      },
+      {
+        rel: 'icon',
+        href: '/icon0.svg',
+        type: 'image/svg+xml',
+      },
+      {
+        rel: 'apple-touch-icon',
+        href: '/apple-icon.png',
+      },
+      {
+        rel: 'manifest',
+        href: '/manifest.json',
       },
     ],
   }),

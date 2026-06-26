@@ -2,13 +2,30 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { convexQuery } from '@convex-dev/react-query'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
-import { ShirtIcon, UserIcon, UsersIcon } from 'lucide-react'
+import type { FunctionReturnType } from 'convex/server'
+import { ChevronDownIcon, ShirtIcon, UserIcon, UsersIcon } from 'lucide-react'
 
 import { api } from '../../../convex/_generated/api'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatSport } from '@/lib/sports'
+
+const SIX_MONTHS = 6
+type PublicTeam = FunctionReturnType<
+  typeof api.teams.getPublicAllWithPlayers
+>[number]
+
+function getOlderItemsCutoff() {
+  const cutoff = new Date()
+  cutoff.setMonth(cutoff.getMonth() - SIX_MONTHS)
+  return cutoff.getTime()
+}
 
 export const Route = createFileRoute('/teams/')({
   loader: ({ context }) => {
@@ -67,6 +84,76 @@ function TeamsSkeleton() {
   )
 }
 
+function TeamCard({ team }: { team: PublicTeam }) {
+  const players = getPlayerNames(team)
+
+  return (
+    <Link
+      key={team._id}
+      to="/teams/$id"
+      params={{ id: team._id }}
+      className="group"
+    >
+      <Card className="overflow-hidden transition-colors group-hover:bg-muted/30">
+        <CardHeader className="border-b border-border/70 bg-muted/20">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 space-y-1">
+              <CardTitle className="truncate font-serif text-xl">
+                {team.name}
+              </CardTitle>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary">
+                  <ShirtIcon className="size-3" />
+                  {formatSport(team.sport)}
+                </Badge>
+                <Badge variant="outline">{formatTeamType(team.type)}</Badge>
+              </div>
+            </div>
+            <div className="rounded-xl bg-background px-3 py-2 text-center">
+              <p className="text-lg font-semibold tabular-nums">
+                {players.length}
+              </p>
+              <p className="text-[0.65rem] uppercase tracking-wide text-muted-foreground">
+                jogadores
+              </p>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          {players.length === 0 ? (
+            <p className="p-4 text-sm text-muted-foreground">
+              Nenhum jogador registrado neste time.
+            </p>
+          ) : (
+            <ul className="divide-y divide-border/70">
+              {players.map((player) => (
+                <li
+                  key={`${team._id}-${player.id}`}
+                  className="flex items-center gap-3 px-4 py-3"
+                >
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                    <UserIcon className="size-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-foreground">
+                      {player.name}
+                    </p>
+                    {player.schoolClass ? (
+                      <p className="text-xs text-muted-foreground">
+                        {player.schoolClass}
+                      </p>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+    </Link>
+  )
+}
+
 function TeamsList() {
   const { data: teams } = useSuspenseQuery(
     convexQuery(api.teams.getPublicAllWithPlayers, {}),
@@ -101,79 +188,33 @@ function TeamsList() {
     })
   })
 
-  return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      {sortedTeams.map((team) => {
-        const players = getPlayerNames(team)
+  const cutoff = getOlderItemsCutoff()
+  const recentTeams = sortedTeams.filter((team) => team._creationTime > cutoff)
+  const olderTeams = sortedTeams.filter((team) => team._creationTime <= cutoff)
 
-        return (
-          <Link
-            key={team._id}
-            to="/teams/$id"
-            params={{ id: team._id }}
-            className="group"
-          >
-            <Card className="overflow-hidden transition-colors group-hover:bg-muted/30">
-              <CardHeader className="border-b border-border/70 bg-muted/20">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 space-y-1">
-                    <CardTitle className="truncate font-serif text-xl">
-                      {team.name}
-                    </CardTitle>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant="secondary">
-                        <ShirtIcon className="size-3" />
-                        {formatSport(team.sport)}
-                      </Badge>
-                      <Badge variant="outline">
-                        {formatTeamType(team.type)}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="rounded-xl bg-background px-3 py-2 text-center">
-                    <p className="text-lg font-semibold tabular-nums">
-                      {players.length}
-                    </p>
-                    <p className="text-[0.65rem] uppercase tracking-wide text-muted-foreground">
-                      jogadores
-                    </p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-0">
-                {players.length === 0 ? (
-                  <p className="p-4 text-sm text-muted-foreground">
-                    Nenhum jogador registrado neste time.
-                  </p>
-                ) : (
-                  <ul className="divide-y divide-border/70">
-                    {players.map((player) => (
-                      <li
-                        key={`${team._id}-${player.id}`}
-                        className="flex items-center gap-3 px-4 py-3"
-                      >
-                        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                          <UserIcon className="size-4" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-medium text-foreground">
-                            {player.name}
-                          </p>
-                          {player.schoolClass ? (
-                            <p className="text-xs text-muted-foreground">
-                              {player.schoolClass}
-                            </p>
-                          ) : null}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </CardContent>
-            </Card>
-          </Link>
-        )
-      })}
+  return (
+    <div className="space-y-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {recentTeams.map((team) => (
+          <TeamCard key={team._id} team={team} />
+        ))}
+      </div>
+
+      {olderTeams.length > 0 && (
+        <Collapsible className="group/collapsible rounded-xl border border-border/70 bg-card/40">
+          <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-medium transition-colors hover:bg-muted/30">
+            <span>Times antigos ({olderTeams.length})</span>
+            <ChevronDownIcon className="size-4 text-muted-foreground transition-transform group-data-[state=open]/collapsible:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="border-t border-border/70 p-3">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {olderTeams.map((team) => (
+                <TeamCard key={team._id} team={team} />
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      )}
     </div>
   )
 }

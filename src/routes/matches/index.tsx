@@ -1,14 +1,31 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { convexQuery } from '@convex-dev/react-query'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import type { FunctionReturnType } from 'convex/server'
 import { api } from '../../../convex/_generated/api'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import { Skeleton } from '@/components/ui/skeleton'
-import { CalendarIcon, SwordsIcon } from 'lucide-react'
+import { CalendarIcon, ChevronDownIcon, SwordsIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatSport } from '@/lib/sports'
 import { Suspense } from 'react'
+
+const SIX_MONTHS = 6
+type PublicMatch = FunctionReturnType<
+  typeof api.matches.getAllWithTeams
+>[number]
+
+function getOlderItemsCutoff() {
+  const cutoff = new Date()
+  cutoff.setMonth(cutoff.getMonth() - SIX_MONTHS)
+  return cutoff.getTime()
+}
 
 export const Route = createFileRoute('/matches/')({
   loader: ({ context }) => {
@@ -89,6 +106,105 @@ function computeScore(
   return Math.max(0, score)
 }
 
+function getMatchTime(match: {
+  scheduledData?: number
+  _creationTime: number
+}) {
+  return match.scheduledData ? match.scheduledData * 1000 : match._creationTime
+}
+
+function MatchCard({ match }: { match: PublicMatch }) {
+  const team0 = match.teamsData[0]
+  const team1 = match.teamsData[1]
+  const score0 = computeScore(match, match.teams[0])
+  const score1 = computeScore(match, match.teams[1])
+  const status = statusConfig[match.status]
+
+  return (
+    <Link
+      key={match._id}
+      to="/matches/$id"
+      params={{ id: match._id }}
+      className="group"
+    >
+      <Card className="transition-colors group-hover:bg-muted/30">
+        <CardHeader className="pb-0">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              {formatSport(team0?.sport)}
+              {team0?.type && (
+                <span className="ml-1.5 text-xs text-muted-foreground/60">
+                  ({team0.type === 'Feminine' ? 'Feminino' : 'Masculino'})
+                </span>
+              )}
+            </CardTitle>
+            <Badge variant={status.variant} className={status.className}>
+              {status.label}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {/* Scoreboard */}
+          <div className="flex items-center justify-between gap-2 pt-1">
+            <div className="flex-1 text-right">
+              <p className="truncate text-sm font-medium text-foreground">
+                {team0?.name ?? 'Time A'}
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 tabular-nums">
+              <span
+                className={cn(
+                  'min-w-[1.5rem] rounded-md bg-muted px-1.5 py-0.5 text-center text-lg font-semibold',
+                  match.status !== 'Scheduled' &&
+                    score0 > score1 &&
+                    'text-green-400',
+                )}
+              >
+                {match.status === 'Scheduled' ? '-' : score0}
+              </span>
+              <span className="text-xs text-muted-foreground">x</span>
+              <span
+                className={cn(
+                  'min-w-[1.5rem] rounded-md bg-muted px-1.5 py-0.5 text-center text-lg font-semibold',
+                  match.status !== 'Scheduled' &&
+                    score1 > score0 &&
+                    'text-green-400',
+                )}
+              >
+                {match.status === 'Scheduled' ? '-' : score1}
+              </span>
+            </div>
+            <div className="flex-1">
+              <p className="truncate text-sm font-medium text-foreground">
+                {team1?.name ?? 'Time B'}
+              </p>
+            </div>
+          </div>
+
+          {/* Date */}
+          {match.scheduledData && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <CalendarIcon className="size-3" />
+              <span>
+                {new Date(match.scheduledData * 1000).toLocaleDateString(
+                  'pt-BR',
+                  {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  },
+                )}
+              </span>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </Link>
+  )
+}
+
 function MatchesList() {
   const { data: matches } = useSuspenseQuery(
     convexQuery(api.matches.getAllWithTeams, {}),
@@ -126,99 +242,33 @@ function MatchesList() {
     return (b.scheduledData ?? 0) - (a.scheduledData ?? 0)
   })
 
+  const cutoff = getOlderItemsCutoff()
+  const recentMatches = sorted.filter((match) => getMatchTime(match) > cutoff)
+  const olderMatches = sorted.filter((match) => getMatchTime(match) <= cutoff)
+
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {sorted.map((match) => {
-        const team0 = match.teamsData[0]
-        const team1 = match.teamsData[1]
-        const score0 = computeScore(match as any, match.teams[0])
-        const score1 = computeScore(match as any, match.teams[1])
-        const status = statusConfig[match.status]
+    <div className="space-y-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {recentMatches.map((match) => (
+          <MatchCard key={match._id} match={match} />
+        ))}
+      </div>
 
-        return (
-          <Link
-            key={match._id}
-            to="/matches/$id"
-            params={{ id: match._id }}
-            className="group"
-          >
-            <Card className="transition-colors group-hover:bg-muted/30">
-              <CardHeader className="pb-0">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {formatSport(team0?.sport)}
-                    {team0?.type && (
-                      <span className="ml-1.5 text-xs text-muted-foreground/60">
-                        ({team0.type === 'Feminine' ? 'Feminino' : 'Masculino'})
-                      </span>
-                    )}
-                  </CardTitle>
-                  <Badge variant={status.variant} className={status.className}>
-                    {status.label}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {/* Scoreboard */}
-                <div className="flex items-center justify-between gap-2 pt-1">
-                  <div className="flex-1 text-right">
-                    <p className="truncate text-sm font-medium text-foreground">
-                      {team0?.name ?? 'Time A'}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1.5 tabular-nums">
-                    <span
-                      className={cn(
-                        'min-w-[1.5rem] rounded-md bg-muted px-1.5 py-0.5 text-center text-lg font-semibold',
-                        match.status !== 'Scheduled' &&
-                          score0 > score1 &&
-                          'text-green-400',
-                      )}
-                    >
-                      {match.status === 'Scheduled' ? '-' : score0}
-                    </span>
-                    <span className="text-xs text-muted-foreground">x</span>
-                    <span
-                      className={cn(
-                        'min-w-[1.5rem] rounded-md bg-muted px-1.5 py-0.5 text-center text-lg font-semibold',
-                        match.status !== 'Scheduled' &&
-                          score1 > score0 &&
-                          'text-green-400',
-                      )}
-                    >
-                      {match.status === 'Scheduled' ? '-' : score1}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="truncate text-sm font-medium text-foreground">
-                      {team1?.name ?? 'Time B'}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Date */}
-                {match.scheduledData && (
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <CalendarIcon className="size-3" />
-                    <span>
-                      {new Date(match.scheduledData * 1000).toLocaleDateString(
-                        'pt-BR',
-                        {
-                          day: '2-digit',
-                          month: 'short',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        },
-                      )}
-                    </span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </Link>
-        )
-      })}
+      {olderMatches.length > 0 && (
+        <Collapsible className="group/collapsible rounded-xl border border-border/70 bg-card/40">
+          <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-medium transition-colors hover:bg-muted/30">
+            <span>Partidas antigas ({olderMatches.length})</span>
+            <ChevronDownIcon className="size-4 text-muted-foreground transition-transform group-data-[state=open]/collapsible:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="border-t border-border/70 p-3">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {olderMatches.map((match) => (
+                <MatchCard key={match._id} match={match} />
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      )}
     </div>
   )
 }
