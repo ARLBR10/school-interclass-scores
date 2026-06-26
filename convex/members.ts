@@ -12,6 +12,11 @@ import {
 type MemberPatch = Partial<Omit<Doc<'members'>, '_id' | '_creationTime'>>
 type MemberCreateInput = Omit<Doc<'members'>, '_id' | '_creationTime'>
 
+type PublicPlayer = Pick<Doc<'members'>, '_id' | '_creationTime' | 'name'> & {
+  schoolClass?: string
+  player: NonNullable<Doc<'members'>['player']>
+}
+
 type ClassAssignmentResult = {
   updated: number
   missing: string[]
@@ -110,6 +115,62 @@ export const getAll = query({
     }
 
     return await ctx.db.query('members').take(999)
+  },
+})
+
+export const getPublicPlayers = query({
+  args: {},
+  async handler(ctx): Promise<PublicPlayer[]> {
+    const members = await ctx.db.query('members').take(999)
+
+    return members
+      .filter((member): member is Doc<'members'> & PublicPlayer =>
+        Boolean(member.player),
+      )
+      .map((member) => ({
+        _id: member._id,
+        _creationTime: member._creationTime,
+        name: member.name,
+        ...(member.schoolClass !== undefined
+          ? { schoolClass: member.schoolClass }
+          : {}),
+        player: member.player,
+      }))
+  },
+})
+
+export const getPublicPlayer = query({
+  args: {
+    id: v.id('members'),
+  },
+  async handler(ctx, args) {
+    const member = await ctx.db.get(args.id)
+
+    if (!member?.player) {
+      return null
+    }
+
+    const teams = await ctx.db.query('teams').collect()
+    const teamsData = teams
+      .filter((team) => team.members?.includes(member._id))
+      .map((team) => ({
+        _id: team._id,
+        name: team.name,
+        sport: team.sport,
+        type: team.type,
+        color: team.color,
+      }))
+
+    return {
+      _id: member._id,
+      _creationTime: member._creationTime,
+      name: member.name,
+      ...(member.schoolClass !== undefined
+        ? { schoolClass: member.schoolClass }
+        : {}),
+      player: member.player,
+      teamsData,
+    }
   },
 })
 

@@ -41,6 +41,11 @@ const data = {
       url: '/teams',
       icon: <UsersIcon />,
     },
+    {
+      title: 'Jogadores',
+      url: '/players',
+      icon: <UserCogIcon />,
+    },
   ],
   navAdmin: [
     {
