@@ -54,6 +54,11 @@ const data = {
       icon: <ClipboardPenLineIcon />,
     },
     {
+      title: 'Times',
+      url: '/admin/teams',
+      icon: <UsersIcon />,
+    },
+    {
       title: 'Membros',
       url: '/admin/members',
       icon: <UsersIcon />,

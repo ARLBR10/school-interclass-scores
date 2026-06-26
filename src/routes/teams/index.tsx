@@ -13,7 +13,7 @@ import { formatSport } from '@/lib/sports'
 export const Route = createFileRoute('/teams/')({
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(
-      convexQuery(api.teams.getAllWithMembers, {}),
+      convexQuery(api.teams.getPublicAllWithPlayers, {}),
     )
   },
   component: TeamsPage,
@@ -69,7 +69,7 @@ function TeamsSkeleton() {
 
 function TeamsList() {
   const { data: teams } = useSuspenseQuery(
-    convexQuery(api.teams.getAllWithMembers, {}),
+    convexQuery(api.teams.getPublicAllWithPlayers, {}),
   )
 
   if (teams.length === 0) {

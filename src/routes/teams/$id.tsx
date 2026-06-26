@@ -15,7 +15,7 @@ import { formatSport } from '@/lib/sports'
 export const Route = createFileRoute('/teams/$id')({
   loader: ({ context, params }) => {
     context.queryClient.ensureQueryData(
-      convexQuery(api.teams.getWithMembers, {
+      convexQuery(api.teams.getPublicWithPlayers, {
         ID: params.id as Id<'teams'>,
       }),
     )
@@ -49,7 +49,7 @@ function TeamDetailSkeleton() {
 function TeamDetail() {
   const { id } = Route.useParams()
   const { data: team } = useSuspenseQuery(
-    convexQuery(api.teams.getWithMembers, {
+    convexQuery(api.teams.getPublicWithPlayers, {
       ID: id as Id<'teams'>,
     }),
   )
@@ -122,8 +122,9 @@ function TeamDetail() {
             <ul className="divide-y divide-border/70">
               {team.membersData.map((member) => (
                 <li key={member._id}>
-                  <a
-                    href={`/player/${member._id}`}
+                  <Link
+                    to="/players/$id"
+                    params={{ id: member._id }}
                     className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/30"
                   >
                     <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
@@ -139,7 +140,7 @@ function TeamDetail() {
                         </p>
                       ) : null}
                     </div>
-                  </a>
+                  </Link>
                 </li>
               ))}
               {textPlayers.map((player) => (
