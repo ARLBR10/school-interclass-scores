@@ -1,6 +1,7 @@
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { ConvexBetterAuthProvider } from '@convex-dev/better-auth/react'
 import { authClient } from '@/lib/auth-client'
+import { AuthLang_PT_BR } from '@/lib/auth/auth-lang-pt-br'
 import { useEffect, useRef, useState } from 'react'
 import {
   Link,
@@ -73,6 +74,7 @@ function BetterAuthUIProviderComponent({
       redirectTo="/settings/account"
       socialProviders={['google']}
       emailAndPassword={{ requireEmailVerification: false }}
+      localization={AuthLang_PT_BR}
       navigate={navigate}
       plugins={[
         // usernamePlugin({
