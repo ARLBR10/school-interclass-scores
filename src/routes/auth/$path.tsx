@@ -12,6 +12,15 @@ const validAuthPathSegments = new Set([
 ])
 
 export const Route = createFileRoute('/auth/$path')({
+  validateSearch(search): AuthSearch {
+    return {
+      credentials: getAllowCredentials(search),
+      redirectTo:
+        typeof search.redirectTo === 'string' && search.redirectTo.length > 0
+          ? search.redirectTo
+          : undefined,
+    }
+  },
   beforeLoad({ context, params: { path }, search }) {
     if (!validAuthPathSegments.has(path)) {
       throw redirect({ to: '/' })
@@ -31,17 +40,24 @@ export const Route = createFileRoute('/auth/$path')({
   component: AuthPage,
 })
 
-function getAuthRedirectTo(search: Record<string, unknown>) {
-  return typeof search.redirectTo === 'string' && search.redirectTo.length > 0
-    ? search.redirectTo
-    : '/'
+type AuthSearch = {
+  credentials?: boolean
+  redirectTo?: string
+}
+
+function getAuthRedirectTo(search: AuthSearch) {
+  return search.redirectTo ?? '/'
+}
+
+function getAllowCredentials(search: Record<string, unknown>) {
+  return search.credentials === true || search.credentials === 'true'
 }
 
 function AuthPage() {
   const { path } = Route.useParams()
-  const search = Route.useSearch() as Record<string, unknown>
+  const search = Route.useSearch()
   const { data: session, isPending } = authClient.useSession()
-  const allowCredentials = search.credentials === 'true'
+  const allowCredentials = search.credentials === true
 
   const shouldRedirectAuthenticatedUser =
     path === viewPaths.auth.signIn || path === viewPaths.auth.signUp
