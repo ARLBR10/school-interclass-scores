@@ -1,16 +1,19 @@
-import { betterAuth, type BetterAuthOptions } from "better-auth/minimal";
-import { createClient } from "@convex-dev/better-auth";
-import { convex } from "@convex-dev/better-auth/plugins";
-import authConfig from "./auth.config";
-import { components, internal } from "./_generated/api";
-import { env, query } from "./_generated/server";
-import type { GenericCtx } from "@convex-dev/better-auth";
-import type { DataModel, Doc } from "./_generated/dataModel";
-import authSchema from "./betterAuth/schema";
+import { betterAuth, type BetterAuthOptions } from 'better-auth/minimal'
+import { createClient } from '@convex-dev/better-auth'
+import { convex } from '@convex-dev/better-auth/plugins'
+import authConfig from './auth.config'
+import { components, internal } from './_generated/api'
+import { env, query } from './_generated/server'
+import type { GenericCtx } from '@convex-dev/better-auth'
+import type { DataModel, Doc } from './_generated/dataModel'
+import authSchema from './betterAuth/schema'
+import { oauthProvider } from '@better-auth/oauth-provider'
+import { jwt } from 'better-auth/plugins'
 
 export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
   return {
     baseURL: siteUrl,
+    basePath: '/api/auth',
     database: authComponent.adapter(ctx),
     // Configure simple, non-verified email/password to get started
     emailAndPassword: {
@@ -27,13 +30,32 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
           : undefined,
     },
     plugins: [
-      // The Convex plugin is required for Convex compatibility
-      convex({ authConfig }),
+      jwt({
+        disableSettingJwtHeader: true,
+      }),
+      // Keep the Convex plugin after jwt() so its /convex/* endpoints are not
+      // shadowed by the generic JWT plugin endpoint keys.
+      convex({
+        authConfig,
+        options: {
+          basePath: '/api/auth',
+        },
+      }),
+      oauthProvider({
+        loginPage: `${siteUrl}/auth/sign-in`,
+        consentPage: `${siteUrl}/auth/consent`,
+        scopes: ['openid', 'profile', 'email', 'mcp:read', 'mcp:write'],
+        validAudiences: [`${siteUrl}/api/mcp`],
+        allowDynamicClientRegistration: true,
+        allowUnauthenticatedClientRegistration: true,
+        clientRegistrationDefaultScopes: ['openid', 'profile', 'mcp:read'],
+        clientRegistrationAllowedScopes: ['email', 'mcp:write'],
+      }),
     ],
-  } satisfies BetterAuthOptions;
-};
+  } satisfies BetterAuthOptions
+}
 
-const siteUrl = env.SITE_URL;
+const siteUrl = env.SITE_URL
 
 // The component client has methods needed for integrating Convex with Better Auth,
 // as well as helper methods for general use.
@@ -44,36 +66,36 @@ export const authComponent = createClient<DataModel, typeof authSchema>(
       schema: authSchema,
     },
   },
-);
+)
 
 export const createAuth = (ctx: GenericCtx<DataModel>) => {
-  return betterAuth(createAuthOptions(ctx));
-};
+  return betterAuth(createAuthOptions(ctx))
+}
 
-export type AuthUser = Awaited<ReturnType<typeof authComponent.getAuthUser>>;
+export type AuthUser = Awaited<ReturnType<typeof authComponent.getAuthUser>>
 
 type UserInfoType = AuthUser & {
-  member: Doc<"members"> | null;
-};
+  member: Doc<'members'> | null
+}
 
 export const getCurrentUser = query({
   args: {},
   handler: async (ctx): Promise<UserInfoType | null> => {
     const userInfo = await authComponent.getAuthUser(ctx).catch(() => {
-      return null;
-    });
+      return null
+    })
 
     if (!userInfo) {
-      return null;
+      return null
     }
 
     const membershipInfo = await ctx.runQuery(internal.members.getByUserId, {
       userId: userInfo._id,
-    });
+    })
 
     return {
       ...userInfo,
       member: membershipInfo,
-    };
+    }
   },
-});
+})
