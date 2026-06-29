@@ -4,6 +4,7 @@ import { v } from 'convex/values'
 import { api } from './_generated/api'
 import type { Doc } from './_generated/dataModel'
 import type { MutationCtx } from './_generated/server'
+import { captureMutationLog, capturePermissionDenied } from './logging'
 
 type TeamPatch = Partial<Omit<Doc<'teams'>, '_id' | '_creationTime'>>
 type PublicTeamPlayer = Pick<Doc<'members'>, '_id' | 'name'> & {
@@ -32,7 +33,7 @@ function toPublicTeamPlayer(member: Doc<'members'>): PublicTeamPlayer {
 
 async function requireAdmin(ctx: MutationCtx) {
   const userInfo = await ctx.runQuery(api.auth.getCurrentUser)
-  return userInfo?.member?.additionalRole === 'admin'
+  return { userInfo, isAdmin: userInfo?.member?.additionalRole === 'admin' }
 }
 
 export const getAll = query({
@@ -162,15 +163,31 @@ export const create = mutation({
     players: v.optional(v.array(v.string())),
   },
   async handler(ctx, args): Promise<null | boolean> {
-    if (!(await requireAdmin(ctx))) return null
+    const { userInfo, isAdmin } = await requireAdmin(ctx)
+    if (!isAdmin) {
+      await capturePermissionDenied(ctx, {
+        mutation: 'teams.create',
+        actor: userInfo,
+        requiredRole: 'admin',
+        details: { data_received: args },
+      })
+      return null
+    }
 
-    await ctx.db.insert('teams', {
+    const teamId = await ctx.db.insert('teams', {
       name: args.name,
       sport: args.sport,
       type: args.type,
       ...(args.color !== undefined ? { color: args.color } : {}),
       ...(args.members !== undefined ? { members: args.members } : {}),
       ...(args.players !== undefined ? { players: args.players } : {}),
+    })
+
+    await captureMutationLog(ctx, {
+      mutation: 'teams.create',
+      actor: userInfo,
+      outcome: 'success',
+      details: { team_id: teamId, data_received: args },
     })
 
     return true
@@ -188,7 +205,16 @@ export const update = mutation({
     players: v.optional(v.union(v.array(v.string()), v.null())),
   },
   async handler(ctx, args): Promise<null | boolean> {
-    if (!(await requireAdmin(ctx))) return null
+    const { userInfo, isAdmin } = await requireAdmin(ctx)
+    if (!isAdmin) {
+      await capturePermissionDenied(ctx, {
+        mutation: 'teams.update',
+        actor: userInfo,
+        requiredRole: 'admin',
+        details: { data_received: args },
+      })
+      return null
+    }
 
     const team = await ctx.db.get(args.id)
     if (!team) return null
@@ -204,6 +230,13 @@ export const update = mutation({
 
     await ctx.db.patch(args.id, patch)
 
+    await captureMutationLog(ctx, {
+      mutation: 'teams.update',
+      actor: userInfo,
+      outcome: 'success',
+      details: { team_id: args.id, data_received: args },
+    })
+
     return true
   },
 })
@@ -213,9 +246,25 @@ export const purge = mutation({
     id: v.id('teams'),
   },
   async handler(ctx, args): Promise<null | boolean> {
-    if (!(await requireAdmin(ctx))) return null
+    const { userInfo, isAdmin } = await requireAdmin(ctx)
+    if (!isAdmin) {
+      await capturePermissionDenied(ctx, {
+        mutation: 'teams.purge',
+        actor: userInfo,
+        requiredRole: 'admin',
+        details: { data_received: args },
+      })
+      return null
+    }
 
     await ctx.db.delete(args.id)
+
+    await captureMutationLog(ctx, {
+      mutation: 'teams.purge',
+      actor: userInfo,
+      outcome: 'success',
+      details: { team_id: args.id },
+    })
 
     return true
   },

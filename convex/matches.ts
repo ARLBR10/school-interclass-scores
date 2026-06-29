@@ -2,6 +2,7 @@ import { v } from 'convex/values'
 import { query, mutation } from './_generated/server'
 import { api } from './_generated/api'
 import type { MutationCtx } from './_generated/server'
+import { captureMutationLog, capturePermissionDenied } from './logging'
 
 const matchStatus = v.union(
   v.literal('Scheduled'),
@@ -41,17 +42,17 @@ const matchEvent = v.union(
 
 async function getCurrentRole(ctx: MutationCtx) {
   const userInfo = await ctx.runQuery(api.auth.getCurrentUser)
-  return userInfo?.member?.additionalRole
+  return { userInfo, role: userInfo?.member?.additionalRole }
 }
 
 async function requireAdmin(ctx: MutationCtx) {
-  const role = await getCurrentRole(ctx)
-  return role === 'admin'
+  const { userInfo, role } = await getCurrentRole(ctx)
+  return { userInfo, isAllowed: role === 'admin' }
 }
 
 async function requireJudge(ctx: MutationCtx) {
-  const role = await getCurrentRole(ctx)
-  return role === 'admin' || role === 'judge'
+  const { userInfo, role } = await getCurrentRole(ctx)
+  return { userInfo, isAllowed: role === 'admin' || role === 'judge' }
 }
 
 export const get = query({
@@ -174,7 +175,16 @@ export const createOrEdit = mutation({
     events: v.array(matchEvent),
   },
   handler: async (ctx, args) => {
-    if (!(await requireAdmin(ctx))) return 'Not authorized'
+    const { userInfo, isAllowed } = await requireAdmin(ctx)
+    if (!isAllowed) {
+      await capturePermissionDenied(ctx, {
+        mutation: 'matches.createOrEdit',
+        actor: userInfo,
+        requiredRole: 'admin',
+        details: { data_received: args },
+      })
+      return 'Not authorized'
+    }
 
     if (args.MatchID) {
       await ctx.db.patch(args.MatchID, {
@@ -183,14 +193,31 @@ export const createOrEdit = mutation({
         status: args.status,
         events: args.events,
       })
+      await captureMutationLog(ctx, {
+        mutation: 'matches.createOrEdit',
+        actor: userInfo,
+        outcome: 'success',
+        details: {
+          action: 'update',
+          match_id: args.MatchID,
+          data_received: args,
+        },
+      })
       return 'Updated!'
     }
 
-    await ctx.db.insert('matches', {
+    const matchId = await ctx.db.insert('matches', {
       teams: args.teams,
       scheduledData: args.scheduledData,
       status: args.status,
       events: args.events,
+    })
+
+    await captureMutationLog(ctx, {
+      mutation: 'matches.createOrEdit',
+      actor: userInfo,
+      outcome: 'success',
+      details: { action: 'create', match_id: matchId, data_received: args },
     })
 
     return 'Created!'
@@ -203,7 +230,16 @@ export const updateStatus = mutation({
     status: matchStatus,
   },
   async handler(ctx, args): Promise<boolean | null> {
-    if (!(await requireJudge(ctx))) return null
+    const { userInfo, isAllowed } = await requireJudge(ctx)
+    if (!isAllowed) {
+      await capturePermissionDenied(ctx, {
+        mutation: 'matches.updateStatus',
+        actor: userInfo,
+        requiredRole: 'judge',
+        details: { data_received: args },
+      })
+      return null
+    }
 
     const match = await ctx.db.get(args.MatchID)
     if (!match) return null
@@ -220,6 +256,13 @@ export const updateStatus = mutation({
       events: statusEvent ? [...match.events, statusEvent] : match.events,
     })
 
+    await captureMutationLog(ctx, {
+      mutation: 'matches.updateStatus',
+      actor: userInfo,
+      outcome: 'success',
+      details: { match_id: args.MatchID, status: args.status },
+    })
+
     return true
   },
 })
@@ -230,13 +273,29 @@ export const addEvent = mutation({
     event: matchEvent,
   },
   async handler(ctx, args): Promise<boolean | null> {
-    if (!(await requireJudge(ctx))) return null
+    const { userInfo, isAllowed } = await requireJudge(ctx)
+    if (!isAllowed) {
+      await capturePermissionDenied(ctx, {
+        mutation: 'matches.addEvent',
+        actor: userInfo,
+        requiredRole: 'judge',
+        details: { data_received: args },
+      })
+      return null
+    }
 
     const match = await ctx.db.get(args.MatchID)
     if (!match) return null
 
     await ctx.db.patch(args.MatchID, {
       events: [...match.events, args.event],
+    })
+
+    await captureMutationLog(ctx, {
+      mutation: 'matches.addEvent',
+      actor: userInfo,
+      outcome: 'success',
+      details: { match_id: args.MatchID, event: args.event },
     })
 
     return true
@@ -249,7 +308,16 @@ export const removeEvent = mutation({
     eventIndex: v.number(),
   },
   async handler(ctx, args): Promise<boolean | null> {
-    if (!(await requireJudge(ctx))) return null
+    const { userInfo, isAllowed } = await requireJudge(ctx)
+    if (!isAllowed) {
+      await capturePermissionDenied(ctx, {
+        mutation: 'matches.removeEvent',
+        actor: userInfo,
+        requiredRole: 'judge',
+        details: { data_received: args },
+      })
+      return null
+    }
 
     const match = await ctx.db.get(args.MatchID)
     if (!match) return null
@@ -261,6 +329,13 @@ export const removeEvent = mutation({
 
     await ctx.db.patch(args.MatchID, { events })
 
+    await captureMutationLog(ctx, {
+      mutation: 'matches.removeEvent',
+      actor: userInfo,
+      outcome: 'success',
+      details: { match_id: args.MatchID, event_index: args.eventIndex },
+    })
+
     return true
   },
 })
@@ -270,9 +345,24 @@ export const purge = mutation({
     MatchID: v.id('matches'),
   },
   async handler(ctx, args): Promise<boolean | null> {
-    if (!(await requireAdmin(ctx))) return null
+    const { userInfo, isAllowed } = await requireAdmin(ctx)
+    if (!isAllowed) {
+      await capturePermissionDenied(ctx, {
+        mutation: 'matches.purge',
+        actor: userInfo,
+        requiredRole: 'admin',
+        details: { data_received: args },
+      })
+      return null
+    }
 
     await ctx.db.delete(args.MatchID)
+    await captureMutationLog(ctx, {
+      mutation: 'matches.purge',
+      actor: userInfo,
+      outcome: 'success',
+      details: { match_id: args.MatchID },
+    })
     return true
   },
 })

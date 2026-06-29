@@ -3,6 +3,7 @@ import { v } from 'convex/values'
 import { api } from './_generated/api'
 import type { Doc } from './_generated/dataModel'
 import { mutation, type MutationCtx } from './_generated/server'
+import { captureMutationLog, capturePermissionDenied } from './logging'
 
 type MemberPatch = Partial<Omit<Doc<'members'>, '_id' | '_creationTime'>>
 type TeamPatch = Partial<Omit<Doc<'teams'>, '_id' | '_creationTime'>>
@@ -89,7 +90,10 @@ export const members = mutation({
     ),
   },
   async handler(ctx, args) {
-    await requireAdmin(ctx)
+    const userInfo = await requireAdmin(ctx, {
+      mutation: 'mcp.members',
+      details: { data_received: args },
+    })
 
     if (args.action === 'list') {
       return await ctx.db.query('members').take(999)
@@ -103,6 +107,12 @@ export const members = mutation({
     if (args.action === 'delete') {
       if (!args.id) throw new Error('Informe o ID do membro.')
       await ctx.db.delete(args.id)
+      await captureMutationLog(ctx, {
+        mutation: 'mcp.members',
+        actor: userInfo,
+        outcome: 'success',
+        details: { action: args.action, member_id: args.id },
+      })
       return { deleted: true }
     }
 
@@ -124,6 +134,12 @@ export const members = mutation({
       }
 
       const id = await ctx.db.insert('members', member)
+      await captureMutationLog(ctx, {
+        mutation: 'mcp.members',
+        actor: userInfo,
+        outcome: 'success',
+        details: { action: args.action, member_id: id, data_received: args },
+      })
       return await ctx.db.get(id)
     }
 
@@ -141,6 +157,12 @@ export const members = mutation({
     if ('player' in fields) patch.player = fields.player ?? undefined
 
     await ctx.db.patch(args.id, patch)
+    await captureMutationLog(ctx, {
+      mutation: 'mcp.members',
+      actor: userInfo,
+      outcome: 'success',
+      details: { action: args.action, member_id: args.id, data_received: args },
+    })
     return await ctx.db.get(args.id)
   },
 })
@@ -161,7 +183,10 @@ export const teams = mutation({
     ),
   },
   async handler(ctx, args) {
-    await requireAdmin(ctx)
+    const userInfo = await requireAdmin(ctx, {
+      mutation: 'mcp.teams',
+      details: { data_received: args },
+    })
 
     if (args.action === 'list') {
       return await ctx.db.query('teams').take(999)
@@ -175,6 +200,12 @@ export const teams = mutation({
     if (args.action === 'delete') {
       if (!args.id) throw new Error('Informe o ID do time.')
       await ctx.db.delete(args.id)
+      await captureMutationLog(ctx, {
+        mutation: 'mcp.teams',
+        actor: userInfo,
+        outcome: 'success',
+        details: { action: args.action, team_id: args.id },
+      })
       return { deleted: true }
     }
 
@@ -196,6 +227,12 @@ export const teams = mutation({
       }
 
       const id = await ctx.db.insert('teams', team)
+      await captureMutationLog(ctx, {
+        mutation: 'mcp.teams',
+        actor: userInfo,
+        outcome: 'success',
+        details: { action: args.action, team_id: id, data_received: args },
+      })
       return await ctx.db.get(id)
     }
 
@@ -211,6 +248,12 @@ export const teams = mutation({
     if ('players' in fields) patch.players = fields.players ?? undefined
 
     await ctx.db.patch(args.id, patch)
+    await captureMutationLog(ctx, {
+      mutation: 'mcp.teams',
+      actor: userInfo,
+      outcome: 'success',
+      details: { action: args.action, team_id: args.id, data_received: args },
+    })
     return await ctx.db.get(args.id)
   },
 })
@@ -229,7 +272,10 @@ export const matches = mutation({
     ),
   },
   async handler(ctx, args) {
-    await requireAdmin(ctx)
+    const userInfo = await requireAdmin(ctx, {
+      mutation: 'mcp.matches',
+      details: { data_received: args },
+    })
 
     if (args.action === 'list') {
       return await ctx.db.query('matches').take(999)
@@ -243,6 +289,12 @@ export const matches = mutation({
     if (args.action === 'delete') {
       if (!args.id) throw new Error('Informe o ID da partida.')
       await ctx.db.delete(args.id)
+      await captureMutationLog(ctx, {
+        mutation: 'mcp.matches',
+        actor: userInfo,
+        outcome: 'success',
+        details: { action: args.action, match_id: args.id },
+      })
       return { deleted: true }
     }
 
@@ -263,6 +315,12 @@ export const matches = mutation({
       }
 
       const id = await ctx.db.insert('matches', match)
+      await captureMutationLog(ctx, {
+        mutation: 'mcp.matches',
+        actor: userInfo,
+        outcome: 'success',
+        details: { action: args.action, match_id: id, data_received: args },
+      })
       return await ctx.db.get(id)
     }
 
@@ -282,14 +340,31 @@ export const matches = mutation({
     }
 
     await ctx.db.patch(args.id, patch)
+    await captureMutationLog(ctx, {
+      mutation: 'mcp.matches',
+      actor: userInfo,
+      outcome: 'success',
+      details: { action: args.action, match_id: args.id, data_received: args },
+    })
     return await ctx.db.get(args.id)
   },
 })
 
-async function requireAdmin(ctx: MutationCtx) {
+async function requireAdmin(
+  ctx: MutationCtx,
+  args: { mutation: string; details: Record<string, unknown> },
+) {
   const userInfo = await ctx.runQuery(api.auth.getCurrentUser)
 
   if (userInfo?.member?.additionalRole !== 'admin') {
+    await capturePermissionDenied(ctx, {
+      mutation: args.mutation,
+      actor: userInfo,
+      requiredRole: 'admin',
+      details: args.details,
+    })
     throw new Error('Apenas administradores podem usar este MCP.')
   }
+
+  return userInfo
 }

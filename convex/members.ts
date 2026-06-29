@@ -8,6 +8,7 @@ import {
   mutation,
   query,
 } from './_generated/server'
+import { captureMutationLog, capturePermissionDenied } from './logging'
 
 type MemberPatch = Partial<Omit<Doc<'members'>, '_id' | '_creationTime'>>
 type MemberCreateInput = Omit<Doc<'members'>, '_id' | '_creationTime'>
@@ -183,16 +184,12 @@ export const create = mutation({
 
     // Permission check
     if (userInfo?.member?.additionalRole !== 'admin') {
-      // await getPostHog().capture(ctx, {
-      //   event: "permission_denied",
-      //   properties: {
-      //     mutation: "member.create",
-      //     user_type_required: "admin",
-      //     memberId: userInfo?.member?._id,
-      //     memberType: userInfo?.member?.type,
-      //     dataReceived: args,
-      //   },
-      // });
+      await capturePermissionDenied(ctx, {
+        mutation: 'members.create',
+        actor: userInfo,
+        requiredRole: 'admin',
+        details: { data_received: args },
+      })
       return null
     }
 
@@ -209,15 +206,14 @@ export const create = mutation({
       ...(args.player !== undefined ? { player: args.player } : {}),
     }
 
-    await ctx.db.insert('members', newMember) // const memberId =
+    const memberId = await ctx.db.insert('members', newMember)
 
-    // await getPostHog().capture(ctx, {
-    //   event: "admin_create_member",
-    //   properties: {
-    //     createdMemberInfo: newMember,
-    //     createdMemberId: memberId,
-    //   },
-    // });
+    await captureMutationLog(ctx, {
+      mutation: 'members.create',
+      actor: userInfo,
+      outcome: 'success',
+      details: { created_member_id: memberId, created_member: newMember },
+    })
     return true
   },
 })
@@ -230,16 +226,12 @@ export const bulkCreate = mutation({
     const userInfo = await ctx.runQuery(api.auth.getCurrentUser)
 
     if (userInfo?.member?.additionalRole !== 'admin') {
-      // await getPostHog().capture(ctx, {
-      //   event: "permission_denied",
-      //   properties: {
-      //     mutation: "member.bulkCreate",
-      //     user_type_required: "admin",
-      //     memberId: userInfo?.member?._id,
-      //     memberType: userInfo?.member?.type,
-      //     dataReceived: { count: args.members.length },
-      //   },
-      // });
+      await capturePermissionDenied(ctx, {
+        mutation: 'members.bulkCreate',
+        actor: userInfo,
+        requiredRole: 'admin',
+        details: { data_received: { count: args.members.length } },
+      })
       return null
     }
 
@@ -266,12 +258,12 @@ export const bulkCreate = mutation({
       await ctx.db.insert('members', newMember)
     }
 
-    // await getPostHog().capture(ctx, {
-    //   event: "admin_bulk_create_members",
-    //   properties: {
-    //     createdCount: args.members.length,
-    //   },
-    // });
+    await captureMutationLog(ctx, {
+      mutation: 'members.bulkCreate',
+      actor: userInfo,
+      outcome: 'success',
+      details: { created_count: args.members.length },
+    })
 
     return { created: args.members.length }
   },
@@ -293,16 +285,12 @@ export const update = mutation({
 
     // Permission check
     if (userInfo?.member?.additionalRole !== 'admin') {
-      // await getPostHog().capture(ctx, {
-      //   event: "permission_denied",
-      //   properties: {
-      //     mutation: "member.update",
-      //     user_type_required: "admin",
-      //     memberId: userInfo?.member?._id,
-      //     memberType: userInfo?.member?.type,
-      //     dataReceived: args,
-      //   },
-      // });
+      await capturePermissionDenied(ctx, {
+        mutation: 'members.update',
+        actor: userInfo,
+        requiredRole: 'admin',
+        details: { data_received: args },
+      })
       return null
     }
 
@@ -341,13 +329,12 @@ export const update = mutation({
 
     await ctx.db.patch('members', args.id, memberPatch)
 
-    // await getPostHog().capture(ctx, {
-    //   event: "admin_update_member",
-    //   properties: {
-    //     id: args.id,
-    //     dataReceived: args,
-    //   },
-    // });
+    await captureMutationLog(ctx, {
+      mutation: 'members.update',
+      actor: userInfo,
+      outcome: 'success',
+      details: { member_id: args.id, data_received: args },
+    })
 
     return true
   },
@@ -368,16 +355,12 @@ export const assignClasses = mutation({
     const userInfo = await ctx.runQuery(api.auth.getCurrentUser)
 
     if (userInfo?.member?.additionalRole !== 'admin') {
-      // await getPostHog().capture(ctx, {
-      //   event: "permission_denied",
-      //   properties: {
-      //     mutation: "member.assignClasses",
-      //     user_type_required: "admin",
-      //     memberId: userInfo?.member?._id,
-      //     memberType: userInfo?.member?.type,
-      //     dataReceived: { count: args.rows.length },
-      //   },
-      // });
+      await capturePermissionDenied(ctx, {
+        mutation: 'members.assignClasses',
+        actor: userInfo,
+        requiredRole: 'admin',
+        details: { data_received: { count: args.rows.length } },
+      })
       return null
     }
 
@@ -438,21 +421,23 @@ export const assignClasses = mutation({
       updated += 1
     }
 
-    // await getPostHog().capture(ctx, {
-    //   event: "admin_assign_member_classes",
-    //   properties: {
-    //     schoolClass: normalizedClass,
-    //     updatedCount: updated,
-    //     missingCount: missing.length,
-    //     duplicateRowCount: duplicateRows.length,
-    //     duplicateMemberCount: duplicateMembers.length,
-    //     warnings: {
-    //       missing,
-    //       duplicateRows,
-    //       duplicateMembers,
-    //     },
-    //   },
-    // });
+    await captureMutationLog(ctx, {
+      mutation: 'members.assignClasses',
+      actor: userInfo,
+      outcome: 'success',
+      details: {
+        school_class: normalizedClass,
+        updated_count: updated,
+        missing_count: missing.length,
+        duplicate_row_count: duplicateRows.length,
+        duplicate_member_count: duplicateMembers.length,
+        warnings: {
+          missing,
+          duplicate_rows: duplicateRows,
+          duplicate_members: duplicateMembers,
+        },
+      },
+    })
 
     return { updated, missing, duplicateRows, duplicateMembers }
   },
@@ -466,26 +451,22 @@ export const purge = mutation({
     const userInfo = await ctx.runQuery(api.auth.getCurrentUser)
 
     if (userInfo?.member?.additionalRole !== 'admin') {
-      // await getPostHog().capture(ctx, {
-      //   event: "permission_denied",
-      //   properties: {
-      //     mutation: "member.purge",
-      //     user_type_required: "admin",
-      //     memberId: userInfo?.member?._id,
-      //     memberType: userInfo?.member?.type,
-      //     dataReceived: args,
-      //   },
-      // });
+      await capturePermissionDenied(ctx, {
+        mutation: 'members.purge',
+        actor: userInfo,
+        requiredRole: 'admin',
+        details: { data_received: args },
+      })
       return null
     }
 
     await ctx.db.delete('members', args.id)
-    // await getPostHog().capture(ctx, {
-    //   event: "admin_delete_member",
-    //   properties: {
-    //     id: args.id,
-    //   },
-    // });
+    await captureMutationLog(ctx, {
+      mutation: 'members.purge',
+      actor: userInfo,
+      outcome: 'success',
+      details: { member_id: args.id },
+    })
     return true
   },
 })

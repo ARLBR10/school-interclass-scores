@@ -143,8 +143,8 @@ function PostHogComponent({ children }: { children: React.ReactNode }) {
 
     posthog.identify(userId)
     posthog.register({
-      distinctID: userId,
-      sessionID: authSessionId,
+      distinct_id: userId,
+      session_id: authSessionId,
     })
     previousUserId.current = userId
   }, [authSessionId, userId])

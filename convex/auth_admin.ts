@@ -3,6 +3,7 @@ import { v } from 'convex/values'
 import { api, components } from './_generated/api'
 import { mutation, query } from './_generated/server'
 import { authComponent, createAuth, type AuthUser } from './auth'
+import { captureMutationLog, capturePermissionDenied } from './logging'
 
 export const getAll = query({
   args: {},
@@ -35,19 +36,16 @@ export const create = mutation({
   },
   async handler(ctx, args) {
     const userInfo = await ctx.runQuery(api.auth.getCurrentUser)
+    const safeArgs = { ...args, password: '[redacted]' }
 
     // Permission check
     if (userInfo?.member?.additionalRole !== 'admin') {
-      // await getPostHog().capture(ctx, {
-      //   event: "permission_denied",
-      //   properties: {
-      //     mutation: "auth_admin.create",
-      //     user_type_required: "admin",
-      //     memberId: userInfo?.member?._id,
-      //     memberType: userInfo?.member?.type,
-      //     dataReceived: args,
-      //   },
-      // });
+      await capturePermissionDenied(ctx, {
+        mutation: 'auth_admin.create',
+        actor: userInfo,
+        requiredRole: 'admin',
+        details: { data_received: safeArgs },
+      })
       return null
     }
 
@@ -70,20 +68,19 @@ export const create = mutation({
       password: await authContext.password.hash(args.password),
     })
 
-    // await getPostHog().capture(ctx, {
-    //   event: "admin_create_user",
-    //   properties: {
-    //     userId: createdUserId,
-    //     accountId: createdAccountId,
-    //     createdUserInfo: {
-    //       name: args.name,
-    //       email: args.email,
-    //       username: args.username,
-    //       cellphone: args.cellphone,
-    //       // No password here. Otherwise it wouldn't be a secret...
-    //     },
-    //   },
-    // });
+    await captureMutationLog(ctx, {
+      mutation: 'auth_admin.create',
+      actor: userInfo,
+      outcome: 'success',
+      details: {
+        created_user_id: createdUserId,
+        created_user: {
+          name: args.name,
+          email: args.email,
+          image: args.image ?? null,
+        },
+      },
+    })
     return true
   },
 })
@@ -99,19 +96,20 @@ export const edit = mutation({
   },
   async handler(ctx, args) {
     const userInfo = await ctx.runQuery(api.auth.getCurrentUser)
+    const safeArgs = {
+      ...args,
+      password: args.password ? '[redacted]' : undefined,
+      passwordUpdated: Boolean(args.password && args.password !== ''),
+    }
 
     // Permission check
     if (userInfo?.member?.additionalRole !== 'admin') {
-      // await getPostHog().capture(ctx, {
-      //   event: "permission_denied",
-      //   properties: {
-      //     mutation: "auth_admin.edit",
-      //     user_type_required: "admin",
-      //     memberId: userInfo?.member?._id,
-      //     memberType: userInfo?.member?.type,
-      //     dataReceived: args,
-      //   },
-      // });
+      await capturePermissionDenied(ctx, {
+        mutation: 'auth_admin.edit',
+        actor: userInfo,
+        requiredRole: 'admin',
+        details: { data_received: safeArgs },
+      })
       return null
     }
 
@@ -135,23 +133,12 @@ export const edit = mutation({
         : null,
     ])
 
-    // Logs need to only be executed on a successful mutation.
-    // await getPostHog().capture(ctx, {
-    //   event: "admin_edit_user",
-    //   properties: {
-    //     userId: args.id,
-    //     dataUpdated: {
-    //       name: args.name,
-    //       email: args.email,
-    //       emailVerified: args.emailVerified,
-    //       passwordUpdated: args.password && args.password !== "" ? true : false,
-    //       twoFactorEnabled: args.twoFactorEnabled,
-    //       username: args.username,
-    //       cellphone: args.cellphone,
-    //       cellphoneVerified: args.cellphoneVerified,
-    //     },
-    //   },
-    // });
+    await captureMutationLog(ctx, {
+      mutation: 'auth_admin.edit',
+      actor: userInfo,
+      outcome: 'success',
+      details: { user_id: args.id, data_updated: safeArgs },
+    })
     return true
   },
 })
@@ -165,16 +152,12 @@ export const purge = mutation({
 
     // Permission check
     if (userInfo?.member?.additionalRole !== 'admin') {
-      // await getPostHog().capture(ctx, {
-      //   event: "permission_denied",
-      //   properties: {
-      //     mutation: "auth_admin.purge",
-      //     user_type_required: "admin",
-      //     memberId: userInfo?.member?._id,
-      //     memberType: userInfo?.member?.type,
-      //     dataReceived: args,
-      //   },
-      // });
+      await capturePermissionDenied(ctx, {
+        mutation: 'auth_admin.purge',
+        actor: userInfo,
+        requiredRole: 'admin',
+        details: { data_received: args },
+      })
       return null
     }
 
@@ -198,13 +181,12 @@ export const purge = mutation({
       authContext.internalAdapter.deleteUser(args.id),
       authContext.internalAdapter.deleteAccount(accountId),
     ])
-    // await getPostHog().capture(ctx, {
-    //   event: "admin_delete_user",
-    //   properties: {
-    //     userId: args.id,
-    //     accountId
-    //   },
-    // });
+    await captureMutationLog(ctx, {
+      mutation: 'auth_admin.purge',
+      actor: userInfo,
+      outcome: 'success',
+      details: { user_id: args.id, account_id: accountId },
+    })
     return true
   },
 })

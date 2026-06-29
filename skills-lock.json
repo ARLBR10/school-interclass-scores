@@ -43,6 +43,12 @@
       "skillPath": "skills/frontend-design/SKILL.md",
       "computedHash": "4eabc66183767153e404b39d1b839b1c37f2d82d86f0a0d7e880a579d8d62336"
     },
+    "logging-best-practices": {
+      "source": "boristane/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/logging-best-practices/SKILL.md",
+      "computedHash": "b4810947c33b5356bf385c84cfe387afa9c54af652baaedb7d642a083cceaa4c"
+    },
     "shadcn": {
       "source": "shadcn/ui",
       "sourceType": "github",
