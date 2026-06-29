@@ -8,7 +8,7 @@ import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
 import { mcpOAuthConfig, mcpResourceClient } from '@/lib/oauth-resource-server'
 
-const convex = new ConvexHttpClient(process.env.VITE_CONVEX_URL!)
+let mcpHandler: ((request: Request) => Response | Promise<Response>) | undefined
 
 const actionSchema = z
   .enum(['list', 'get', 'create', 'update', 'delete'])
@@ -68,193 +68,206 @@ const matchEventSchema = z.union([
   }),
 ])
 
-const handler = withMcpAuth(
-  createMcpHandler(
-    (server) => {
-      server.registerTool(
-        'members',
-        {
-          title: 'Administrar membros',
-          description:
-            'Lista, consulta, cria, atualiza ou remove membros. Disponível apenas para administradores.',
-          inputSchema: {
-            action: actionSchema,
-            id: z
-              .string()
-              .optional()
-              .describe('ID do membro para get/update/delete.'),
-            fields: z
-              .object({
-                userId: z.string().nullable().optional(),
-                name: z.string().optional(),
-                tuitionId: z.string().nullable().optional(),
-                additionalRole: z
-                  .enum(['press', 'judge'])
-                  .nullable()
-                  .optional(),
-                schoolClass: z.string().nullable().optional(),
-                player: playerSchema.nullable().optional(),
-              })
-              .optional()
-              .describe('Campos usados em create/update.'),
+function getMcpHandler() {
+  if (mcpHandler) return mcpHandler
+
+  const handler = withMcpAuth(
+    createMcpHandler(
+      (server) => {
+        server.registerTool(
+          'members',
+          {
+            title: 'Administrar membros',
+            description:
+              'Lista, consulta, cria, atualiza ou remove membros. Disponível apenas para administradores.',
+            inputSchema: {
+              action: actionSchema,
+              id: z
+                .string()
+                .optional()
+                .describe('ID do membro para get/update/delete.'),
+              fields: z
+                .object({
+                  userId: z.string().nullable().optional(),
+                  name: z.string().optional(),
+                  tuitionId: z.string().nullable().optional(),
+                  additionalRole: z
+                    .enum(['press', 'judge'])
+                    .nullable()
+                    .optional(),
+                  schoolClass: z.string().nullable().optional(),
+                  player: playerSchema.nullable().optional(),
+                })
+                .optional()
+                .describe('Campos usados em create/update.'),
+            },
           },
-        },
-        async (input, extra) => {
-          convex.setAuth(extra.authInfo!.token)
-          const result = await convex.mutation(api.mcp.members, {
-            ...input,
-            id: input.id as Id<'members'> | undefined,
-          })
+          async (input, extra) => {
+            const convex = createConvexClient(extra.authInfo!.token)
+            const result = await convex.mutation(api.mcp.members, {
+              ...input,
+              id: input.id as Id<'members'> | undefined,
+            })
 
-          return {
-            content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-          }
-        },
-      )
-
-      server.registerTool(
-        'teams',
-        {
-          title: 'Administrar times',
-          description:
-            'Lista, consulta, cria, atualiza ou remove times. Disponível apenas para administradores.',
-          inputSchema: {
-            action: actionSchema,
-            id: z
-              .string()
-              .optional()
-              .describe('ID do time para get/update/delete.'),
-            fields: z
-              .object({
-                name: z.string().optional(),
-                sport: z.string().optional(),
-                color: z.string().nullable().optional(),
-                type: z.enum(['Feminine', 'Masculine']).optional(),
-                members: z.array(z.string()).nullable().optional(),
-                players: z.array(z.string()).nullable().optional(),
-              })
-              .optional()
-              .describe('Campos usados em create/update.'),
+            return {
+              content: [
+                { type: 'text', text: JSON.stringify(result, null, 2) },
+              ],
+            }
           },
-        },
-        async (input, extra) => {
-          convex.setAuth(extra.authInfo!.token)
-          const result = await convex.mutation(api.mcp.teams, {
-            ...input,
-            id: input.id as Id<'teams'> | undefined,
-            fields: input.fields
-              ? {
-                  ...input.fields,
-                  members:
-                    input.fields.members === undefined ||
-                    input.fields.members === null
-                      ? input.fields.members
-                      : input.fields.members.map((id) => id as Id<'members'>),
-                }
-              : undefined,
-          })
+        )
 
-          return {
-            content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-          }
-        },
-      )
-
-      server.registerTool(
-        'matches',
-        {
-          title: 'Administrar partidas',
-          description:
-            'Lista, consulta, cria, atualiza ou remove partidas. Disponível apenas para administradores.',
-          inputSchema: {
-            action: actionSchema,
-            id: z
-              .string()
-              .optional()
-              .describe('ID da partida para get/update/delete.'),
-            fields: z
-              .object({
-                teams: z.array(z.string()).optional(),
-                scheduledData: z.number().nullable().optional(),
-                status: z
-                  .enum(['Scheduled', 'Started', 'Canceled', 'Finished'])
-                  .optional(),
-                events: z.array(matchEventSchema).optional(),
-              })
-              .optional()
-              .describe('Campos usados em create/update.'),
+        server.registerTool(
+          'teams',
+          {
+            title: 'Administrar times',
+            description:
+              'Lista, consulta, cria, atualiza ou remove times. Disponível apenas para administradores.',
+            inputSchema: {
+              action: actionSchema,
+              id: z
+                .string()
+                .optional()
+                .describe('ID do time para get/update/delete.'),
+              fields: z
+                .object({
+                  name: z.string().optional(),
+                  sport: z.string().optional(),
+                  color: z.string().nullable().optional(),
+                  type: z.enum(['Feminine', 'Masculine']).optional(),
+                  members: z.array(z.string()).nullable().optional(),
+                  players: z.array(z.string()).nullable().optional(),
+                })
+                .optional()
+                .describe('Campos usados em create/update.'),
+            },
           },
-        },
-        async (input, extra) => {
-          convex.setAuth(extra.authInfo!.token)
-          const result = await convex.mutation(api.mcp.matches, {
-            ...input,
-            id: input.id as Id<'matches'> | undefined,
-            fields: input.fields
-              ? {
-                  ...input.fields,
-                  teams: input.fields.teams?.map((id) => id as Id<'teams'>),
-                  events: input.fields.events?.map((event) => {
-                    if (event.type === 'SwitchPlayers') {
+          async (input, extra) => {
+            const convex = createConvexClient(extra.authInfo!.token)
+            const result = await convex.mutation(api.mcp.teams, {
+              ...input,
+              id: input.id as Id<'teams'> | undefined,
+              fields: input.fields
+                ? {
+                    ...input.fields,
+                    members:
+                      input.fields.members === undefined ||
+                      input.fields.members === null
+                        ? input.fields.members
+                        : input.fields.members.map((id) => id as Id<'members'>),
+                  }
+                : undefined,
+            })
+
+            return {
+              content: [
+                { type: 'text', text: JSON.stringify(result, null, 2) },
+              ],
+            }
+          },
+        )
+
+        server.registerTool(
+          'matches',
+          {
+            title: 'Administrar partidas',
+            description:
+              'Lista, consulta, cria, atualiza ou remove partidas. Disponível apenas para administradores.',
+            inputSchema: {
+              action: actionSchema,
+              id: z
+                .string()
+                .optional()
+                .describe('ID da partida para get/update/delete.'),
+              fields: z
+                .object({
+                  teams: z.array(z.string()).optional(),
+                  scheduledData: z.number().nullable().optional(),
+                  status: z
+                    .enum(['Scheduled', 'Started', 'Canceled', 'Finished'])
+                    .optional(),
+                  events: z.array(matchEventSchema).optional(),
+                })
+                .optional()
+                .describe('Campos usados em create/update.'),
+            },
+          },
+          async (input, extra) => {
+            const convex = createConvexClient(extra.authInfo!.token)
+            const result = await convex.mutation(api.mcp.matches, {
+              ...input,
+              id: input.id as Id<'matches'> | undefined,
+              fields: input.fields
+                ? {
+                    ...input.fields,
+                    teams: input.fields.teams?.map((id) => id as Id<'teams'>),
+                    events: input.fields.events?.map((event) => {
+                      if (event.type === 'SwitchPlayers') {
+                        return {
+                          ...event,
+                          team: event.team as Id<'teams'>,
+                          members: event.members?.map(
+                            (id) => id as Id<'members'>,
+                          ),
+                        }
+                      }
+
+                      if (
+                        event.type === 'StartedMatch' ||
+                        event.type === 'FinishedMatch'
+                      ) {
+                        return event
+                      }
+
                       return {
                         ...event,
                         team: event.team as Id<'teams'>,
-                        members: event.members?.map(
-                          (id) => id as Id<'members'>,
-                        ),
+                        member: event.member as Id<'members'> | undefined,
                       }
-                    }
+                    }),
+                  }
+                : undefined,
+            })
 
-                    if (
-                      event.type === 'StartedMatch' ||
-                      event.type === 'FinishedMatch'
-                    ) {
-                      return event
-                    }
-
-                    return {
-                      ...event,
-                      team: event.team as Id<'teams'>,
-                      member: event.member as Id<'members'> | undefined,
-                    }
-                  }),
-                }
-              : undefined,
-          })
-
-          return {
-            content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-          }
-        },
-      )
-    },
-    {
-      serverInfo: {
-        name: 'interclasse-aacsa',
-        version: '0.1.0',
+            return {
+              content: [
+                { type: 'text', text: JSON.stringify(result, null, 2) },
+              ],
+            }
+          },
+        )
       },
-      capabilities: { tools: {} },
-    },
+      {
+        serverInfo: {
+          name: 'interclasse-aacsa',
+          version: '0.1.0',
+        },
+        capabilities: { tools: {} },
+      },
+      {
+        basePath: '/api',
+        disableSse: true,
+        maxDuration: 60,
+      },
+    ),
+    verifyMcpToken,
     {
-      basePath: '/api',
-      disableSse: true,
-      maxDuration: 60,
+      required: true,
+      requiredScopes: ['mcp:read'],
+      resourceMetadataPath: '/.well-known/oauth-protected-resource',
     },
-  ),
-  verifyMcpToken,
-  {
-    required: true,
-    requiredScopes: ['mcp:read'],
-    resourceMetadataPath: '/.well-known/oauth-protected-resource',
-  },
-)
+  )
+
+  mcpHandler = handler
+  return handler
+}
 
 export const Route = createFileRoute('/api/mcp')({
   server: {
     handlers: {
-      GET: async ({ request }) => withCors(await handler(request)),
-      POST: async ({ request }) => withCors(await handler(request)),
-      DELETE: async ({ request }) => withCors(await handler(request)),
+      GET: async ({ request }) => withCors(await getMcpHandler()(request)),
+      POST: async ({ request }) => withCors(await getMcpHandler()(request)),
+      DELETE: async ({ request }) => withCors(await getMcpHandler()(request)),
       OPTIONS: () => corsPreflight(),
     },
   },
@@ -287,6 +300,12 @@ function withCors(response: Response) {
     statusText: response.statusText,
     headers,
   })
+}
+
+function createConvexClient(token: string) {
+  const convex = new ConvexHttpClient(process.env.VITE_CONVEX_URL!)
+  convex.setAuth(token)
+  return convex
 }
 
 async function verifyMcpToken(
