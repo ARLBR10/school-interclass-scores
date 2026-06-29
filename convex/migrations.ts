@@ -1,4 +1,5 @@
 import { v } from 'convex/values'
+import { components } from './_generated/api'
 import { internalMutation } from './_generated/server'
 import type { Id } from './_generated/dataModel'
 
@@ -108,5 +109,15 @@ export const migratePlayersToMembers = internalMutation({
     }
 
     return { migratedPlayers, migratedTeams, migratedMatches }
+  },
+})
+
+export const clearBetterAuthJwks = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.runMutation(components.betterAuth.adapter.deleteMany, {
+      model: 'jwks',
+      where: [],
+    } as any)
   },
 })

@@ -32,6 +32,12 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
     plugins: [
       jwt({
         disableSettingJwtHeader: true,
+        jwks: {
+          keyPairConfig: {
+            alg: 'RS256',
+            modulusLength: 2048,
+          },
+        },
       }),
       // Keep the Convex plugin after jwt() so its /convex/* endpoints are not
       // shadowed by the generic JWT plugin endpoint keys.
@@ -97,5 +103,24 @@ export const getCurrentUser = query({
       ...userInfo,
       member: membershipInfo,
     }
+  },
+})
+
+export const getJwks = query({
+  args: {},
+  handler: async (ctx) => {
+    const result = await ctx.runQuery(components.betterAuth.adapter.findMany, {
+      model: 'jwks',
+      paginationOpts: {
+        cursor: null,
+        numItems: 100,
+      },
+    } as any)
+
+    return result.page.map((key: any) => ({
+      ...JSON.parse(key.publicKey),
+      kid: key.id ?? key._id,
+      alg: key.alg ?? 'RS256',
+    }))
   },
 })

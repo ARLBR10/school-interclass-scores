@@ -14,6 +14,7 @@ const validAuthPathSegments = new Set([
 export const Route = createFileRoute('/auth/$path')({
   validateSearch(search): AuthSearch {
     return {
+      ...search,
       credentials: getAllowCredentials(search),
       redirectTo:
         typeof search.redirectTo === 'string' && search.redirectTo.length > 0
@@ -34,6 +35,8 @@ export const Route = createFileRoute('/auth/$path')({
       context.isAuthenticated &&
       (path === viewPaths.auth.signIn || path === viewPaths.auth.signUp)
     ) {
+      if (isOAuthRedirectSearch(search)) return
+
       throw redirect({ to: getAuthRedirectTo(search) })
     }
   },
@@ -41,8 +44,17 @@ export const Route = createFileRoute('/auth/$path')({
 })
 
 type AuthSearch = {
+  [key: string]: unknown
   credentials?: boolean
   redirectTo?: string
+}
+
+function isOAuthRedirectSearch(search: AuthSearch) {
+  return (
+    typeof search.client_id === 'string' &&
+    typeof search.response_type === 'string' &&
+    typeof search.sig === 'string'
+  )
 }
 
 function getAuthRedirectTo(search: AuthSearch) {
@@ -60,16 +72,36 @@ function AuthPage() {
   const allowCredentials = search.credentials === true
 
   const shouldRedirectAuthenticatedUser =
-    path === viewPaths.auth.signIn || path === viewPaths.auth.signUp
+    (path === viewPaths.auth.signIn || path === viewPaths.auth.signUp) &&
+    !isOAuthRedirectSearch(search)
+  const shouldContinueOAuth =
+    (path === viewPaths.auth.signIn || path === viewPaths.auth.signUp) &&
+    isOAuthRedirectSearch(search)
   const redirectTo = getAuthRedirectTo(search)
 
   useEffect(() => {
+    if (!isPending && session && shouldContinueOAuth) {
+      const params = getOAuthAuthorizeParams(search)
+      window.location.assign(`/api/auth/oauth2/authorize?${params}`)
+      return
+    }
+
     if (!isPending && session && shouldRedirectAuthenticatedUser) {
       window.location.assign(redirectTo)
     }
-  }, [isPending, redirectTo, session, shouldRedirectAuthenticatedUser])
+  }, [
+    isPending,
+    redirectTo,
+    search,
+    session,
+    shouldContinueOAuth,
+    shouldRedirectAuthenticatedUser,
+  ])
 
-  if (shouldRedirectAuthenticatedUser && (isPending || session)) {
+  if (
+    (shouldRedirectAuthenticatedUser || shouldContinueOAuth) &&
+    (isPending || session)
+  ) {
     return null
   }
 
@@ -78,4 +110,33 @@ function AuthPage() {
       <Auth path={path} allowCredentials={allowCredentials} />
     </div>
   )
+}
+
+function getOAuthAuthorizeParams(search: AuthSearch) {
+  const params = new URLSearchParams()
+  const allowedParams = [
+    'response_type',
+    'client_id',
+    'redirect_uri',
+    'scope',
+    'state',
+    'code_challenge',
+    'code_challenge_method',
+    'resource',
+    'prompt',
+  ]
+
+  for (const key of allowedParams) {
+    const value = search[key]
+
+    if (typeof value === 'string') {
+      params.set(key, value)
+    } else if (Array.isArray(value)) {
+      for (const item of value) {
+        if (typeof item === 'string') params.append(key, item)
+      }
+    }
+  }
+
+  return params.toString()
 }

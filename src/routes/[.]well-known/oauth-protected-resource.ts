@@ -12,6 +12,19 @@ export const Route = createFileRoute('/.well-known/oauth-protected-resource')({
   server: {
     handlers: {
       GET: ({ request }) => handler(request),
+      OPTIONS: () => corsPreflight(),
     },
   },
 })
+
+function corsPreflight() {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': '*',
+      'Access-Control-Max-Age': '86400',
+    },
+  })
+}

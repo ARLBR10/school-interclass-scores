@@ -69,6 +69,10 @@ export const tables = {
   jwks: defineTable({
     publicKey: v.string(),
     privateKey: v.string(),
+    alg: v.optional(v.union(v.literal('EdDSA'), v.literal('RS256'))),
+    crv: v.optional(
+      v.union(v.literal('Ed25519'), v.literal('P-256'), v.literal('P-521')),
+    ),
     createdAt: v.number(),
     expiresAt: v.optional(v.union(v.null(), v.number())),
   }),

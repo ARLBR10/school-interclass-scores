@@ -10,20 +10,26 @@ import { authClient } from '@/lib/auth-client'
 export const Route = createFileRoute('/auth/consent')({
   validateSearch(search): ConsentSearch {
     return {
+      ...search,
       client_id:
         typeof search.client_id === 'string' ? search.client_id : undefined,
       scope: typeof search.scope === 'string' ? search.scope : undefined,
     }
   },
-  beforeLoad({ context }) {
+  beforeLoad({ context, search }) {
     if (!context.isAuthenticated) {
-      throw redirect({ to: '/auth/$path', params: { path: 'sign-in' } })
+      throw redirect({
+        to: '/auth/$path',
+        params: { path: 'sign-in' },
+        search,
+      })
     }
   },
   component: ConsentPage,
 })
 
 type ConsentSearch = {
+  [key: string]: unknown
   client_id?: string
   scope?: string
 }
@@ -32,6 +38,11 @@ type OAuthPublicClient = {
   client_name?: string
   client_uri?: string
   logo_uri?: string
+}
+
+type OAuthConsentResponse = {
+  redirect_uri?: string
+  url?: string
 }
 
 function ConsentPage() {
@@ -77,6 +88,7 @@ function ConsentPage() {
       ...(accept && requestedScopes.length > 0
         ? { scope: requestedScopes.join(' ') }
         : {}),
+      oauth_query: getSignedOAuthQuery(),
     })
 
     if (consentError) {
@@ -87,7 +99,15 @@ function ConsentPage() {
       return
     }
 
-    window.location.assign(data.redirect_uri)
+    const redirectUrl = (data as OAuthConsentResponse | null)?.url ?? data?.redirect_uri
+
+    if (!redirectUrl) {
+      setError('Não foi possível continuar o fluxo de autorização.')
+      setIsPending(false)
+      return
+    }
+
+    window.location.assign(redirectUrl)
   }
 
   return (
@@ -149,4 +169,22 @@ function ConsentPage() {
       </Card>
     </div>
   )
+}
+
+function getSignedOAuthQuery() {
+  const params = new URLSearchParams(window.location.search)
+  const signedParameterNames = params.getAll('ba_param')
+
+  if (!params.has('sig') || signedParameterNames.length === 0) return undefined
+
+  const signedParameters = new Set(signedParameterNames)
+  const oauthQuery = new URLSearchParams()
+
+  for (const [key, value] of params.entries()) {
+    if (key === 'sig' || key === 'ba_param' || signedParameters.has(key)) {
+      oauthQuery.append(key, value)
+    }
+  }
+
+  return oauthQuery.toString()
 }
