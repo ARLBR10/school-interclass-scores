@@ -81,9 +81,4 @@ export default defineSchema({
     members: v.optional(v.array(v.id('members'))),
     players: v.optional(v.array(v.string())),
   }),
-  mcpPings: defineTable({
-    userId: v.string(),
-    message: v.string(),
-    createdAt: v.number(),
-  }).index('by_userId', ['userId']),
 })

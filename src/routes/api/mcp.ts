@@ -5,42 +5,222 @@ import { createMcpHandler, withMcpAuth } from 'mcp-handler'
 import { z } from 'zod'
 
 import { api } from '../../../convex/_generated/api'
+import type { Id } from '../../../convex/_generated/dataModel'
 import { mcpOAuthConfig, mcpResourceClient } from '@/lib/oauth-resource-server'
 
 const convex = new ConvexHttpClient(process.env.VITE_CONVEX_URL!)
+
+const actionSchema = z
+  .enum(['list', 'get', 'create', 'update', 'delete'])
+  .describe('Operação a executar.')
+
+const playerSchema = z.object({
+  alias: z.array(z.string()).optional(),
+  height: z.string().optional(),
+  weight: z.string().optional(),
+  age: z.number().optional(),
+  photo: z.string().optional(),
+  socialMedias: z
+    .object({
+      Instagram: z.string().optional(),
+    })
+    .optional(),
+})
+
+const matchEventSchema = z.union([
+  z.object({
+    type: z.literal('AddScore'),
+    time: z.number(),
+    team: z.string(),
+    score: z.number(),
+    member: z.string().optional(),
+    player: z.string().optional(),
+  }),
+  z.object({
+    type: z.literal('RemScore'),
+    time: z.number(),
+    team: z.string(),
+    score: z.number(),
+    member: z.string().optional(),
+    player: z.string().optional(),
+  }),
+  z.object({
+    type: z.literal('KickedPlayer'),
+    time: z.number(),
+    team: z.string(),
+    member: z.string().optional(),
+    player: z.string().optional(),
+  }),
+  z.object({
+    type: z.literal('StartedMatch'),
+    time: z.number(),
+  }),
+  z.object({
+    type: z.literal('FinishedMatch'),
+    time: z.number(),
+  }),
+  z.object({
+    type: z.literal('SwitchPlayers'),
+    time: z.number(),
+    team: z.string(),
+    members: z.array(z.string()).optional(),
+    players: z.array(z.string()).optional(),
+  }),
+])
 
 const handler = withMcpAuth(
   createMcpHandler(
     (server) => {
       server.registerTool(
-        'viewer',
+        'members',
         {
-          title: 'Usuário autenticado',
-          description: 'Retorna os dados do usuário autenticado no Convex.',
-          inputSchema: {},
+          title: 'Administrar membros',
+          description:
+            'Lista, consulta, cria, atualiza ou remove membros. Disponível apenas para administradores.',
+          inputSchema: {
+            action: actionSchema,
+            id: z
+              .string()
+              .optional()
+              .describe('ID do membro para get/update/delete.'),
+            fields: z
+              .object({
+                userId: z.string().nullable().optional(),
+                name: z.string().optional(),
+                tuitionId: z.string().nullable().optional(),
+                additionalRole: z
+                  .enum(['press', 'judge'])
+                  .nullable()
+                  .optional(),
+                schoolClass: z.string().nullable().optional(),
+                player: playerSchema.nullable().optional(),
+              })
+              .optional()
+              .describe('Campos usados em create/update.'),
+          },
         },
-        async (_input, extra) => {
+        async (input, extra) => {
           convex.setAuth(extra.authInfo!.token)
-          const viewer = await convex.query(api.mcp.viewer, {})
+          const result = await convex.mutation(api.mcp.members, {
+            ...input,
+            id: input.id as Id<'members'> | undefined,
+          })
 
           return {
-            content: [{ type: 'text', text: JSON.stringify(viewer, null, 2) }],
+            content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
           }
         },
       )
 
       server.registerTool(
-        'ping',
+        'teams',
         {
-          title: 'Ping autenticado',
-          description: 'Executa uma mutation autenticada de exemplo no Convex.',
+          title: 'Administrar times',
+          description:
+            'Lista, consulta, cria, atualiza ou remove times. Disponível apenas para administradores.',
           inputSchema: {
-            message: z.string().min(1).describe('Mensagem para registrar.'),
+            action: actionSchema,
+            id: z
+              .string()
+              .optional()
+              .describe('ID do time para get/update/delete.'),
+            fields: z
+              .object({
+                name: z.string().optional(),
+                sport: z.string().optional(),
+                color: z.string().nullable().optional(),
+                type: z.enum(['Feminine', 'Masculine']).optional(),
+                members: z.array(z.string()).nullable().optional(),
+                players: z.array(z.string()).nullable().optional(),
+              })
+              .optional()
+              .describe('Campos usados em create/update.'),
           },
         },
-        async ({ message }, extra) => {
+        async (input, extra) => {
           convex.setAuth(extra.authInfo!.token)
-          const result = await convex.mutation(api.mcp.ping, { message })
+          const result = await convex.mutation(api.mcp.teams, {
+            ...input,
+            id: input.id as Id<'teams'> | undefined,
+            fields: input.fields
+              ? {
+                  ...input.fields,
+                  members:
+                    input.fields.members === undefined ||
+                    input.fields.members === null
+                      ? input.fields.members
+                      : input.fields.members.map((id) => id as Id<'members'>),
+                }
+              : undefined,
+          })
+
+          return {
+            content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+          }
+        },
+      )
+
+      server.registerTool(
+        'matches',
+        {
+          title: 'Administrar partidas',
+          description:
+            'Lista, consulta, cria, atualiza ou remove partidas. Disponível apenas para administradores.',
+          inputSchema: {
+            action: actionSchema,
+            id: z
+              .string()
+              .optional()
+              .describe('ID da partida para get/update/delete.'),
+            fields: z
+              .object({
+                teams: z.array(z.string()).optional(),
+                scheduledData: z.number().nullable().optional(),
+                status: z
+                  .enum(['Scheduled', 'Started', 'Canceled', 'Finished'])
+                  .optional(),
+                events: z.array(matchEventSchema).optional(),
+              })
+              .optional()
+              .describe('Campos usados em create/update.'),
+          },
+        },
+        async (input, extra) => {
+          convex.setAuth(extra.authInfo!.token)
+          const result = await convex.mutation(api.mcp.matches, {
+            ...input,
+            id: input.id as Id<'matches'> | undefined,
+            fields: input.fields
+              ? {
+                  ...input.fields,
+                  teams: input.fields.teams?.map((id) => id as Id<'teams'>),
+                  events: input.fields.events?.map((event) => {
+                    if (event.type === 'SwitchPlayers') {
+                      return {
+                        ...event,
+                        team: event.team as Id<'teams'>,
+                        members: event.members?.map(
+                          (id) => id as Id<'members'>,
+                        ),
+                      }
+                    }
+
+                    if (
+                      event.type === 'StartedMatch' ||
+                      event.type === 'FinishedMatch'
+                    ) {
+                      return event
+                    }
+
+                    return {
+                      ...event,
+                      team: event.team as Id<'teams'>,
+                      member: event.member as Id<'members'> | undefined,
+                    }
+                  }),
+                }
+              : undefined,
+          })
 
           return {
             content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
