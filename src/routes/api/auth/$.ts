@@ -16,7 +16,10 @@ export const Route = createFileRoute('/api/auth/$')({
           return withCors(Response.json({ keys }))
         }
 
-        return withCors(await handler(withAuthRequestFixes(request)))
+        const fixedRequest = withAuthRequestFixes(request)
+        const response = await handler(fixedRequest)
+
+        return withCors(await withBrowserRedirect(fixedRequest, response))
       },
       POST: async ({ request }) => withCors(await handler(request)),
       OPTIONS: () => corsPreflight(),
@@ -55,7 +58,10 @@ function withCors(response: Response) {
 function withAuthRequestFixes(request: Request) {
   const url = new URL(request.url)
 
-  if (url.pathname === '/api/auth/oauth2/authorize' && !url.searchParams.has('scope')) {
+  if (
+    url.pathname === '/api/auth/oauth2/authorize' &&
+    !url.searchParams.has('scope')
+  ) {
     url.searchParams.set('scope', 'openid profile mcp:read')
   }
 
@@ -71,4 +77,66 @@ function withAuthRequestFixes(request: Request) {
   }
 
   return request
+}
+
+async function withBrowserRedirect(request: Request, response: Response) {
+  const url = new URL(request.url)
+
+  if (url.pathname !== '/api/auth/oauth2/authorize') {
+    return response
+  }
+
+  const location = response.headers.get('location')
+
+  if (location && !isRedirectStatus(response.status)) {
+    return redirectResponse(response, location)
+  }
+
+  const contentType = response.headers.get('content-type')
+
+  if (!contentType?.includes('application/json')) {
+    return response
+  }
+
+  const payload = await response
+    .clone()
+    .json()
+    .catch(() => null)
+
+  if (!isRedirectPayload(payload)) {
+    return response
+  }
+
+  return redirectResponse(response, payload.url)
+}
+
+function redirectResponse(response: Response, location: string) {
+  const headers = new Headers(response.headers)
+
+  headers.set('location', location)
+  headers.delete('content-type')
+  headers.delete('content-length')
+
+  return new Response(null, {
+    status: 302,
+    statusText: 'Found',
+    headers,
+  })
+}
+
+function isRedirectStatus(status: number) {
+  return status >= 300 && status < 400
+}
+
+function isRedirectPayload(
+  payload: unknown,
+): payload is { redirect: true; url: string } {
+  return (
+    typeof payload === 'object' &&
+    payload !== null &&
+    'redirect' in payload &&
+    'url' in payload &&
+    payload.redirect === true &&
+    typeof payload.url === 'string'
+  )
 }
