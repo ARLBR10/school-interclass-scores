@@ -21,7 +21,11 @@ export const Route = createFileRoute('/api/auth/$')({
 
         return withCors(await withBrowserRedirect(fixedRequest, response))
       },
-      POST: async ({ request }) => withCors(await handler(request)),
+      POST: async ({ request }) => {
+        const fixedRequest = await withAuthPostRequestFixes(request)
+
+        return withCors(await handler(fixedRequest))
+      },
       OPTIONS: () => corsPreflight(),
     },
   },
@@ -77,6 +81,65 @@ function withAuthRequestFixes(request: Request) {
   }
 
   return request
+}
+
+async function withAuthPostRequestFixes(request: Request) {
+  const url = new URL(request.url)
+
+  if (url.pathname !== '/api/auth/oauth2/token') {
+    return request
+  }
+
+  const contentType = request.headers.get('content-type') ?? ''
+
+  if (contentType.includes('application/json')) {
+    return withJsonTokenResource(request)
+  }
+
+  return withFormTokenResource(request)
+}
+
+async function withFormTokenResource(request: Request) {
+  const body = new URLSearchParams(await request.clone().text())
+
+  if (body.has('resource')) {
+    return request
+  }
+
+  body.set('resource', mcpOAuthConfig.audience)
+
+  const headers = new Headers(request.headers)
+  headers.set('content-type', 'application/x-www-form-urlencoded')
+  headers.delete('content-length')
+
+  return new Request(request.url, {
+    body: body.toString(),
+    headers,
+    method: request.method,
+    signal: request.signal,
+  })
+}
+
+async function withJsonTokenResource(request: Request) {
+  const body = await request
+    .clone()
+    .json()
+    .catch(() => null)
+
+  if (!isRecord(body) || typeof body.resource === 'string') {
+    return request
+  }
+
+  const headers = new Headers(request.headers)
+  headers.set('content-type', 'application/json')
+  headers.delete('content-length')
+
+  return new Request(request.url, {
+    body: JSON.stringify({ ...body, resource: mcpOAuthConfig.audience }),
+    headers,
+    method: request.method,
+    signal: request.signal,
+  })
 }
 
 async function withBrowserRedirect(request: Request, response: Response) {
@@ -139,4 +202,8 @@ function isRedirectPayload(
     payload.redirect === true &&
     typeof payload.url === 'string'
   )
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
