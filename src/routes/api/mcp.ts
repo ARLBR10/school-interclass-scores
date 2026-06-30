@@ -254,8 +254,7 @@ function getMcpHandler() {
     {
       required: true,
       requiredScopes: ['mcp:read'],
-      resourceMetadataPath: '/.well-known/oauth-protected-resource',
-      resourceUrl: mcpOAuthConfig.audience,
+      resourceMetadataPath: '/.well-known/oauth-protected-resource/api/mcp',
     },
   )
 
