@@ -10,6 +10,7 @@ type JsonRpcRequest = {
 }
 
 type ToolName = 'members' | 'teams' | 'matches'
+type McpAction = 'list' | 'get' | 'create' | 'update' | 'delete'
 
 const DEBUG_MCP = true
 
@@ -169,19 +170,21 @@ async function dispatchMethod(ctx: ActionCtx, method: string, params: unknown) {
 async function callTool(ctx: ActionCtx, name: ToolName, input: unknown) {
   const args = getObject(input)
   if (!args) throw new Error('Informe os argumentos da ferramenta.')
+  const normalizedArgs = normalizeToolArgs(args)
 
   if (name === 'members') {
     return await ctx.runMutation(api.mcp.members, {
-      ...args,
-      id: args.id as Id<'members'> | undefined,
+      action: normalizedArgs.action,
+      id: normalizedArgs.id as Id<'members'> | undefined,
+      fields: normalizedArgs.fields,
     } as any)
   }
 
   if (name === 'teams') {
-    const fields = getObject(args.fields)
+    const fields = normalizedArgs.fields
     return await ctx.runMutation(api.mcp.teams, {
-      ...args,
-      id: args.id as Id<'teams'> | undefined,
+      action: normalizedArgs.action,
+      id: normalizedArgs.id as Id<'teams'> | undefined,
       fields: fields
         ? {
             ...fields,
@@ -193,10 +196,10 @@ async function callTool(ctx: ActionCtx, name: ToolName, input: unknown) {
     } as any)
   }
 
-  const fields = getObject(args.fields)
+  const fields = normalizedArgs.fields
   return await ctx.runMutation(api.mcp.matches, {
-    ...args,
-    id: args.id as Id<'matches'> | undefined,
+    action: normalizedArgs.action,
+    id: normalizedArgs.id as Id<'matches'> | undefined,
     fields: fields
       ? {
           ...fields,
@@ -209,6 +212,44 @@ async function callTool(ctx: ActionCtx, name: ToolName, input: unknown) {
         }
       : undefined,
   } as any)
+}
+
+function normalizeToolArgs(args: Record<string, unknown>) {
+  const action = normalizeAction(args.action)
+  const id = normalizeId(args.id)
+  const fields = getObject(args.fields)
+
+  return {
+    action,
+    id:
+      action === 'get' || action === 'update' || action === 'delete'
+        ? id
+        : undefined,
+    fields: action === 'create' || action === 'update' ? fields : undefined,
+  }
+}
+
+function normalizeAction(value: unknown): McpAction {
+  if (
+    value === 'list' ||
+    value === 'get' ||
+    value === 'create' ||
+    value === 'update' ||
+    value === 'delete'
+  ) {
+    return value
+  }
+
+  throw new Error(
+    'Informe uma ação válida: list, get, create, update ou delete.',
+  )
+}
+
+function normalizeId(value: unknown) {
+  if (typeof value !== 'string') return undefined
+
+  const id = value.trim()
+  return id.length > 0 ? id : undefined
 }
 
 function normalizeMatchEvent(event: unknown) {
