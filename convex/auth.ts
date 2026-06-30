@@ -11,6 +11,8 @@ import { oauthProvider } from '@better-auth/oauth-provider'
 import { jwt } from 'better-auth/plugins'
 
 export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
+  const convexSiteUrl = getConvexSiteUrl()
+
   return {
     baseURL: siteUrl,
     basePath: '/api/auth',
@@ -51,17 +53,29 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         loginPage: `${siteUrl}/auth/sign-in`,
         consentPage: `${siteUrl}/auth/consent`,
         scopes: ['openid', 'profile', 'email', 'mcp:read', 'mcp:write'],
-        validAudiences: [`${siteUrl}/api/mcp`],
+        validAudiences: [
+          `${siteUrl}/api/mcp`,
+          ...(convexSiteUrl ? [`${convexSiteUrl}/mcp`] : []),
+        ],
         allowDynamicClientRegistration: true,
         allowUnauthenticatedClientRegistration: true,
         clientRegistrationDefaultScopes: ['openid', 'profile', 'mcp:read'],
         clientRegistrationAllowedScopes: ['email', 'mcp:write'],
+        silenceWarnings: {
+          oauthAuthServerConfig: true,
+        },
       }),
     ],
   } satisfies BetterAuthOptions
 }
 
 const siteUrl = env.SITE_URL
+const convexSiteUrl = (env as typeof env & { CONVEX_SITE_URL?: string })
+  .CONVEX_SITE_URL
+
+function getConvexSiteUrl() {
+  return convexSiteUrl?.replace(/\/$/, '')
+}
 
 // The component client has methods needed for integrating Convex with Better Auth,
 // as well as helper methods for general use.
